@@ -15,29 +15,34 @@ namespace {
 		return (GetKeyState(VK_SHIFT) & 0x8000) != 0;
 	}
 
-    // 未確定入力として捕捉するキーか判定する。
-    // 対応: 英字キー(A-Z, ローマ字バッファへ追加), Backspace(1文字削除),
-    //       Enter(確定), Escape(取消)。他のキーは全て素通しする。
-    // NOTE: IME ON/OFF切替コンパートメントは未対応のため、このTIPがアクティブな間は
-    BOOL IsKeyEaten(WPARAM wParam) {
-		WPARAM key = (WPARAM)wParam;
-		if (g_currentMode == SKKMode::Hankaku) {
-			return FALSE;
-		}
-        if (_isAlphabet(key)) {
-            return TRUE;
-        }
-        switch (key) {
-        case VK_BACK:
-        case VK_RETURN:
-        case VK_ESCAPE:
-            return TRUE;
-        default:
-            return FALSE;
-        }
-    }
 
 } // namespace
+
+// 未確定入力として捕捉するキーか判定する。
+// 対応: 英字キー(A-Z, ローマ字バッファへ追加), Backspace(1文字削除),
+//       Enter(確定), Escape(取消)。他のキーは全て素通しする。
+// NOTE: IME ON/OFF切替コンパートメントは未対応のため、このTIPがアクティブな間は
+BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
+    WPARAM key = (WPARAM)wParam;
+    if (g_currentMode == SKKMode::Hankaku) {
+        return FALSE;
+    }
+   // if (_isAlphabet(key)) {
+    if (m_qelfTranslater._is_contain_key(key)) {
+        return TRUE;
+    }
+    switch (key) {
+    case VK_BACK:
+    case VK_RETURN:
+    case VK_ESCAPE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+
+    return FALSE;
+}
+
 
 CTextService::CTextService() {
     initialize_setting();
@@ -165,7 +170,7 @@ STDAPI CTextService::OnTestKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam
     if (pfEaten == nullptr) {
         return E_INVALIDARG;
     }
-    *pfEaten = IsKeyEaten(wParam);
+    *pfEaten = __IsKeyEaten(wParam);
     return S_OK;
 }
 
@@ -184,7 +189,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return E_INVALIDARG;
     }
 
-    *pfEaten = IsKeyEaten(wParam);
+    *pfEaten = __IsKeyEaten(wParam);
     if (!(*pfEaten)) {
         return S_OK;
     }
@@ -232,7 +237,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return S_OK;
     }
 
-    // 英字キー: 小文字化してバッファへ追加。
+    // 英字キー: バッファへ追加。
     WCHAR ch = static_cast<WCHAR>(wParam);
     
 	DebugTrace((L"OnKeyDown: " + std::wstring(1,ch)));

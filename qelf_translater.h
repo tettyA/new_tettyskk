@@ -16,6 +16,9 @@
 #define ex_boin     (0x9C)
 #define ex_sakujo   (0x9A)
 
+// 最後に WCHAR_XTU を付けると，促音(っ)が挿入される ( SA% -> っさ, KYA% -> っきゃ) 
+#define WCHAR_XTU (L'%')
+
 using  KeyCode = WCHAR;
 struct KMP {
     enum class Dir {
@@ -64,6 +67,7 @@ public:
     /// <returns>trueの時，変換を行った。falseの時，変換に達しなかった</returns>
 	bool translate_qwerty_to_qelf(const KeyCode& key, std::wstring& output);
 
+	inline bool _is_contain_key(const KeyCode& key) const { return m_KMP.KMPs.contains(key); }
 	void load_KMP_table(const std::wstring& filename);
 private:
 	//QWERTY配列からQ-ELF配列への変換テーブル

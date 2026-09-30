@@ -28,6 +28,8 @@ namespace {
 qelf_translater::qelf_translater(){
 	m_KMP = KMP();
     DSendCnt = 0;
+    m_KMP.is_key_pushed = { false,false,false };
+	Send1st = DsendElements{ KMP::Dir::None, {0}, 0 };
 }
 
 qelf_translater::~qelf_translater()
@@ -48,14 +50,21 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
         switch (selected.to_samedir)
         {
         case ex_smalltu:
+			m_KMP.is_key_pushed.sokuon = true;
+            return false;
+        case ex_nn:
+            output = L"NN";
+            return true;
+        case ex_youon:
+            m_KMP.is_key_pushed.youon = true;
             return false;
         case ex_boin:
-                return false;
-        case ex_nn:
             return false;
-
+        case ex_sakujo:
+            return false;
         default:
-            break;
+            output = std::wstring(1, (WCHAR)selected.to_samedir);
+            return true;
         }
     }
     else if (selected.cmd == KMP::KMPelm::Cmd::DSend) {
@@ -69,24 +78,35 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
         else if (DSendCnt >= 1) {
             DsendElements    Send2nd = DsendElements{ selected.dir,selected.to_samedir,selected.to_otherdir };
 		
-            // q‰¹‚Ìˆ— 
-            if (Send1st.dir == KMP::Dir::None || Send2nd.dir == KMP::Dir::None) {
-                output = std::wstring(1, WCHAR(Send1st.dir1.dirkc));
-			}
-            // ‘÷‰¹
-            else if(Send1st.dir == Send2nd.dir) {
-				output = std::wstring(1, WCHAR(Send1st.dir1.samedirkc));
+            if (Send1st.dir1.dirkc != ex_boin) {
+                // q‰¹‚Ìˆ— 
+                if (Send1st.dir == KMP::Dir::None || Send2nd.dir == KMP::Dir::None) {
+                    output = std::wstring(1, WCHAR(Send1st.dir1.dirkc));
+                }
+                // ‘÷‰¹
+                else if (Send1st.dir == Send2nd.dir) {
+                    output = std::wstring(1, WCHAR(Send1st.dir1.samedirkc));
+                }
+                // ´‰¹
+                else {
+                    output = std::wstring(1, WCHAR(Send1st.otherdirkc));
+                }
             }
-            // ´‰¹
-            else {
-                output = std::wstring(1, WCHAR(Send1st.otherdirkc));
+            
+            if(m_KMP.is_key_pushed.youon) {
+                output += L"Y";
             }
 
             // •ê‰¹‚Ìˆ—
 			output += std::wstring(1, WCHAR(selected.to_secboin));
+			// ‘£‰¹‚Ìˆ—
+            if (m_KMP.is_key_pushed.sokuon) {
+                output += WCHAR_XTU;
+            }
 			DebugTrace(L"output: " + output);
             DSendCnt = 0;
-
+            m_KMP.is_key_pushed.sokuon = false;
+            m_KMP.is_key_pushed.youon = false;
             return true;
         }
     }

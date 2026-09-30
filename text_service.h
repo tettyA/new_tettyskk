@@ -55,7 +55,7 @@ private:
 
 	inline void __RequestEditSession(ITfContext* pContext, EditSessionRequest req, HRESULT hrSession);
 	inline bool __HasComposition() const { return _pComposition != nullptr; }
-
+	BOOL __IsKeyEaten(WPARAM wParam) const;
 
     LONG _refCount;
     // TSF òAóçóp
