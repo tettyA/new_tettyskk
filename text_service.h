@@ -5,10 +5,11 @@
 #include <atlbase.h>
 #include <msctf.h>
 #include <string>
-
+#include "globals.h"
 #include "edit_session.h"
 #include "romaji_kana_translater.h"
 #include "qelf_translater.h"
+#include "ClangBarItemButton.h"
 
 class CTextService : public ITfTextInputProcessor,
     public ITfKeyEventSink,
@@ -43,6 +44,13 @@ public:
     STDMETHODIMP EnumDisplayAttributeInfo(IEnumTfDisplayAttributeInfo** ppEnum);
     STDMETHODIMP GetDisplayAttributeInfo(REFGUID guid, ITfDisplayAttributeInfo** ppInfo);
 
+
+    inline void __GetThreadMgr(ITfThreadMgr** ppThreadMgr) const
+    {
+        if (ppThreadMgr == nullptr)return;
+        *ppThreadMgr = _pThreadMgr;
+        (*ppThreadMgr)->AddRef();
+    }
 private:
     friend class CEditSession;
 
@@ -57,6 +65,9 @@ private:
 	inline bool __HasComposition() const { return _pComposition != nullptr; }
 	BOOL __IsKeyEaten(WPARAM wParam) const;
 
+    void __changeCurrentMode(const SKKMode mode);
+    void __changeCurrentKanaMode(const KanaMode mode);
+
     LONG _refCount;
     // TSF òAóçóp
     CComPtr<ITfThreadMgr> _pThreadMgr;
@@ -70,5 +81,7 @@ private:
 
 	romaji_kana_translater m_romajiKanaTranslater;
 	qelf_translater m_qelfTranslater;
+
+	CComPtr<CLangBarItemButton> m_pLangBarItemButton;
 
 };

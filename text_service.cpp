@@ -1,4 +1,6 @@
 #include "pch.h"
+#include <ctffunc.h>
+
 #include "text_service.h"
 #include "display_attribute.h"
 #include "edit_session.h"
@@ -43,6 +45,22 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     return FALSE;
 }
 
+void CTextService::__changeCurrentMode(const SKKMode mode)
+{
+    g_currentMode = mode;
+    if (m_pLangBarItemButton != nullptr) {
+        m_pLangBarItemButton->_UpdateIcon();
+    }
+}
+
+void CTextService::__changeCurrentKanaMode(const KanaMode mode)
+{
+    g_CurrentKanaMode = mode;
+	if (m_pLangBarItemButton != nullptr) {
+		m_pLangBarItemButton->_UpdateIcon();
+	}
+}
+
 
 CTextService::CTextService() {
     initialize_setting();
@@ -54,17 +72,32 @@ CTextService::CTextService() {
 	m_romajiKanaTranslater = romaji_kana_translater();
 	m_qelfTranslater = qelf_translater();
 
+
+    m_pLangBarItemButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE);
+    
 	m_qelfTranslater.load_KMP_table(SKK_Q_ELFTRANSLATER_KMP_FILEPATH);
 
 	g_CurrentKanaMode = KanaMode::Hiragana;
-	g_currentMode = SKKMode::Kakutei;
+	g_currentMode = SKKMode::Hankaku;
 
-    
 
     InterlockedIncrement(&g_cRefDll);
 }
 
-CTextService::~CTextService() { InterlockedDecrement(&g_cRefDll); }
+CTextService::~CTextService() { 
+    if (m_pLangBarItemButton)
+    {
+        m_pLangBarItemButton.Release();
+        m_pLangBarItemButton = nullptr;
+    }
+    if (_pThreadMgr)
+    {
+        _pThreadMgr.Release();
+        _pThreadMgr = nullptr;
+    }
+    InterlockedDecrement(&g_cRefDll); 
+    
+}
 
 STDAPI CTextService::QueryInterface(REFIID riid, void** ppvObj) {
     if (ppvObj == nullptr) {
@@ -130,6 +163,9 @@ STDAPI CTextService::Activate(ITfThreadMgr* ptim, TfClientId tid) {
         TRUE
     );
 
+    if (m_pLangBarItemButton) {
+        m_pLangBarItemButton->_Init();
+    }
 
     return hr;
 }
@@ -138,6 +174,9 @@ STDAPI CTextService::Deactivate() {
 
     if (_pThreadMgr == nullptr || _clientId == TF_CLIENTID_NULL) {
         return E_FAIL;
+    }
+    if (m_pLangBarItemButton) {
+        m_pLangBarItemButton->_Uninit();
     }
 
     // composition が残っている場合、ここではEditSessionを発行できない
@@ -190,7 +229,28 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
 
     *pfEaten = __IsKeyEaten(wParam);
+
+    if (_IsCtrlKeyPressed() && wParam == 'J') {
+        *pfEaten = TRUE;
+        __changeCurrentMode(SKKMode::Kakutei);
+		__changeCurrentKanaMode(KanaMode::Hiragana);
+        return S_OK;
+    }
+   
+
     if (!(*pfEaten)) {
+        return S_OK;
+    }
+
+    // ここにいるということは，SKKMode::Hankaku ではない。
+    if (wParam == 'R') {
+        __changeCurrentMode(SKKMode::Hankaku);
+        return S_OK;
+    }
+    else if (wParam == 'Q') {
+        *pfEaten = TRUE;
+        __changeCurrentMode(SKKMode::Kakutei);
+        __changeCurrentKanaMode(KanaMode::Katakana);
         return S_OK;
     }
 

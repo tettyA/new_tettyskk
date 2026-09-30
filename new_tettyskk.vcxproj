@@ -155,6 +155,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ClangBarItemButton.h" />
     <ClInclude Include="class_factory.h" />
     <ClInclude Include="display_attribute.h" />
     <ClInclude Include="edit_session.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="text_service.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CLangBarItembutton.cpp" />
     <ClCompile Include="class_factory.cpp" />
     <ClCompile Include="display_attribute.cpp" />
     <ClCompile Include="dllmain.cpp" />
