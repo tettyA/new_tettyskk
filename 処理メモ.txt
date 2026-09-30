@@ -1,0 +1,65 @@
+- OSがIMEをDLLにロードされた時，
+1. DllMain (OSがdllをロード)
+2. DllGetClassObject (OSがCLSID_new_tettyskkのファクトリ要求)
+3. CClassFactory::CreateInstance
+  - new CTextService()
+  - ITfTextInputProcessorをOSに返却
+
+- IMEに切り替えて有効になった時
+CTextService::Activate
+  - TSFからITfTreadMgrとTfClientIdを取得
+  - ITfKeyStrokeMgr::AdviseKeyEventSinkでキーイベントの通知を登録
+  - OSキーイベントを呼び出しするように
+
+  - キーが入力された時(例,'A'が押された)
+  1. CTextService::OnTestKeyDown
+    - このキー入力を処理するかどうかを判断する
+    - 処理する-> TRUE 処理しない-> FALSE
+    - 処理の判断はIsKeyEatenで行う
+  2. CTextService::OnKeyDown
+    - 処理する場合は，CTextService::OnKeyDownで処理する
+    - _compositionに文字を追加する
+    - new CEditSessionを割り当て
+      - _req(EditSessionRequest列挙) は，
+      - StartComposition -> バッファが空で，新しくcomposition作成(その後DoCompositionに合流)
+      - DoComposition -> バッファが空でなく，compositionに文字を追加
+      - EndCompositionCommit -> compositionをcommitして，バッファを空にする
+      - EndCompositionCancel -> compositionをキャンセルして，バッファを空にする
+    - RequestEditSessionでCEditSession::DoEditSessionを呼び出す
+    - 処理しない場合は，OSにキーイベントを返却する
+
+- エディットセッションの実行
+1. CEditSession::DoEditSession
+ - CEditSession::CEditSessionで渡された列挙型_reqの値に応じて，処理を分岐
+
+ 1. _StartComposition
+  - ITfContextComposition::StartCompositionを呼び出し，新しくcompositionを作成 (CTextService::_pCompositionメンバに格納) 
+ 2. _DoComposition
+  - ITfRange::SetTextを呼び出して，_compositionBufferの内容をアプリケーションのウィンドウの反映させる。
+  - ITfProperty::SetValueを呼び出して，テキスト範囲にGUID_DisplayAttributeInputを付与
+  - キャレットを文字列の末尾に移動させる( pRange->Collapse(ec, TF_ANCHOR_END); )
+
+
+- 描画処理
+- 未確定文字列を描画しようとした時に発生
+
+1. CTextService::GetDisplayAttributeInfo
+  - OSが，GUID_DDisplayAttributeInputに対応する描画属性を取得しようとした時に呼び出される
+  - new CDisplayAttributeInfo()を作成して，OSに返却する
+
+2. CDisplayAttributeInfo::GetAttributeInfo()
+  - g_Setting.display_attribute を読み取る。
+  - 結果的に，実線の下線付きで文字列が描画される。
+
+- Compositionの確定
+1. CTextService::OnKeyDownでVK_RETURNが押された
+  - EndCompositionCommitを指定して，RequestEditSessionを呼び出す
+2. CEditSession::DoEditSession
+3. CTextService::_EndComposition(fCommit=TRUE)
+  - ITfComposition::EndComposition を呼び出します。これによりTSFはアプリケーション内の文字列を確定状態にします。
+  -  _compositionBuffer.clear() を呼び出し、ローカルのバッファを初期化します。
+
+- IMEの無効
+1. CTextService::Deactivate
+  - ITfKeystrokeMgr::UnadviseKeyEventSink を呼び出し、キーストロークのインターセプトを停止します。
+  - _pThreadMgr を解放し、ローカルのクライアントIDをクリアします。

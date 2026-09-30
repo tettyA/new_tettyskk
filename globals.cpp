@@ -1,0 +1,21 @@
+#include "pch.h"
+#include "globals.h"
+
+#define INITGUID
+#include <initguid.h>
+
+// GUID for this SKK
+// {C1827914-09A3-44C0-95A2-4AA25F6F30ED}
+DEFINE_GUID(CLSID_new_tettyskk, 0xc1827914, 0x9a3, 0x44c0, 0x95, 0xa2, 0x4a,
+    0xa2, 0x5f, 0x6f, 0x30, 0xed);
+
+// unique profile GUID for tettySKK
+// {829224A8-964C-4ACB-84B4-F96906084BEE}
+DEFINE_GUID(GUID_Profile_SkkIme, 0x829224a8, 0x964c, 0x4acb, 0x84, 0xb4, 0xf9,
+    0x69, 0x6, 0x8, 0x4b, 0xee);
+
+// ñ¢ämíËì¸óÕ(composition)ópÇÃï\é¶ëÆê´GUID
+// {216D13C4-3628-4BD5-A214-A1F9B9BACF74}
+DEFINE_GUID(GUID_DisplayAttributeInput,
+    0x216d13c4, 0x3628, 0x4bd5, 0xa2, 0x14, 0xa1, 0xf9, 0xb9, 0xba, 0xcf, 0x74);
+
