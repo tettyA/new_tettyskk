@@ -39,6 +39,7 @@ public:
 	~SKKDictionaryProvider();
 
 	BOOL LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath);
+	void GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const;
 private:
 	SKKDictionary m_skkdict;
 	SKKDictionary m_user_skkdict;

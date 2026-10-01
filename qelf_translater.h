@@ -43,8 +43,9 @@ struct KMP {
     struct SpecialKeyStates {
         bool sokuon;
         bool youon;
-        bool shift;
+        //bool shift;
     }is_key_pushed;
+	bool is_shift_pressed;
 
     std::unordered_map<KeyCode, KMPelm>KMPs;
 };
@@ -69,6 +70,7 @@ public:
 
 	inline bool _is_contain_key(const KeyCode& key) const { return m_KMP.KMPs.contains(key); }
 	void load_KMP_table(const std::wstring& filename);
+	inline void get_key_state(KMP::SpecialKeyStates& key_states) const;
 private:
 	//QWERTY配列からQ-ELF配列への変換テーブル
 	KMP m_KMP;

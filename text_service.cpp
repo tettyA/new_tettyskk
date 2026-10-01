@@ -8,18 +8,6 @@
 
 #define _isAlphabet(_key_) ((_key_ >= 'A' && _key_ <= 'Z'))
 
-namespace {
-	inline BOOL _IsCtrlKeyPressed() {
-		return (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-	}
-
-    inline BOOL _IsShiftKeyPressed() {
-		return (GetKeyState(VK_SHIFT) & 0x8000) != 0;
-	}
-
-
-} // namespace
-
 // 未確定入力として捕捉するキーか判定する。
 // 対応: 英字キー(A-Z, ローマ字バッファへ追加), Backspace(1文字削除),
 //       Enter(確定), Escape(取消)。他のキーは全て素通しする。
@@ -305,10 +293,22 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     if (m_qelfTranslater.translate_qwerty_to_qelf(ch, kekkabutu)) {
         std::wstring output;
         if (m_romajiKanaTranslater.translate_qelf(kekkabutu, output)) {
-            _compositionBuffer = output;
+            _compositionBuffer += output;
         }
     }
     
+    if (_IsShiftKeyPressed() && g_currentMode == SKKMode::Kakutei) {
+        // 変換の開始
+        __changeCurrentMode(SKKMode::Henkan);
+
+		if (_pComposition != nullptr) {
+			HRESULT hrSession = S_OK;
+			__RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
+		}
+		HRESULT hrSession = S_OK;
+		__RequestEditSession(pic, EditSessionRequest::StartComposition, hrSession);
+	}
+
     if (g_currentMode == SKKMode::Kakutei) {
 		HRESULT hrSession = S_OK;
 		__RequestEditSession(pic, EditSessionRequest::InsertText, hrSession);

@@ -28,7 +28,8 @@ namespace {
 qelf_translater::qelf_translater(){
 	m_KMP = KMP();
     DSendCnt = 0;
-    m_KMP.is_key_pushed = { false,false,false };
+    m_KMP.is_key_pushed = { false,false };
+    m_KMP.is_shift_pressed = false;
 	Send1st = DsendElements{ KMP::Dir::None, {0}, 0 };
 }
 
@@ -45,6 +46,10 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
 
     output.clear();
 	KMP::KMPelm selected = m_KMP.KMPs[key];
+
+    if (_IsShiftKeyPressed()) {
+        m_KMP.is_shift_pressed = true;
+    }
 
     if (selected.cmd == KMP::KMPelm::Cmd::Send) {
         switch (selected.to_samedir)
@@ -107,6 +112,7 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
             DSendCnt = 0;
             m_KMP.is_key_pushed.sokuon = false;
             m_KMP.is_key_pushed.youon = false;
+            m_KMP.is_shift_pressed = false;
             return true;
         }
     }
@@ -222,4 +228,9 @@ void qelf_translater::load_KMP_table(const std::wstring& filename){
 	
 
     return;
+}
+
+inline void qelf_translater::get_key_state(KMP::SpecialKeyStates& key_states) const
+{
+	key_states = m_KMP.is_key_pushed;
 }

@@ -23,6 +23,20 @@ BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const st
 	return TRUE;
 }
 
+void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const
+{
+	auto it = m_skkdict.find(hiragana_key);
+	if (it != m_skkdict.end()) {
+		candidates = it->second;
+	}
+
+	it = m_user_skkdict.find(hiragana_key);
+	if (it != m_user_skkdict.end()) {
+		// ƒ†[ƒU[Ž«‘‚ÌŒó•â‚ð’Ç‰Á
+		candidates.insert(candidates.end(), it->second.begin(), it->second.end());
+	}
+}
+
 BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict)
 {
 	std::ifstream file(filepath, std::ios::binary | std::ios::ate);
