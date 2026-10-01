@@ -17,7 +17,7 @@ CLangBarItemButton::CLangBarItemButton(CTextService* cskkime, REFGUID guid)
 
 	_pSkkIme = cskkime;
 	if (_pSkkIme) {
-		_pSkkIme->AddRef();
+		//_pSkkIme->AddRef();
 	}
 	_pLangBarItemSink = nullptr;
 }
@@ -25,7 +25,7 @@ CLangBarItemButton::CLangBarItemButton(CTextService* cskkime, REFGUID guid)
 CLangBarItemButton::~CLangBarItemButton()
 {
 	_Uninit();
-	_pSkkIme->Release();
+	//_pSkkIme->Release();
 	_pSkkIme = nullptr;
 }
 

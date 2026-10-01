@@ -36,6 +36,6 @@ DECLSPEC_SELECTANY KanaMode g_CurrentKanaMode;
 
 #ifdef _DEBUG
 #define DebugTrace(msg) OutputDebugString((L"[DEBUG-tettySKK] "+ (msg)).c_str())
-#elif
+#else
 #define DebugTrace(msg) ;
 #endif

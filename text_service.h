@@ -67,6 +67,9 @@ private:
 	inline bool __HasComposition() const { return _pComposition != nullptr; }
 	BOOL __IsKeyEaten(WPARAM wParam) const;
 
+	void __StartHenkanMode(ITfContext* pic);
+	void __EndHenkanMode(ITfContext* pic);
+
     void __changeCurrentMode(const SKKMode mode);
     void __changeCurrentKanaMode(const KanaMode mode);
 
@@ -87,4 +90,7 @@ private:
 	CComPtr<CLangBarItemButton> m_pLangBarItemButton;
 
 	SKKDictionaryProvider m_skkdictProvider;
+	SKKCandidates m_candidates;
+	std::wstring m_henkanGokan; // •ÏŠ·‘ÎÛ‚ÌŒêŠ²
+	int m_candidateIndex;
 };

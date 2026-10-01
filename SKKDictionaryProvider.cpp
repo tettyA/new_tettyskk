@@ -25,6 +25,7 @@ BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const st
 
 void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const
 {
+	candidates.clear();
 	auto it = m_skkdict.find(hiragana_key);
 	if (it != m_skkdict.end()) {
 		candidates = it->second;

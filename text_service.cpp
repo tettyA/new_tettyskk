@@ -25,12 +25,36 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     case VK_BACK:
     case VK_RETURN:
     case VK_ESCAPE:
+    case VK_SPACE:
         return TRUE;
     default:
         return FALSE;
     }
 
     return FALSE;
+}
+
+void CTextService::__StartHenkanMode(ITfContext *pic)
+{
+    if (!__HasComposition()) {
+        HRESULT hrSession = S_OK;
+        __RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
+    }
+
+    __changeCurrentMode(SKKMode::Henkan);
+
+    HRESULT hrSession = S_OK;
+    __RequestEditSession(pic, EditSessionRequest::StartComposition, hrSession);
+
+    m_candidates.clear();
+    m_candidateIndex = 0;
+}
+
+void CTextService::__EndHenkanMode(ITfContext* pic)
+{
+    m_candidates.clear();
+    m_candidateIndex = 0;
+	g_currentMode = SKKMode::Kakutei;
 }
 
 void CTextService::__changeCurrentMode(const SKKMode mode)
@@ -61,7 +85,7 @@ CTextService::CTextService() {
 	m_qelfTranslater = qelf_translater();
 
 
-    m_pLangBarItemButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE);
+    m_pLangBarItemButton.Attach(new CLangBarItemButton(this, GUID_LBI_INPUTMODE));
     
 	m_qelfTranslater.load_KMP_table(g_Setting.kmp_file_path);
 
@@ -70,6 +94,9 @@ CTextService::CTextService() {
 
 	m_skkdictProvider = SKKDictionaryProvider();
 	m_skkdictProvider.LoadDictionary(g_Setting.skk_dic_file_path, g_Setting.skk_user_dic_file_path);
+
+	m_candidates = SKKCandidates();
+    m_candidateIndex = 0;
 
     InterlockedIncrement(&g_cRefDll);
 }
@@ -207,7 +234,7 @@ STDAPI CTextService::OnTestKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam
     return S_OK;
 }
 
-// このキーをどのように処理するか呼び出される(キーが離された瞬間)
+
 
 
 // キーが押された瞬間
@@ -241,9 +268,8 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         __changeCurrentKanaMode(KanaMode::Katakana);
         return S_OK;
     }
-
     // Enter で そのまま(変換せずに) 確定処理 
-    if (wParam == VK_RETURN) {
+    else if (wParam == VK_RETURN) {
         if (!__HasComposition()) {
             *pfEaten = FALSE; // composition中でなければEnterはアプリに渡す
             return S_OK;
@@ -252,9 +278,8 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 		__RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
         return S_OK;
     }
-
 	// Escape で compositionをキャンセルする
-    if (wParam == VK_ESCAPE) {
+    else if (wParam == VK_ESCAPE) {
         if (!__HasComposition()) {
             *pfEaten = FALSE;
             return S_OK;
@@ -263,9 +288,8 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 		__RequestEditSession(pic, EditSessionRequest::EndCompositionCancel, hrSession);
         return S_OK;
     }
-
 	// 削除キーでバッファの最後の文字を削除する
-    if (wParam == VK_BACK) {
+    else if (wParam == VK_BACK) {
         if (!__HasComposition()) {
             *pfEaten = FALSE; // composition中でなければBackspaceはアプリに渡す
             return S_OK;
@@ -284,32 +308,64 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         }
         return S_OK;
     }
+    else if (wParam == VK_SPACE) {
+        if (g_currentMode == SKKMode::Henkan) {
+            // 候補の表示
+            // 候補新規取得
+            if (m_candidates.empty()) {
+                m_candidateIndex = 0;
+				m_henkanGokan = _compositionBuffer;
+                m_skkdictProvider.GetCandidates(m_henkanGokan, m_candidates);
+            }
+			// 候補が存在する場合、次の候補を表示
+            else{
+				m_candidateIndex++;
+                if (m_candidateIndex >= m_candidates.size()) {
+                    m_candidateIndex = 0;// 一旦最初の候補に戻す
+                }
+            }
+
+            // 候補の表示
+            if (m_candidates.empty()) {
+                return S_OK;
+            }
+
+			_compositionBuffer = m_candidates[m_candidateIndex].candidate;
+			HRESULT hrSession = S_OK;
+			__RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
+            return S_OK;
+        }
+    }
 
     // 英字キー: バッファへ追加。
     WCHAR ch = static_cast<WCHAR>(wParam);
     
 	DebugTrace((L"OnKeyDown: " + std::wstring(1,ch)));
+    std::wstring output=L"";
     std::wstring kekkabutu = L"";
     if (m_qelfTranslater.translate_qwerty_to_qelf(ch, kekkabutu)) {
-        std::wstring output;
         if (m_romajiKanaTranslater.translate_qelf(kekkabutu, output)) {
-            _compositionBuffer += output;
+           // _compositionBuffer += output;
         }
     }
-    
+
+    // 変換中であるのにも拘らず，何かしらの文字が入力された -> 暗黙の確定
+    if (g_currentMode == SKKMode::Henkan && !m_candidates.empty()) {
+        // 現在の候補で確定して，composition終了。
+		// その後、入力された文字をcompositionに追加する。(そのまま流す)
+		HRESULT hrSession = S_OK;
+		__RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
+
+
+    }
+
+
+	_compositionBuffer += output;
     if (_IsShiftKeyPressed() && g_currentMode == SKKMode::Kakutei) {
         // 変換の開始
-        __changeCurrentMode(SKKMode::Henkan);
-
-		if (_pComposition != nullptr) {
-			HRESULT hrSession = S_OK;
-			__RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
-		}
-		HRESULT hrSession = S_OK;
-		__RequestEditSession(pic, EditSessionRequest::StartComposition, hrSession);
+        __StartHenkanMode(pic);
 	}
-
-    if (g_currentMode == SKKMode::Kakutei) {
+    else if (g_currentMode == SKKMode::Kakutei) {
 		HRESULT hrSession = S_OK;
 		__RequestEditSession(pic, EditSessionRequest::InsertText, hrSession);
     }
@@ -323,6 +379,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     return S_OK;
 }
 
+// このキーをどのように処理するか呼び出される(キーが離された瞬間)
 STDAPI CTextService::OnTestKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
     if (pfEaten == nullptr) {
         return E_INVALIDARG;
@@ -483,6 +540,10 @@ HRESULT CTextService::_EndComposition(TfEditCookie ec, ITfContext* pContext, BOO
     if (!__HasComposition()) {
         return E_FAIL;
     }
+
+	if (g_currentMode == SKKMode::Henkan) {
+		__EndHenkanMode(pContext);
+	}
 
     if (!fCommit) {
         CComPtr<ITfRange> pRange;
