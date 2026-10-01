@@ -25,6 +25,7 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     case VK_BACK:
     case VK_RETURN:
     case VK_ESCAPE:
+        return __HasComposition();
     case VK_SPACE:
         return TRUE;
     default:
@@ -303,6 +304,10 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         if (_compositionBuffer.empty()) {// ãÛÇ»ÇÁèIóπ
 			__RequestEditSession(pic, EditSessionRequest::EndCompositionCancel, hrSession);
         }
+        else if (g_currentMode == SKKMode::Henkan) {
+			__RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
+			__RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
+        }
 		else {// ãÛÇ≈Ç»ÇØÇÍÇŒçXêV
 			__RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
         }
@@ -358,7 +363,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 
 
     }
-
+    
 
 	_compositionBuffer += output;
     if (_IsShiftKeyPressed() && g_currentMode == SKKMode::Kakutei) {
