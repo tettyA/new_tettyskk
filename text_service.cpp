@@ -210,17 +210,15 @@ STDAPI CTextService::OnTestKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam
         return E_INVALIDARG;
     }
     *pfEaten = __IsKeyEaten(wParam);
+    if (_IsCtrlKeyPressed() && wParam == 'J') {
+        *pfEaten = TRUE;
+    }
+
     return S_OK;
 }
 
 // このキーをどのように処理するか呼び出される(キーが離された瞬間)
-STDAPI CTextService::OnTestKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
-    if (pfEaten == nullptr) {
-        return E_INVALIDARG;
-    }
-    *pfEaten = FALSE;
-    return S_OK;
-}
+
 
 // キーが押された瞬間
 STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
@@ -320,6 +318,14 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             : EditSessionRequest::DoComposition;
         __RequestEditSession(pic, req, hrSession);
     }
+    return S_OK;
+}
+
+STDAPI CTextService::OnTestKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
+    if (pfEaten == nullptr) {
+        return E_INVALIDARG;
+    }
+    *pfEaten = FALSE;
     return S_OK;
 }
 
