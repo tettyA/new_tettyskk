@@ -7,6 +7,8 @@ void initialize_setting() {
     initialize_setting_display_attribute();
 
     g_Setting.kmp_file_path = LR"(C:\skktemp\kmp.kmp)";
+	g_Setting.skk_dic_file_path = LR"(C:\skktemp\SKK-JISYO.L)";
+//	g_Setting.skk_user_dic_file_path = LR"(C:\skktemp\SKK-JISYO.user)";
 }
 
 void initialize_setting_display_attribute() {

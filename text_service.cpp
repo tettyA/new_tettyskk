@@ -80,6 +80,8 @@ CTextService::CTextService() {
 	g_CurrentKanaMode = KanaMode::Hiragana;
 	g_currentMode = SKKMode::Hankaku;
 
+	m_skkdictProvider = SKKDictionaryProvider();
+	m_skkdictProvider.LoadDictionary(g_Setting.skk_dic_file_path, g_Setting.skk_user_dic_file_path);
 
     InterlockedIncrement(&g_cRefDll);
 }

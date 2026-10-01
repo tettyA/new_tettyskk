@@ -10,6 +10,8 @@
 #include "romaji_kana_translater.h"
 #include "qelf_translater.h"
 #include "ClangBarItemButton.h"
+#include "SKKDictionaryProvider.h"
+
 
 class CTextService : public ITfTextInputProcessor,
     public ITfKeyEventSink,
@@ -84,4 +86,5 @@ private:
 
 	CComPtr<CLangBarItemButton> m_pLangBarItemButton;
 
+	SKKDictionaryProvider m_skkdictProvider;
 };

@@ -25,6 +25,107 @@ BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const st
 
 BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict)
 {
+	std::ifstream file(filepath, std::ios::binary | std::ios::ate);
+	if (!file.is_open()) {
+		return FALSE;
+	}
+
+	std::streamsize fileSize = file.tellg();
+	file.seekg(0, std::ios::beg);
+
+	if (fileSize <= 0) {
+		return TRUE;
+	}
+
+	// ファイル全体を一括読み込み
+	std::vector<char> buffer(static_cast<size_t>(fileSize));
+	if (!file.read(buffer.data(), fileSize)) {
+		return FALSE;
+	}
+
+	// ファイル全体を一括で文字コード変換 (MultiByteToWideCharの呼び出しオーバーヘッドを削減)
+	int wideSize = MultiByteToWideChar(EUC_JP_CODEPAGE, 0, buffer.data(), static_cast<int>(fileSize), nullptr, 0);
+	if (wideSize <= 0) {
+		return FALSE;
+	}
+
+	std::vector<wchar_t> wbuffer(static_cast<size_t>(wideSize));
+	MultiByteToWideChar(EUC_JP_CODEPAGE, 0, buffer.data(), static_cast<int>(fileSize), wbuffer.data(), wideSize);
+
+	// ポインタを利用したゼロアロケーション解析
+	const wchar_t* p = wbuffer.data();
+	const wchar_t* end = p + wideSize;
+
+	while (p < end) {
+		const wchar_t* nl = static_cast<const wchar_t*>(wmemchr(p, L'\n', end - p));
+		if (!nl) {
+			nl = end;
+		}
+
+		const wchar_t* lineEnd = nl;
+		if (lineEnd > p && *(lineEnd - 1) == L'\r') {
+			--lineEnd;
+		}
+
+		size_t lineLen = lineEnd - p;
+
+		// 空行およびコメント行のスキップ
+		if (lineLen > 0 && !(lineLen >= 2 && p[0] == L';' && p[1] == L';')) {
+			const wchar_t* space = static_cast<const wchar_t*>(wmemchr(p, L' ', lineLen));
+			if (space) {
+				std::wstring reading(p, space - p);
+				SKKCandidates candidates;
+
+				const wchar_t* candStart = space + 1;
+
+				// 候補数の予測とメモリ事前確保による再確保コストの削減
+				size_t slashCount = 0;
+				for (const wchar_t* c = candStart; c < lineEnd; ++c) {
+					if (*c == L'/') {
+						++slashCount;
+					}
+				}
+				candidates.reserve(slashCount);
+
+				// 候補文字列の抽出
+				while (candStart < lineEnd) {
+					const wchar_t* slash = static_cast<const wchar_t*>(wmemchr(candStart, L'/', lineEnd - candStart));
+					if (!slash) {
+						slash = lineEnd;
+					}
+
+					size_t candLen = slash - candStart;
+					if (candLen > 0) {
+						const wchar_t* semi = static_cast<const wchar_t*>(wmemchr(candStart, SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR, candLen));
+						if (semi) {
+							// 注釈がある場合
+							candidates.push_back({
+								std::wstring(candStart, semi - candStart),
+								std::wstring(semi + 1, slash - semi - 1)
+								});
+						}
+						else {
+							// 注釈がない場合
+							candidates.push_back({
+								std::wstring(candStart, candLen),
+								std::wstring()
+								});
+						}
+					}
+					candStart = slash + 1;
+				}
+
+				if (!candidates.empty()) {
+					// ムーブセマンティクスを利用して無駄なコピーを回避
+					_dict.insert_or_assign(std::move(reading), std::move(candidates));
+				}
+			}
+		}
+		p = nl + 1;
+
+	}
+	return TRUE;
+	/*
 	if (_dict.size() > 0)return TRUE;
 
 	_dict.clear();
@@ -58,7 +159,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 		* [ひらがな] /候補1/候補2/候補3/.../
 		* 候補の中に;がある場合，その後は解説的なもの
 		*/
-
+	/*
 		//  例:
 		// いa /射/居/鋳;金物を鋳る/将;兵を将る/率;≒将る/鑄;「鋳」の旧字(人名用漢字)/
 
@@ -96,5 +197,5 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 		}
 	}
 
-	return TRUE;
+	return TRUE;*/
 }
