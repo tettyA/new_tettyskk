@@ -10,7 +10,7 @@
 
 #define MAKETRANSTABLE(romaji,hiragana,katakana) {L#romaji, {L#hiragana, L#katakana}}
 #define MAKETKIGOUTRANSTABLE(keycode,jpnsymbol) { keycode, L#jpnsymbol}
-
+using KeyCode = WCHAR;
 class romaji_kana_translater
 {
 public:
@@ -18,6 +18,12 @@ public:
 	~romaji_kana_translater();
 	// true: 変換され，m_bufferは空になる false: 変換されず，バッファはkeyが追加されて残る(qelf前提)
 	BOOL translate_qelf(const std::wstring key, std::wstring& outstr);
+
+	// true: 変換され，m_bufferは空になる false: 変換されず，バッファはkeyが追加されて残る
+	BOOL translate_kigou(const int keycode, std::wstring& outstr);
+	inline bool contain_kigou(const KeyCode keycode) const{
+		return m_KigouToJpnKigou.find(keycode) != m_KigouToJpnKigou.end();
+	}
 private:
 	std::wstring m_buffer;
 	std::unordered_map<std::wstring, std::vector<std::wstring>> m_RomajiToKana;

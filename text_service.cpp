@@ -18,7 +18,7 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
         return FALSE;
     }
    // if (_isAlphabet(key)) {
-    if (m_qelfTranslater._is_contain_key(key)) {
+    if (m_qelfTranslater._is_contain_key(key) || m_romajiKanaTranslater.contain_kigou(key)) {
         return TRUE;
     }
     switch (key) {
@@ -348,6 +348,17 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 	DebugTrace((L"OnKeyDown: " + std::wstring(1,ch)));
     std::wstring output=L"";
     std::wstring kekkabutu = L"";
+
+	if (m_romajiKanaTranslater.translate_kigou(ch, output)) {
+		// _compositionBuffer += output;
+         if (g_currentMode==SKKMode::Henkan&& output != L"ー") {
+			 // 変換中であるのにも拘らず，何かしらの記号が入力された -> 暗黙の確定
+             HRESULT hrSession = S_OK;
+             __RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
+         }
+		 _compositionBuffer += output;
+         output.clear();
+	}
     if (m_qelfTranslater.translate_qwerty_to_qelf(ch, kekkabutu)) {
         if (m_romajiKanaTranslater.translate_qelf(kekkabutu, output)) {
            // _compositionBuffer += output;

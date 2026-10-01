@@ -44,3 +44,14 @@ BOOL romaji_kana_translater::translate_qelf(const std::wstring input, std::wstri
 
 	return 0;
 }
+
+BOOL romaji_kana_translater::translate_kigou(const int keycode, std::wstring& outstr)
+{
+	outstr.clear();
+	auto it = m_KigouToJpnKigou.find(keycode);
+	if (it != m_KigouToJpnKigou.end()) {
+		outstr = it->second;
+		return TRUE;
+	}
+	return FALSE;
+}
