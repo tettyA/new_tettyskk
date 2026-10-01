@@ -170,6 +170,7 @@
     <ClInclude Include="romaji2kana_transtable.h" />
     <ClInclude Include="romaji_kana_translater.h" />
     <ClInclude Include="settings_value.h" />
+    <ClInclude Include="SKKDictionaryProvider.h" />
     <ClInclude Include="text_service.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +190,7 @@
     <ClCompile Include="register.cpp" />
     <ClCompile Include="romaji_kana_translater.cpp" />
     <ClCompile Include="settings_value.cpp" />
+    <ClCompile Include="SKKDictionaryProvider.cpp" />
     <ClCompile Include="text_service.cpp" />
   </ItemGroup>
   <ItemGroup>

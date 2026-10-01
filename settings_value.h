@@ -9,6 +9,8 @@
 struct settings_value {
     TF_DISPLAYATTRIBUTE display_attribute;
 	std::wstring kmp_file_path;
+	std::wstring skk_dic_file_path;
+	std::wstring skk_user_dic_file_path;
 };
 
 extern settings_value g_Setting;
