@@ -34,5 +34,3 @@ DECLSPEC_SELECTANY KanaMode g_CurrentKanaMode;
 #elif
 #define DebugTrace(msg) ;
 #endif
-
-DECLSPEC_SELECTANY std::wstring SKK_Q_ELFTRANSLATER_KMP_FILEPATH = LR"(C:\skktemp\kmp.kmp)";

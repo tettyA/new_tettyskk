@@ -5,6 +5,8 @@ __declspec(selectany) settings_value g_Setting; // 設定値のグローバル変数
 
 void initialize_setting() {
     initialize_setting_display_attribute();
+
+    g_Setting.kmp_file_path = LR"(C:\skktemp\kmp.kmp)";
 }
 
 void initialize_setting_display_attribute() {

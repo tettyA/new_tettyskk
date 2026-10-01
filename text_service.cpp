@@ -75,7 +75,7 @@ CTextService::CTextService() {
 
     m_pLangBarItemButton = new CLangBarItemButton(this, GUID_LBI_INPUTMODE);
     
-	m_qelfTranslater.load_KMP_table(SKK_Q_ELFTRANSLATER_KMP_FILEPATH);
+	m_qelfTranslater.load_KMP_table(g_Setting.kmp_file_path);
 
 	g_CurrentKanaMode = KanaMode::Hiragana;
 	g_currentMode = SKKMode::Hankaku;
