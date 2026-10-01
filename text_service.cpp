@@ -35,6 +35,24 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     return FALSE;
 }
 
+void _ConvertToKatakana(std::wstring& str)
+{
+    for (size_t i = 0; i < str.length(); i++) {
+        if (str[i] >= L'ぁ' && str[i] <= L'ん') {
+            str[i] = str[i] - L'ぁ' + L'ァ';
+        }
+    }
+}
+
+void _ConvertToHiragana(std::wstring& str)
+{
+    for (size_t i = 0; i < str.length(); i++) {
+        if (str[i] >= L'ァ' && str[i] <= L'ン') {
+            str[i] = str[i] + L'ぁ' - L'ァ';
+        }
+    }
+}
+
 void CTextService::__StartHenkanMode(ITfContext *pic)
 {
     if (!__HasComposition()) {
@@ -265,8 +283,23 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
     else if (wParam == 'Q') {
         *pfEaten = TRUE;
+        if (__HasComposition() && g_currentMode == SKKMode::Henkan) {
+            if (!m_candidates.empty()) {
+                _compositionBuffer = m_henkanGokan;
+            }
+            _ConvertToKatakana(_compositionBuffer);
+			DebugTrace(L"compobuf:" + _compositionBuffer);
+            HRESULT hrSession = S_OK;
+            __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
+			hrSession = S_OK;
+            __RequestEditSession(pic, EditSessionRequest::EndCompositionCommit, hrSession);
+        }
+
+
         __changeCurrentMode(SKKMode::Kakutei);
         __changeCurrentKanaMode(KanaMode::Katakana);
+
+ 
         return S_OK;
     }
     // Enter で そのまま(変換せずに) 確定処理 
