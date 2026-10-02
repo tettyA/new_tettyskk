@@ -66,6 +66,17 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
         case ex_boin:
             return false;
         case ex_sakujo:
+            if (DSendCnt > 0) {
+                DSendCnt = 0;
+                reset_kmp_state();
+            }
+            else {
+                reset_kmp_state();
+                INPUT input = { 0 };
+                input.type = INPUT_KEYBOARD;
+                input.ki.wVk = VK_BACK;
+                SendInput(1, &input, sizeof(INPUT));
+            }
             return false;
         default:
             output = std::wstring(1, (WCHAR)selected.to_samedir);
@@ -233,4 +244,12 @@ void qelf_translater::load_KMP_table(const std::wstring& filename){
 inline void qelf_translater::get_key_state(KMP::SpecialKeyStates& key_states) const
 {
 	key_states = m_KMP.is_key_pushed;
+}
+
+void qelf_translater::reset_kmp_state()
+{
+	DSendCnt = 0;
+	m_KMP.is_key_pushed = { false,false };
+	m_KMP.is_shift_pressed = false;
+    Send1st = DsendElements{ KMP::Dir::None, {0}, };
 }

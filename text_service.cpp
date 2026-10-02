@@ -288,7 +288,10 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
                 _compositionBuffer = m_henkanGokan;
             }
             _ConvertToKatakana(_compositionBuffer);
-			DebugTrace(L"compobuf:" + _compositionBuffer);
+			//DebugTrace(L"compobuf:" + _compositionBuffer);
+            // TODO: ‘—‚è‰¼–¼•ÏŠ·‚ÌÀ‘•
+            // TODO: m‚Åíœ‚³‚¹‚é‚â‚Â‚ÌÀ‘•
+            // TODO window•\¦(Œó•â) ‚Å‚«‚ê‚ÎWINAPI‚ÌEDITg‚¦‚é‚Æ—Ç‚¢‚Ì‚¾‚ª...
             HRESULT hrSession = S_OK;
             __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
 			hrSession = S_OK;

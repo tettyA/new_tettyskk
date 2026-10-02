@@ -72,6 +72,7 @@ public:
 	void load_KMP_table(const std::wstring& filename);
 	inline void get_key_state(KMP::SpecialKeyStates& key_states) const;
 private:
+    void reset_kmp_state();
 	//QWERTY配列からQ-ELF配列への変換テーブル
 	KMP m_KMP;
 
