@@ -158,7 +158,7 @@ void qelf_translater::load_KMP_table(const std::wstring& filename){
     
     while (std::getline(kmpfile, line)){
 
-        auto newwend = std::remove_if(line.begin(), line.end(), ::isspace);
+        auto newwend = std::remove_if(line.begin(), line.end(), ::iswspace);
         
         line.erase(newwend, line.end());
         if (line.empty())continue;
