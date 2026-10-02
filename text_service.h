@@ -73,6 +73,9 @@ private:
     void __changeCurrentMode(const SKKMode mode);
     void __changeCurrentKanaMode(const KanaMode mode);
 
+    inline bool _IsCtrlKeyPressed();
+    inline bool _IsShiftKeyPressed();
+
     LONG _refCount;
     // TSF ˜A——p
     CComPtr<ITfThreadMgr> _pThreadMgr;
@@ -92,5 +95,7 @@ private:
 	SKKDictionaryProvider m_skkdictProvider;
 	SKKCandidates m_candidates;
 	std::wstring m_henkanGokan; // •ÏŠ·‘ÎÛ‚ÌŒêŠ²
+    WCHAR m_okuriganashiin; // ‚¨‚àw ‚Ì w
+	std::wstring m_okurigana; // [Shift]‚¨‚à[Shift]‚í ‚Ì ‚í
 	int m_candidateIndex;
 };

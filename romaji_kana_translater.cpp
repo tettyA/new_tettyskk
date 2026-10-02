@@ -11,6 +11,7 @@ romaji_kana_translater::romaji_kana_translater(){
 		#include "kigou2kana_translatable.h"
 	};
 
+	m_last_shiin = L'\0';
 }
 
 romaji_kana_translater::~romaji_kana_translater()
@@ -34,13 +35,13 @@ BOOL romaji_kana_translater::translate_qelf(const std::wstring input, std::wstri
 	if (it != m_RomajiToKana.end()) {
 		
 		outstr += it->second[(g_CurrentKanaMode == KanaMode::Hiragana ? TrR2K_INDEX_HIRAGANA : TrR2K_INDEX_KATAKANA)];
-		
+		m_last_shiin = m_buffer[0];// SHA ->S I -> I TA% =TA -> T
 		m_buffer.clear();
 		DebugTrace((L"outputkana=[" + outstr + L"]"));
 		return TRUE;
 	}
 	m_buffer.clear();
-
+	
 
 	return 0;
 }

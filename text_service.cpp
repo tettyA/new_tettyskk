@@ -73,6 +73,8 @@ void CTextService::__EndHenkanMode(ITfContext* pic)
 {
     m_candidates.clear();
     m_candidateIndex = 0;
+	m_okurigana.clear();
+	m_okuriganashiin = L'\0';
 	g_currentMode = SKKMode::Kakutei;
 }
 
@@ -90,6 +92,16 @@ void CTextService::__changeCurrentKanaMode(const KanaMode mode)
 	if (m_pLangBarItemButton != nullptr) {
 		m_pLangBarItemButton->_UpdateIcon();
 	}
+}
+
+inline bool CTextService::_IsCtrlKeyPressed()
+{
+    return (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+}
+
+inline bool CTextService::_IsShiftKeyPressed()
+{
+    return (GetKeyState(VK_SHIFT) & 0x8000) != 0 || m_qelfTranslater.get_shift_pushed_last();
 }
 
 
@@ -115,6 +127,8 @@ CTextService::CTextService() {
 	m_skkdictProvider.LoadDictionary(g_Setting.skk_dic_file_path, g_Setting.skk_user_dic_file_path);
 
 	m_candidates = SKKCandidates();
+	m_okuriganashiin = L'\0';
+	m_okurigana = L"";
     m_candidateIndex = 0;
 
     InterlockedIncrement(&g_cRefDll);
@@ -290,7 +304,6 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             _ConvertToKatakana(_compositionBuffer);
 			//DebugTrace(L"compobuf:" + _compositionBuffer);
             // TODO: 送り仮名変換の実装
-            // TODO: mで削除させるやつの実装
             // TODO window表示(候補) できればWINAPIのEDIT使えると良いのだが...
             HRESULT hrSession = S_OK;
             __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
@@ -371,7 +384,12 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
                 return S_OK;
             }
 
-			_compositionBuffer = m_candidates[m_candidateIndex].candidate;
+            if (m_okurigana.empty()) {
+                _compositionBuffer = m_candidates[m_candidateIndex].candidate;
+            }
+            else{
+                _compositionBuffer = m_candidates[m_candidateIndex].candidate + m_okurigana;
+            }
 			HRESULT hrSession = S_OK;
 			__RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
             return S_OK;
@@ -413,9 +431,31 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     
 
 	_compositionBuffer += output;
-    if (_IsShiftKeyPressed() && g_currentMode == SKKMode::Kakutei) {
-        // 変換の開始
-        __StartHenkanMode(pic);
+    if (_IsShiftKeyPressed()) {
+        if (g_currentMode == SKKMode::Kakutei&& !output.empty()) {
+            // 変換の開始 g_currenntMode=>Henkan
+            __StartHenkanMode(pic);
+        }
+        else if(g_currentMode==SKKMode::Henkan && !output.empty()) {
+			// 送り仮名での変換を行う
+            
+            // 候補新規取得
+            if (m_candidates.empty()) {
+                m_candidateIndex = 0;
+                m_okurigana = output;
+				m_henkanGokan = _compositionBuffer.substr(0, _compositionBuffer.length() - output.length()); // 送り仮名の子音を削除して語幹を取得
+                m_skkdictProvider.GetCandidates(m_henkanGokan+ m_romajiKanaTranslater.get_last_translate_last_shiin(), m_candidates);
+            }
+            DebugTrace(L"送り仮名変換開始:" + m_henkanGokan + m_romajiKanaTranslater.get_last_translate_last_shiin());
+            // 候補の表示
+            if (m_candidates.empty()) {
+                return S_OK;
+            }
+
+            _compositionBuffer = m_candidates[m_candidateIndex].candidate+m_okurigana;
+            HRESULT hrSession = S_OK;
+            __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
+        }
 	}
     else if (g_currentMode == SKKMode::Kakutei) {
 		HRESULT hrSession = S_OK;

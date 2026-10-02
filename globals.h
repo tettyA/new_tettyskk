@@ -28,9 +28,6 @@ DECLSPEC_SELECTANY SKKMode g_currentMode;
 DECLSPEC_SELECTANY KanaMode g_CurrentKanaMode;
 
 
-#define _IsCtrlKeyPressed() ((GetKeyState(VK_CONTROL) & 0x8000) != 0)
-#define _IsShiftKeyPressed() ((GetKeyState(VK_SHIFT) & 0x8000) != 0)
-
 
 #define gtettySKK_IME_NAME TEXT("new_tettySKK")
 

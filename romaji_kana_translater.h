@@ -10,6 +10,8 @@
 
 #define MAKETRANSTABLE(romaji,hiragana,katakana) {L#romaji, {L#hiragana, L#katakana}}
 #define MAKETKIGOUTRANSTABLE(keycode,jpnsymbol) { keycode, L#jpnsymbol}
+#define ToSmallAlphabet (L'a' - L'A')
+
 using KeyCode = WCHAR;
 class romaji_kana_translater
 {
@@ -24,9 +26,13 @@ public:
 	inline bool contain_kigou(const KeyCode keycode) const{
 		return m_KigouToJpnKigou.find(keycode) != m_KigouToJpnKigou.end();
 	}
+	// 小文字で返す。
+	inline WCHAR get_last_translate_last_shiin() const { return m_last_shiin +ToSmallAlphabet; }
 private:
 	std::wstring m_buffer;
 	std::unordered_map<std::wstring, std::vector<std::wstring>> m_RomajiToKana;
 	std::unordered_map<int, std::wstring>m_KigouToJpnKigou;
+
+	WCHAR m_last_shiin;// 最後にQ-ELFに変換された子音のローマ字部分(例: k, s, t, a, i)(母音はaiueo)
 };
 
