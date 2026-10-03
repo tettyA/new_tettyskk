@@ -8,7 +8,8 @@ CCandidateWindow::CCandidateWindow()
 	m_currentIndex = 0;
 	m_drawmode = CandidateWindowDrawMode::Single;
 	m_isRegisterMode = false;
-	m_registerInput = L"";
+	m_registerCommittedInput = L"";
+	m_registerUnconfirmedInput = L"";
 	m_registerTarget = L"";
 
 	m_desktop_dpi_x = GetSystemMetrics(SM_CXSCREEN);
@@ -133,11 +134,12 @@ void CCandidateWindow::SetShowIndex(int candidates_index, CandidateWindowDrawMod
 	}
 }
 
-void CCandidateWindow::SetRegisterInfo(bool isRegister, const std::wstring& target, const std::wstring& input)
+void CCandidateWindow::SetRegisterInfo(bool isRegister, const std::wstring& target, const std::wstring& committedInput, const std::wstring& unconfirmedInput)
 {
 	m_isRegisterMode = isRegister;
 	m_registerTarget = target;
-	m_registerInput = input;
+	m_registerCommittedInput = committedInput;
+	m_registerUnconfirmedInput = unconfirmedInput;
 	if (m_hwnd) {
 		InvalidateRect(m_hwnd, NULL, TRUE);
 	}
@@ -205,14 +207,16 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 		}
 		yOffset += LINE_HEIGHT;
 	};
-
+	DebugTrace((L"RenderContent: availableWidth=" + std::to_wstring(availableWidth) + L", wrapLimit=" + std::to_wstring(wrapLimit)));
 	if (m_isRegisterMode) {
 		std::vector<ColorfulText> texts{
 			{L"[“o˜^] ", g_Setting.candidate_window_asdfjkl_font_color},
 			{m_registerTarget, g_Setting.candidate_window_font_color},
 			{L" : ", g_Setting.candidate_window_dim_font_color},
-			{m_registerInput, g_Setting.candidate_window_font_color}
+			{m_registerCommittedInput, g_Setting.candidate_window_font_color},
+			{m_registerUnconfirmedInput, g_Setting.candidate_window_unconfirmed_font_color}
 		};
+		DebugTrace((L"RegisterInfo: " + m_registerTarget + L" : " + m_registerCommittedInput + L" + " + m_registerUnconfirmedInput));
 		finalizeLine(texts, MARGIN_X + _GetTextSize(hdc, 0, (int)texts.size(), texts));
 	}
 

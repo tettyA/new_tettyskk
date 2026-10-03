@@ -29,7 +29,7 @@ public:
 	void SetCandidates(const SKKCandidates& candidas);
 	void SetShowIndex(int candidates_index, CandidateWindowDrawMode drawmode);
 
-	void SetRegisterInfo(bool isRegister, const std::wstring& target, const std::wstring& input);
+	void SetRegisterInfo(bool isRegister, const std::wstring& target, const std::wstring& committedInput, const std::wstring& unconfirmedInput);
 
 
 	inline HWND GetHwnd()const { return m_hwnd; }
@@ -47,7 +47,8 @@ private:
 
 	bool m_isRegisterMode;
 	std::wstring m_registerTarget;
-	std::wstring m_registerInput;
+	std::wstring m_registerCommittedInput;
+	std::wstring m_registerUnconfirmedInput;
 
 
 	HFONT m_hFont;

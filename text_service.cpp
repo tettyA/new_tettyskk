@@ -177,8 +177,8 @@ void CTextService::_UpdateCandidateWindow(TfEditCookie ec ,ITfContext* pContext)
 
 	m_candidateWindow.SetCandidates(m_candidates);
 	m_candidateWindow.SetShowIndex(m_candidateIndex, m_drawmode);
-    // 登録中は「確定済みの文字列 + 変換中の読み/候補」をウィンドウ上の入力として見せる
-    m_candidateWindow.SetRegisterInfo(isRegisterMode, registerTarget, isRegisterMode ? (m_regText + _compositionBuffer) : L"");
+	// 登録中は「確定済みの文字列 + 変換中の読み/候補」をウィンドウ上の入力として見せる
+	m_candidateWindow.SetRegisterInfo(isRegisterMode, registerTarget, m_regText, _compositionBuffer);
 
     RECT rc = { 0 };
 	if (_GetCaretRect(ec,pContext, &rc)) {
@@ -593,6 +593,10 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 
         // 辞書登録中: 入力があればその語で登録・確定、空なら登録をキャンセルして元の変換状態へ戻る
         if (!m_stateStack.empty()) {
+            if (g_currentMode == SKKMode::Henkan) {
+                _CommitHenkan(pic);
+                return S_OK;
+            }
             _ExitDictionaryRegistration(pic, true);
             return S_OK;
         }
