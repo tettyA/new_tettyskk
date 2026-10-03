@@ -79,8 +79,35 @@ void CCandidateWindow::Destroy()
 void CCandidateWindow::Show(int x, int y)
 {
 	if (m_hwnd) {
-		SetWindowPos(m_hwnd, HWND_TOPMOST, x, y, window_width, window_height, SWP_NOACTIVATE | SWP_SHOWWINDOW);
-		InvalidateRect(m_hwnd, NULL, TRUE);
+		HDC hdc = GetDC(m_hwnd);
+		if (hdc) {
+			SelectObject(hdc, m_hFont);
+			int measuredWidth = window_width;
+			int measuredHeight = window_height;
+			int availableWidth = window_width;
+			RECT workArea{ 0 };
+			{
+				POINT pt{ x, y };
+				HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+				MONITORINFO mi{ sizeof(MONITORINFO) };
+				if (GetMonitorInfoW(hMonitor, &mi)) {
+					availableWidth = max(1, mi.rcWork.right - x);
+					workArea = mi.rcWork;
+				}
+			}
+			_RenderContent(hdc, availableWidth, false, measuredWidth, measuredHeight);
+			ReleaseDC(m_hwnd, hdc);
+			window_width = measuredWidth;
+			window_height = measuredHeight;
+			if (workArea.right > workArea.left) {
+				const int maxX = workArea.right - window_width;
+				if (x > maxX) {
+					x = max(workArea.left, maxX);
+				}
+			}
+			SetWindowPos(m_hwnd, HWND_TOPMOST, x, y, window_width, window_height, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+			InvalidateRect(m_hwnd, NULL, TRUE);
+		}
 	}
 }
 
@@ -133,6 +160,27 @@ void CCandidateWindow::OnPaint(HWND hwnd)
 	SetBkMode(hdc, TRANSPARENT);
 	SelectObject(hdc, m_hFont);
 
+	RECT rc{};
+	GetWindowRect(hwnd, &rc);
+	int availableWidth = window_width;
+	{
+		HMONITOR hMonitor = MonitorFromRect(&rc, MONITOR_DEFAULTTONEAREST);
+		MONITORINFO mi{ sizeof(MONITORINFO) };
+		if (GetMonitorInfoW(hMonitor, &mi)) {
+			availableWidth = max(1, mi.rcWork.right - rc.left);
+		}
+	}
+	int renderedWidth = window_width;
+	int renderedHeight = window_height;
+	_RenderContent(hdc, availableWidth, true, renderedWidth, renderedHeight);
+	window_width = renderedWidth;
+	window_height = renderedHeight;
+
+	EndPaint(hwnd, &ps);
+}
+
+void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, int& outWidth, int& outHeight)
+{
 	SetTextColor(hdc, g_Setting.candidate_window_font_color);
 	{
 		std::wstring testStr = L"‚ ";
@@ -140,70 +188,79 @@ void CCandidateWindow::OnPaint(HWND hwnd)
 		GetTextExtentPoint32W(hdc, testStr.c_str(), (int)testStr.length(), &size);
 		LINE_HEIGHT = size.cy;
 	}
+
+	const int wrapLimit = max(MARGIN_X, availableWidth - MARGIN_X);
 	int yOffset = MARGIN_Y;
-	int xMaxOffset = MARGIN_X;
+	int maxX = MARGIN_X;
+
+	auto finalizeLine = [&](const std::vector<ColorfulText>& line, int lineRight) {
+		if (line.empty()) {
+			return;
+		}
+		if (draw) {
+			maxX = max(maxX, _DrawColorfulText(hdc, MARGIN_X, yOffset, 0, (int)line.size(), line));
+		}
+		else {
+			maxX = max(maxX, lineRight);
+		}
+		yOffset += LINE_HEIGHT;
+	};
 
 	if (m_isRegisterMode) {
-
-		xMaxOffset= _DrawColorfulText(hdc, MARGIN_X, yOffset, 0, 4, {
+		std::vector<ColorfulText> texts{
 			{L"[“o˜^] ", g_Setting.candidate_window_asdfjkl_font_color},
 			{m_registerTarget, g_Setting.candidate_window_font_color},
 			{L" : ", g_Setting.candidate_window_dim_font_color},
 			{m_registerInput, g_Setting.candidate_window_font_color}
-			});
-		yOffset += LINE_HEIGHT;
+		};
+		finalizeLine(texts, MARGIN_X + _GetTextSize(hdc, 0, (int)texts.size(), texts));
 	}
 
 	const int candCount = (int)m_candidates.size();
 	if (m_drawmode == CandidateWindowDrawMode::Single && m_currentIndex >= 0 && m_currentIndex < candCount) {
-		xMaxOffset = max(xMaxOffset, _DrawColorfulText(hdc, MARGIN_X, yOffset, 0, 3,
-			{
-		{L"[" + std::to_wstring(m_currentIndex + 1) + L" of " + std::to_wstring(candCount) + L"] ", g_Setting.candidate_window_dim_font_color},
-		{ m_candidates[m_currentIndex].candidate,g_Setting.candidate_window_font_color},
-		{
-		(m_candidates[m_currentIndex].annotation.empty() ? L"" :
-			L" ;" + m_candidates[m_currentIndex].annotation), g_Setting.candidate_window_dim_font_color
-		}
-			}));
-		yOffset += LINE_HEIGHT;
-
-		window_width = xMaxOffset + MARGIN_X;
-		window_height = yOffset + MARGIN_Y;
+		std::vector<ColorfulText> texts{
+			{L"[" + std::to_wstring(m_currentIndex + 1) + L" of " + std::to_wstring(candCount) + L"] ", g_Setting.candidate_window_dim_font_color},
+			{m_candidates[m_currentIndex].candidate, g_Setting.candidate_window_font_color},
+			{(m_candidates[m_currentIndex].annotation.empty() ? L"" : L" ;" + m_candidates[m_currentIndex].annotation), g_Setting.candidate_window_dim_font_color}
+		};
+		finalizeLine(texts, MARGIN_X + _GetTextSize(hdc, 0, (int)texts.size(), texts));
 	}
 	else if (m_drawmode == CandidateWindowDrawMode::Multi) {
-		std::vector<ColorfulText> texts;
-		int nowWidth = MARGIN_X;
-		int startIndex = m_currentIndex;
-		int starttextsIdx = 0;
-		int endtextsIdx = 0;
-		for (int i = 0; i < SKK_CHOOSE_CANDIDATES_BIGSTR_LEN && (startIndex + i) < candCount; i++) {
-			texts.push_back({ L"[" + std::wstring(1,SKK_CHOOSE_CANDIDATES_BIGSTR[i]) + L"] ", g_Setting.candidate_window_dim_font_color });
-			texts.push_back({ m_candidates[startIndex + i].candidate,g_Setting.candidate_window_asdfjkl_font_color });
-			if (!m_candidates[startIndex + i].annotation.empty()) {
-				texts.push_back({ L";" + m_candidates[startIndex + i].annotation,g_Setting.candidate_window_dim_font_color });
-			}
+		std::vector<ColorfulText> lineTexts;
+		int lineRight = MARGIN_X;
 
-			nowWidth += _GetTextSize(hdc, starttextsIdx, (int)texts.size(), texts);
-			if (nowWidth + MARGIN_X > window_width) {
-				xMaxOffset = max(xMaxOffset, _DrawColorfulText(hdc, MARGIN_X, yOffset, starttextsIdx, endtextsIdx, texts));
-				yOffset += LINE_HEIGHT;
-				starttextsIdx = endtextsIdx;
-				nowWidth = MARGIN_X;
+		auto flushLine = [&]() {
+			finalizeLine(lineTexts, lineRight);
+			lineTexts.clear();
+			lineRight = MARGIN_X;
+		};
+
+		auto appendSegment = [&](const std::vector<ColorfulText>& segment) {
+			const int segmentWidth = _GetTextSize(hdc, 0, (int)segment.size(), segment);
+			if (!lineTexts.empty() && lineRight + segmentWidth > wrapLimit) {
+				flushLine();
 			}
-			else {
-				endtextsIdx = (int)texts.size();
+			lineTexts.insert(lineTexts.end(), segment.begin(), segment.end());
+			lineRight += segmentWidth;
+		};
+
+		for (int i = 0; i < SKK_CHOOSE_CANDIDATES_BIGSTR_LEN && (m_currentIndex + i) < candCount; i++) {
+			std::vector<ColorfulText> segment{
+				{L"[" + std::wstring(1, SKK_CHOOSE_CANDIDATES_BIGSTR[i]) + L"] ", g_Setting.candidate_window_dim_font_color},
+				{m_candidates[m_currentIndex + i].candidate, g_Setting.candidate_window_asdfjkl_font_color}
+			};
+			if (!m_candidates[m_currentIndex + i].annotation.empty()) {
+				segment.push_back({ L";" + m_candidates[m_currentIndex + i].annotation, g_Setting.candidate_window_dim_font_color });
 			}
+			appendSegment(segment);
 		}
 
-		texts.push_back({ L"Žc:" + std::to_wstring(max(0,candCount - (startIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color });
-		xMaxOffset = max(xMaxOffset, _DrawColorfulText(hdc, MARGIN_X, yOffset, endtextsIdx, texts.size(), texts));
-		yOffset += LINE_HEIGHT;
-
-		window_width = xMaxOffset + MARGIN_X;
-		window_height = yOffset + MARGIN_Y;
+		appendSegment({ {L"Žc:" + std::to_wstring(max(0, candCount - (m_currentIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color} });
+		flushLine();
 	}
-	EndPaint(hwnd, &ps);
 
+	outWidth = maxX + MARGIN_X;
+	outHeight = yOffset + MARGIN_Y;
 }
 
 int CCandidateWindow::_DrawColorfulText(HDC hdc, int beginx, int beginy,int beginidx,int endidx, const std::vector<ColorfulText>& texts)

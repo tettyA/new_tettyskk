@@ -37,6 +37,7 @@ public:
 private:
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void OnPaint(HWND hwnd);
+	void _RenderContent(HDC hdc, int availableWidth, bool draw, int& outWidth, int& outHeight);
 	int _DrawColorfulText(HDC hdc, int beginx, int beginy, int beginidx, int endidx, const std::vector<ColorfulText>& texts);
 	int _GetTextSize(HDC hdc,int beginidx,int endidx, const std::vector<ColorfulText>& texts);
 	HWND m_hwnd;
