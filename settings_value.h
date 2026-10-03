@@ -12,6 +12,12 @@ struct settings_value {
 	std::wstring skk_dic_file_path;
 	std::wstring skk_user_dic_file_path;
 	int single_candidate_max_count;
+	int candidate_window_font_size;
+	LPCWSTR candidate_window_font_name;
+	COLORREF candidate_window_font_color;
+	COLORREF candidate_window_dim_font_color;
+	COLORREF candidate_window_hilight_font_color;
+	COLORREF candidate_window_asdfjkl_font_color;
 };
 
 extern settings_value g_Setting;

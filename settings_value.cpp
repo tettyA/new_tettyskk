@@ -1,7 +1,7 @@
-ï»¿#include "pch.h"
+#include "pch.h"
 #include "settings_value.h"
 
-__declspec(selectany) settings_value g_Setting; // è¨­å®šå€¤ã®ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
+__declspec(selectany) settings_value g_Setting; // İ’è’l‚ÌƒOƒ[ƒoƒ‹•Ï”
 
 void initialize_setting() {
     initialize_setting_display_attribute();
@@ -10,13 +10,21 @@ void initialize_setting() {
 	g_Setting.skk_dic_file_path = LR"(C:\skktemp\SKK-JISYO.L)";
 	g_Setting.skk_user_dic_file_path = LR"(C:\skktemp\SKK-JISYO.user)";
     g_Setting.single_candidate_max_count = 5;
+
+	g_Setting.candidate_window_font_size = 46; // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğİ’è
+	g_Setting.candidate_window_font_name = L"Meiryo UI"; // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒtƒHƒ“ƒg–¼‚ğİ’è
+	g_Setting.candidate_window_font_color = RGB(0, 0, 0); // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒtƒHƒ“ƒgF‚ğİ’è 
+	g_Setting.candidate_window_dim_font_color = RGB(128, 128, 128); // Œó•âƒEƒBƒ“ƒhƒE‚Ì”–‚¢ƒtƒHƒ“ƒgF‚ğİ’è
+	g_Setting.candidate_window_hilight_font_color = RGB(163, 41, 99); // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒnƒCƒ‰ƒCƒgƒtƒHƒ“ƒgF‚ğİ’è
+	g_Setting.candidate_window_asdfjkl_font_color = RGB(106, 160, 99); // Œó•âƒEƒBƒ“ƒhƒE‚ÌASDFJKLƒtƒHƒ“ƒgF‚ğİ’è
+
 }
 
 void initialize_setting_display_attribute() {
-    g_Setting.display_attribute.crText.type = TF_CT_NONE; // ãƒ†ã‚­ã‚¹ãƒˆã®å‰æ™¯è‰² (æŒ‡å®šã›ãš)
-    g_Setting.display_attribute.crBk.type = TF_CT_NONE; // ãƒ†ã‚­ã‚¹ãƒˆã®èƒŒæ™¯è‰² (æŒ‡å®šã›ãš)
-    g_Setting.display_attribute.lsStyle = TF_LS_SOLID; // ä¸‹ç·šã®ç¨®é¡ (å®Ÿç·š)
-    g_Setting.display_attribute.fBoldLine = FALSE; // ä¸‹ç·šã‚’å¤ªãã™ã‚‹ã‹ (é€šå¸¸ã®å¤ªã•)
-    g_Setting.display_attribute.crLine.type = TF_CT_NONE; // ä¸‹ç·šã®è‰² (æŒ‡å®šã›ãš)
-    g_Setting.display_attribute.bAttr = TF_ATTR_INPUT; // æœªç¢ºå®šæ–‡å­—åˆ—ã®å±æ€§
+    g_Setting.display_attribute.crText.type = TF_CT_NONE; // ƒeƒLƒXƒg‚Ì‘OŒiF (w’è‚¹‚¸)
+    g_Setting.display_attribute.crBk.type = TF_CT_NONE; // ƒeƒLƒXƒg‚Ì”wŒiF (w’è‚¹‚¸)
+    g_Setting.display_attribute.lsStyle = TF_LS_SOLID; // ‰ºü‚Ìí—Ş (Àü)
+    g_Setting.display_attribute.fBoldLine = FALSE; // ‰ºü‚ğ‘¾‚­‚·‚é‚© (’Êí‚Ì‘¾‚³)
+    g_Setting.display_attribute.crLine.type = TF_CT_NONE; // ‰ºü‚ÌF (w’è‚¹‚¸)
+    g_Setting.display_attribute.bAttr = TF_ATTR_INPUT; // –¢Šm’è•¶š—ñ‚Ì‘®«
 }

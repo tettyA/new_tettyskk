@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "CCandidateWindow.h"
 
 CCandidateWindow::CCandidateWindow()
@@ -10,6 +10,9 @@ CCandidateWindow::CCandidateWindow()
 	m_isRegisterMode = false;
 	m_registerInput = L"";
 	m_registerTarget = L"";
+
+	m_desktop_dpi_x = GetSystemMetrics(SM_CXSCREEN);
+	
 }
 
 CCandidateWindow::~CCandidateWindow()
@@ -36,13 +39,32 @@ bool CCandidateWindow::Create(HWND hparent,HINSTANCE hIns)
 		WS_EX_TOOLWINDOW | WS_EX_TOPMOST | WS_EX_NOACTIVATE,
 		className, L"",
 		WS_POPUP | WS_BORDER,
-		0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
+		0, 0, window_width, window_height,
 		hparent, NULL, winc.hInstance, this
 	);
 
 	if(m_hwnd) {
 		SetWindowLongPtrW(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	}
+
+	m_hFont =
+		CreateFont(
+			g_Setting.candidate_window_font_size,
+			0,
+			0,
+			0,
+			FW_REGULAR,
+			FALSE,
+			FALSE,
+			FALSE,
+			SHIFTJIS_CHARSET,
+			OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS,
+			PROOF_QUALITY,
+			FIXED_PITCH | FF_MODERN,
+			g_Setting.candidate_window_font_name
+		);
+	
 	return m_hwnd != NULL;
 }
 
@@ -57,7 +79,7 @@ void CCandidateWindow::Destroy()
 void CCandidateWindow::Show(int x, int y)
 {
 	if (m_hwnd) {
-		SetWindowPos(m_hwnd, HWND_TOPMOST, x, y, WINDOW_WIDTH, WINDOW_HEIGHT, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+		SetWindowPos(m_hwnd, HWND_TOPMOST, x, y, window_width, window_height, SWP_NOACTIVATE | SWP_SHOWWINDOW);
 		InvalidateRect(m_hwnd, NULL, TRUE);
 	}
 }
@@ -74,7 +96,7 @@ void CCandidateWindow::SetCandidates(const SKKCandidates & candidas)
 	m_candidates = candidas;
 }
 
-// m_currentIndexから，multiで6個，singleで1個の候補を描画する。
+// m_currentIndex����Cmulti��6�Csingle��1�̌���`�悷��B
 void CCandidateWindow::SetShowIndex(int candidates_index, CandidateWindowDrawMode drawmode)
 {
 	m_drawmode = drawmode;
@@ -109,48 +131,104 @@ void CCandidateWindow::OnPaint(HWND hwnd)
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
 	SetBkMode(hdc, TRANSPARENT);
-	// 既定のDCフォントは日本語表示に不向きなためGUIフォントを使う(ストックオブジェクトなので解放不要)
-	HGDIOBJ oldFont = SelectObject(hdc, GetStockObject(DEFAULT_GUI_FONT));
-	SetTextColor(hdc, COLOR_NORMAL);
+	SelectObject(hdc, m_hFont);
 
+	SetTextColor(hdc, g_Setting.candidate_window_font_color);
+	{
+		std::wstring testStr = L"��";
+		SIZE size;
+		GetTextExtentPoint32W(hdc, testStr.c_str(), (int)testStr.length(), &size);
+		LINE_HEIGHT = size.cy;
+	}
 	int yOffset = MARGIN_Y;
+	int xMaxOffset = MARGIN_X;
 
 	if (m_isRegisterMode) {
-		std::wstring text = L"[Reg] " + m_registerTarget + L" : " + m_registerInput;
-		TextOutW(hdc, MARGIN_X, yOffset, text.c_str(), (int)text.length());
+
+		xMaxOffset= _DrawColorfulText(hdc, MARGIN_X, yOffset, 0, 4, {
+			{L"[�o�^] ", g_Setting.candidate_window_asdfjkl_font_color},
+			{m_registerTarget, g_Setting.candidate_window_font_color},
+			{L" : ", g_Setting.candidate_window_dim_font_color},
+			{m_registerInput, g_Setting.candidate_window_font_color}
+			});
 		yOffset += LINE_HEIGHT;
 	}
 
 	const int candCount = (int)m_candidates.size();
 	if (m_drawmode == CandidateWindowDrawMode::Single && m_currentIndex >= 0 && m_currentIndex < candCount) {
-		SetTextColor(hdc, COLOR_NORMAL);
-		std::wstring candtext = m_candidates[m_currentIndex].candidate;
-		TextOut(hdc,MARGIN_X, yOffset, candtext.c_str(), candtext.length());
-		if (!m_candidates[m_currentIndex].annotation.empty()) {
-			SIZE size;
-			GetTextExtentPoint32W(hdc, candtext.c_str(), (int)candtext.length(), &size);
-			SetTextColor(hdc, COLOR_DIM);
-			std::wstring annotext = L" ;" + m_candidates[m_currentIndex].annotation ;
-			TextOut(hdc, MARGIN_X + size.cx, yOffset, annotext.c_str(), annotext.length());
+		xMaxOffset = max(xMaxOffset, _DrawColorfulText(hdc, MARGIN_X, yOffset, 0, 3,
+			{
+		{L"[" + std::to_wstring(m_currentIndex + 1) + L" of " + std::to_wstring(candCount) + L"] ", g_Setting.candidate_window_dim_font_color},
+		{ m_candidates[m_currentIndex].candidate,g_Setting.candidate_window_font_color},
+		{
+		(m_candidates[m_currentIndex].annotation.empty() ? L"" :
+			L" ;" + m_candidates[m_currentIndex].annotation), g_Setting.candidate_window_dim_font_color
 		}
+			}));
+		yOffset += LINE_HEIGHT;
+
+		window_width = xMaxOffset + MARGIN_X;
+		window_height = yOffset + MARGIN_Y;
 	}
-	else if(m_drawmode==CandidateWindowDrawMode::Multi) {
+	else if (m_drawmode == CandidateWindowDrawMode::Multi) {
+		std::vector<ColorfulText> texts;
+		int nowWidth = MARGIN_X;
 		int startIndex = m_currentIndex;
+		int starttextsIdx = 0;
+		int endtextsIdx = 0;
 		for (int i = 0; i < SKK_CHOOSE_CANDIDATES_BIGSTR_LEN && (startIndex + i) < candCount; i++) {
-			std::wstring displayText =std::wstring(1, SKK_CHOOSE_CANDIDATES_BIGSTR[i] )+ L". " + m_candidates[startIndex + i].candidate;
-			TextOut(hdc, 5, yOffset, displayText.c_str(), displayText.length());
-			
+			texts.push_back({ L"[" + std::wstring(1,SKK_CHOOSE_CANDIDATES_BIGSTR[i]) + L"] ", g_Setting.candidate_window_dim_font_color });
+			texts.push_back({ m_candidates[startIndex + i].candidate,g_Setting.candidate_window_asdfjkl_font_color });
 			if (!m_candidates[startIndex + i].annotation.empty()) {
-				SIZE size;
-				GetTextExtentPoint32W(hdc, displayText.c_str(), (int)displayText.length(), &size);
-				SetTextColor(hdc, COLOR_DIM);
-				std::wstring annotext = L" ;" + m_candidates[startIndex + i].annotation;
-				TextOut(hdc, 5 + size.cx, yOffset, annotext.c_str(), annotext.length());
-				SetTextColor(hdc, COLOR_NORMAL);
+				texts.push_back({ L";" + m_candidates[startIndex + i].annotation,g_Setting.candidate_window_dim_font_color });
 			}
-			yOffset += LINE_HEIGHT;
+
+			nowWidth += _GetTextSize(hdc, starttextsIdx, (int)texts.size(), texts);
+			if (nowWidth + MARGIN_X > window_width) {
+				xMaxOffset = max(xMaxOffset, _DrawColorfulText(hdc, MARGIN_X, yOffset, starttextsIdx, endtextsIdx, texts));
+				yOffset += LINE_HEIGHT;
+				starttextsIdx = endtextsIdx;
+				nowWidth = MARGIN_X;
+			}
+			else {
+				endtextsIdx = (int)texts.size();
+			}
 		}
+
+		texts.push_back({ L"�c:" + std::to_wstring(max(0,candCount - (startIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color });
+		xMaxOffset = max(xMaxOffset, _DrawColorfulText(hdc, MARGIN_X, yOffset, endtextsIdx, texts.size(), texts));
+		yOffset += LINE_HEIGHT;
+
+		window_width = xMaxOffset + MARGIN_X;
+		window_height = yOffset + MARGIN_Y;
 	}
-	SelectObject(hdc, oldFont);
 	EndPaint(hwnd, &ps);
+
+}
+
+int CCandidateWindow::_DrawColorfulText(HDC hdc, int beginx, int beginy,int beginidx,int endidx, const std::vector<ColorfulText>& texts)
+{
+	endidx = min(endidx, (int)texts.size());
+	for (int i = beginidx; i < endidx; i++) {
+		if (texts[i].text.empty()) continue;
+		SetTextColor(hdc, texts[i].color);
+		TextOutW(hdc, beginx, beginy, texts[i].text.c_str(), (int)texts[i].text.length());
+		SIZE size;
+		GetTextExtentPoint32W(hdc, texts[i].text.c_str(), (int)texts[i].text.length(), &size);
+		beginx += size.cx;
+	}
+	return  beginx;
+}
+
+int CCandidateWindow::_GetTextSize(HDC hdc, int beginidx, int endidx, const std::vector<ColorfulText>& texts)
+{
+	int beginx = 0;
+	int beginy = 0;
+	endidx = min(endidx, (int)texts.size());
+	for (int i = beginidx; i < endidx; i++) {
+		SIZE size;
+		GetTextExtentPoint32W(hdc, texts[i].text.c_str(), (int)texts[i].text.length(), &size);
+		beginx += size.cx;
+	}
+	return  beginx;
 }

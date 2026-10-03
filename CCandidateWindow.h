@@ -3,11 +3,17 @@
 #include <Windows.h>
 #include <vector>
 #include <string>
+#include "settings_value.h"
 #include "SKKDictionaryProvider.h"
 
 enum class CandidateWindowDrawMode {
 	Single,
 	Multi
+};
+
+struct ColorfulText {
+	std::wstring text;
+	COLORREF color;
 };
 
 class CCandidateWindow
@@ -31,7 +37,8 @@ public:
 private:
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void OnPaint(HWND hwnd);
-
+	int _DrawColorfulText(HDC hdc, int beginx, int beginy, int beginidx, int endidx, const std::vector<ColorfulText>& texts);
+	int _GetTextSize(HDC hdc,int beginidx,int endidx, const std::vector<ColorfulText>& texts);
 	HWND m_hwnd;
 	SKKCandidates m_candidates;
 	CandidateWindowDrawMode m_drawmode;
@@ -41,12 +48,13 @@ private:
 	std::wstring m_registerTarget;
 	std::wstring m_registerInput;
 
-	static constexpr int WINDOW_WIDTH = 250;
-	static constexpr int WINDOW_HEIGHT = 200;
+
+	HFONT m_hFont;
+	int m_desktop_dpi_x;
+	int window_width = 250;
+	int window_height = 200;
 	static constexpr int MARGIN_X = 5;
 	static constexpr int MARGIN_Y = 5;
-	static constexpr int LINE_HEIGHT = 20;
-	static constexpr COLORREF COLOR_NORMAL = RGB(0, 0, 0);
-	static constexpr COLORREF COLOR_DIM = RGB(128, 128, 128);
+	int LINE_HEIGHT = 20;
 };
 
