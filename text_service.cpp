@@ -567,18 +567,22 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return S_OK;
     }
     else if (wParam == 'Q') {
-        // 変換中なら、未確定バッファ(候補表示中は読み)をカタカナにして確定してからカタカナ入力へ
+        KanaMode gotokanaMode = KanaMode::Katakana;
+        // 変換中なら、未確定バッファ(候補表示中は読み)をカタカナにして確定
         if (g_currentMode == SKKMode::Henkan && __HasComposition()) {
             if (!m_candidates.empty()) {
                 _compositionBuffer = m_henkanGokan + m_okurigana;
             }
             _ConvertToKatakana(_compositionBuffer);
             _CommitHenkan(pic);
+            gotokanaMode = g_CurrentKanaMode;
         }
         m_romajiKanaTranslater.reset();
         m_qelfTranslater.reset_kmp_state();
         __changeCurrentMode(SKKMode::Kakutei);
-        __changeCurrentKanaMode(KanaMode::Katakana);
+        if (gotokanaMode == KanaMode::Katakana) {
+            __changeCurrentKanaMode(gotokanaMode);
+        }
         return S_OK;
     }
     else if (wParam == VK_RETURN) {
