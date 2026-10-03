@@ -183,7 +183,7 @@ void CCandidateWindow::OnPaint(HWND hwnd)
 
 void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, int& outWidth, int& outHeight)
 {
-	SetTextColor(hdc, g_Setting.candidate_window_font_color);
+	SetTextColor(hdc, g_Setting.candidate_window_normal_font_color);
 	{
 		std::wstring testStr = L"‚ ";
 		SIZE size;
@@ -210,10 +210,10 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 	DebugTrace((L"RenderContent: availableWidth=" + std::to_wstring(availableWidth) + L", wrapLimit=" + std::to_wstring(wrapLimit)));
 	if (m_isRegisterMode) {
 		std::vector<ColorfulText> texts{
-			{L"[“o˜^] ", g_Setting.candidate_window_asdfjkl_font_color},
-			{m_registerTarget, g_Setting.candidate_window_font_color},
+			{L"[“o˜^] ", g_Setting.candidate_window_hilight_font_color},
+			{m_registerTarget, g_Setting.candidate_window_normal_font_color},
 			{L" : ", g_Setting.candidate_window_dim_font_color},
-			{m_registerCommittedInput, g_Setting.candidate_window_font_color},
+			{m_registerCommittedInput, g_Setting.candidate_window_normal_font_color},
 			{m_registerUnconfirmedInput, g_Setting.candidate_window_unconfirmed_font_color}
 		};
 		DebugTrace((L"RegisterInfo: " + m_registerTarget + L" : " + m_registerCommittedInput + L" + " + m_registerUnconfirmedInput));
@@ -223,8 +223,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 	const int candCount = (int)m_candidates.size();
 	if (m_drawmode == CandidateWindowDrawMode::Single && m_currentIndex >= 0 && m_currentIndex < candCount) {
 		std::vector<ColorfulText> texts{
-			{L"[" + std::to_wstring(m_currentIndex + 1) + L" of " + std::to_wstring(candCount) + L"] ", g_Setting.candidate_window_dim_font_color},
-			{m_candidates[m_currentIndex].candidate, g_Setting.candidate_window_font_color},
+			{m_candidates[m_currentIndex].candidate, g_Setting.candidate_window_normal_font_color},
 			{(m_candidates[m_currentIndex].annotation.empty() ? L"" : L" ;" + m_candidates[m_currentIndex].annotation), g_Setting.candidate_window_dim_font_color}
 		};
 		finalizeLine(texts, MARGIN_X + _GetTextSize(hdc, 0, (int)texts.size(), texts));
@@ -250,8 +249,8 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 
 		for (int i = 0; i < SKK_CHOOSE_CANDIDATES_BIGSTR_LEN && (m_currentIndex + i) < candCount; i++) {
 			std::vector<ColorfulText> segment{
-				{L"[" + std::wstring(1, SKK_CHOOSE_CANDIDATES_BIGSTR[i]) + L"] ", g_Setting.candidate_window_dim_font_color},
-				{m_candidates[m_currentIndex + i].candidate, g_Setting.candidate_window_asdfjkl_font_color}
+				{L"[" + std::wstring(1, SKK_CHOOSE_CANDIDATES_BIGSTR[i]) + L"] ", g_Setting.candidate_window_asdfjkl_font_color},
+				{m_candidates[m_currentIndex + i].candidate, g_Setting.candidate_window_normal_font_color}
 			};
 			if (!m_candidates[m_currentIndex + i].annotation.empty()) {
 				segment.push_back({ L";" + m_candidates[m_currentIndex + i].annotation, g_Setting.candidate_window_dim_font_color });
@@ -259,7 +258,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 			appendSegment(segment);
 		}
 
-		appendSegment({ {L"Žc:" + std::to_wstring(max(0, candCount - (m_currentIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color} });
+		appendSegment({ {L" Žc:" + std::to_wstring(max(0, candCount - (m_currentIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color} });
 		flushLine();
 	}
 

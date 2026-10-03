@@ -14,10 +14,10 @@ void initialize_setting() {
 
 	g_Setting.candidate_window_font_size = 46; // 候補ウィンドウのフォントサイズを設定
 	g_Setting.candidate_window_font_name = L"Meiryo UI"; // 候補ウィンドウのフォント名を設定
-	g_Setting.candidate_window_font_color = RGB(0, 0, 0); // 候補ウィンドウのフォント色を設定 
+	g_Setting.candidate_window_normal_font_color = RGB(0, 0, 0); // 候補ウィンドウのフォント色を設定 
 	g_Setting.candidate_window_dim_font_color = RGB(128, 128, 128); // 候補ウィンドウの薄いフォント色を設定
 	g_Setting.candidate_window_hilight_font_color = RGB(163, 41, 99); // 候補ウィンドウのハイライトフォント色を設定
-	g_Setting.candidate_window_asdfjkl_font_color = RGB(106, 160, 99); // 候補ウィンドウのASDFJKLフォント色を設定
+	g_Setting.candidate_window_asdfjkl_font_color = RGB(28, 110, 83); // 候補ウィンドウのASDFJKLフォント色を設定
 	g_Setting.candidate_window_unconfirmed_font_color = RGB(24, 90, 163); // unconfirmed font color
 
 }

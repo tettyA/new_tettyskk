@@ -14,7 +14,7 @@ struct settings_value {
 	int single_candidate_max_count;
 	int candidate_window_font_size;
 	LPCWSTR candidate_window_font_name;
-	COLORREF candidate_window_font_color;
+	COLORREF candidate_window_normal_font_color;
 	COLORREF candidate_window_unconfirmed_font_color;
 	COLORREF candidate_window_dim_font_color;
 	COLORREF candidate_window_hilight_font_color;
