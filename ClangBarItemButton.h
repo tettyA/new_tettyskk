@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <ctfutb.h>
 #include <atlbase.h>
@@ -42,7 +42,7 @@ public:
 
 private:
 	LONG _refCount;
-	CComPtr<ITfLangBarItemSink> _pLangBarItemSink;//’Ê’m—pƒVƒ“ƒN
+	CComPtr<ITfLangBarItemSink> _pLangBarItemSink;//é€šçŸ¥ç”¨ã‚·ãƒ³ã‚¯
 	CTextService* _pSkkIme;
 
 	TF_LANGBARITEMINFO _LangBarItemInfo;

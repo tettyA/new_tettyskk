@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "qelf_translater.h"
 #include "globals.h"
 #include <locale>
@@ -41,7 +41,7 @@ qelf_translater::~qelf_translater()
 
 bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring& output)
 {
-	// �ϊ��\�ɑ��݂��邩�m�F
+	// 変換表に存在するか確認
     if (!m_KMP.KMPs.contains(key)) {
 		DebugTrace((L"key not found:[" + std::to_wstring(key) + L"]"));
         return false;
@@ -62,6 +62,7 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
             return false;
         case ex_nn:
             output = L"NN";
+            _ConsumeShiftState();
             return true;
         case ex_youon:
             m_KMP.is_key_pushed.youon = true;
@@ -69,20 +70,25 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
         case ex_boin:
             return false;
         case ex_sakujo:
-            if (DSendCnt > 0) {
-                DSendCnt = 0;
+            // 保留中の入力(1打目/促音/拗音)があればそれを取り消すだけ。何も無ければ本物のBackspaceを送る
+            if (DSendCnt > 0 || m_KMP.is_key_pushed.sokuon || m_KMP.is_key_pushed.youon) {
                 reset_kmp_state();
             }
             else {
                 reset_kmp_state();
-                INPUT input = { 0 };
-                input.type = INPUT_KEYBOARD;
-                input.ki.wVk = VK_BACK;
-                SendInput(1, &input, sizeof(INPUT));
+                // keydown/keyupの両方を送らないとキーが押しっぱなし扱いになる
+                INPUT inputs[2] = {};
+                inputs[0].type = INPUT_KEYBOARD;
+                inputs[0].ki.wVk = VK_BACK;
+                inputs[1].type = INPUT_KEYBOARD;
+                inputs[1].ki.wVk = VK_BACK;
+                inputs[1].ki.dwFlags = KEYEVENTF_KEYUP;
+                SendInput(2, inputs, sizeof(INPUT));
             }
             return false;
         default:
             output = std::wstring(1, (WCHAR)selected.to_samedir);
+            _ConsumeShiftState();
             return true;
         }
     }
@@ -90,7 +96,7 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
         if (DSendCnt == 0) {
             DSendCnt++;
             
-            // ���ڂ̏���ۑ�
+            // 一回目の情報を保存
             Send1st = DsendElements{ selected.dir,selected.to_samedir,selected.to_otherdir };
 		
         }
@@ -98,15 +104,15 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
             DsendElements    Send2nd = DsendElements{ selected.dir,selected.to_samedir,selected.to_otherdir };
 		
             if (Send1st.dir1.dirkc != ex_boin) {
-                // �q���̏��� 
+                // 子音の処理 
                 if (Send1st.dir == KMP::Dir::None || Send2nd.dir == KMP::Dir::None) {
                     output = std::wstring(1, WCHAR(Send1st.dir1.dirkc));
                 }
-                // ����
+                // 濁音
                 else if (Send1st.dir == Send2nd.dir) {
                     output = std::wstring(1, WCHAR(Send1st.dir1.samedirkc));
                 }
-                // ����
+                // 清音
                 else {
                     output = std::wstring(1, WCHAR(Send1st.otherdirkc));
                 }
@@ -116,9 +122,9 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
                 output += L"Y";
             }
 
-            // �ꉹ�̏���
+            // 母音の処理
 			output += std::wstring(1, WCHAR(selected.to_secboin));
-			// �����̏���
+			// 促音の処理
             if (m_KMP.is_key_pushed.sokuon) {
                 output += WCHAR_XTU;
             }
@@ -126,8 +132,7 @@ bool qelf_translater::translate_qwerty_to_qelf(const KeyCode& key, std::wstring&
             DSendCnt = 0;
             m_KMP.is_key_pushed.sokuon = false;
             m_KMP.is_key_pushed.youon = false;
-			m_KMP.is_shift_pressed_last = m_KMP.is_shift_pressed;
-            m_KMP.is_shift_pressed = false;
+            _ConsumeShiftState();
             return true;
         }
     }
@@ -165,7 +170,7 @@ void qelf_translater::load_KMP_table(const std::wstring& filename){
         if (line[0] == L'-')continue;
   
 
-        // ���݂̃��[�h�̕ύX
+        // 現在のモードの変更
         if (line[0] == L'@') {
             line = line.substr(1);
 
@@ -247,11 +252,18 @@ void qelf_translater::load_KMP_table(const std::wstring& filename){
 
 
 
+// 出力が確定した時点で、保留していたShift状態を「直前の出力のShift」として確定させる
+void qelf_translater::_ConsumeShiftState()
+{
+	m_KMP.is_shift_pressed_last = m_KMP.is_shift_pressed;
+	m_KMP.is_shift_pressed = false;
+}
+
 void qelf_translater::reset_kmp_state()
 {
 	DSendCnt = 0;
 	m_KMP.is_key_pushed = { false,false };
-	m_KMP.is_shift_pressed_last = m_KMP.is_shift_pressed;
+	m_KMP.is_shift_pressed_last = false;
 	m_KMP.is_shift_pressed = false;
-    Send1st = DsendElements{ KMP::Dir::None, {0}, };
+    Send1st = DsendElements{ KMP::Dir::None, {0}, 0 };
 }

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "romaji_kana_translater.h"
 #include "globals.h"
 #include "qelf_translater.h"
@@ -21,16 +21,25 @@ BOOL romaji_kana_translater::translate_qelf(const std::wstring input, std::wstri
 {
 	outstr.clear();
 
+	// Q-ELF配列が記号のVKコード(例: Wキー -> VK_OEM_MINUS)を送ってきた場合は日本語記号に変換する
+	if (input.length() == 1) {
+		auto kigou = m_KigouToJpnKigou.find(input[0]);
+		if (kigou != m_KigouToJpnKigou.end()) {
+			outstr = kigou->second;
+			return TRUE;
+		}
+	}
+
 	m_buffer += input;
 	DebugTrace((L"translate_qelf: buffer=[" + m_buffer + L"]"));
 
-	// �����̏���
+	// 促音の処理
 	if (m_buffer.ends_with(WCHAR_XTU)) {
 		outstr += m_RomajiToKana[L"XTU"][(g_CurrentKanaMode == KanaMode::Hiragana ? TrR2K_INDEX_HIRAGANA : TrR2K_INDEX_KATAKANA)];
 		m_buffer.pop_back();
 	}
 
-	//�ϊ��o���Ȃ���΁C�m��ŕϊ��o���Ȃ��B
+	// Q-ELFは1音節ずつ完結した形で送ってくるため、変換出来なければバッファを破棄する(持ち越さない)
 	auto it = m_RomajiToKana.find(m_buffer);
 	if (it != m_RomajiToKana.end()) {
 		

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <atlbase.h>
 #include <msctf.h>
@@ -6,7 +6,7 @@
 #include "globals.h"
 
 
-// –¢Šm’è•¶š—ñ‚ğ‰ºü•\¦‚·‚é‚½‚ß‚ÌÅ¬À‘• •¶š‘•ü‚ğTSF‚É“`‚¦‚é‚½‚ß‚ÌƒNƒ‰ƒX
+// æœªç¢ºå®šæ–‡å­—åˆ—ã‚’ä¸‹ç·šè¡¨ç¤ºã™ã‚‹ãŸã‚ã®æœ€å°å®Ÿè£… æ–‡å­—è£…é£¾ã‚’TSFã«ä¼ãˆã‚‹ãŸã‚ã®ã‚¯ãƒ©ã‚¹
 class CDisplayAttributeInfo : public ITfDisplayAttributeInfo {
 public:
 	CDisplayAttributeInfo();
@@ -29,8 +29,8 @@ private:
 	//TF_DISPLAYATTRIBUTE _attribute;
 };
 
-// GUID_DisplayAttributeInput‚Ì1Œ‚Ì‚İ‚ğ—ñ‹“‚·‚éÅ¬À‘• 
-// ITfDisplayAttributeInfo‚ğ•Ô‚·‚½‚ß‚ÌƒNƒ‰ƒX
+// GUID_DisplayAttributeInputã®1ä»¶ã®ã¿ã‚’åˆ—æŒ™ã™ã‚‹æœ€å°å®Ÿè£… 
+// ITfDisplayAttributeInfoã‚’è¿”ã™ãŸã‚ã®ã‚¯ãƒ©ã‚¹
 class CEnumDisplayAttributeInfo : public IEnumTfDisplayAttributeInfo {
 public:
 	CEnumDisplayAttributeInfo();
@@ -49,5 +49,5 @@ public:
 
 private:
 	LONG _refCount;
-	ULONG _index; // Ÿ‚É•Ô‚·—v‘f‚ÌˆÊ’u(0‚©1)
+	ULONG _index; // æ¬¡ã«è¿”ã™è¦ç´ ã®ä½ç½®(0ã‹1)
 };

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "globals.h"
 
 #include <string>
@@ -17,18 +17,18 @@
 
 #define SKK_CHOOSE_CANDIDATES_BIGSTR  (L"ASDFJKL")
 #define SKK_CHOOSE_CANDIDATES_SMLSTR  (L"asdfjkl")
-
+#define SKK_CHOOSE_CANDIDATES_BIGSTR_LEN  (7)
 struct SKKCandidate {
-	std::wstring candidate; // ˆê‚Â‚ÌŒó•â•¶š—ñ
-	std::wstring annotation;  // ’ß
+	std::wstring candidate; // ä¸€ã¤ã®å€™è£œæ–‡å­—åˆ—
+	std::wstring annotation;  // æ³¨é‡ˆ
 };
-using SKKCandidates = std::vector<SKKCandidate>;//Œó•â•¶š—ñŒQ
-using SKKDictionary = std::map<std::wstring, SKKCandidates>;//“Ç‚İCŒó•â•¶š—ñŒQ
+using SKKCandidates = std::vector<SKKCandidate>;//å€™è£œæ–‡å­—åˆ—ç¾¤
+using SKKDictionary = std::map<std::wstring, SKKCandidates>;//èª­ã¿ï¼Œå€™è£œæ–‡å­—åˆ—ç¾¤
 
-// SKKDictionary[L"‚±‚¤‚µ‚å‚¤"]={{"ŒğÂ","˜b‚µ‡‚Á‚ÄğŒ‚ğŒˆ‚ß‚ ‚¤"},{"ZÍ","ŠwZ‚â‘åŠw‚Ì–äÍ"},{"H±","Hê‚İ‚½‚¢‚È‚Æ‚±‚ë"}, ... }
+// SKKDictionary[L"ã“ã†ã—ã‚‡ã†"]={{"äº¤æ¸‰","è©±ã—åˆã£ã¦æ¡ä»¶ã‚’æ±ºã‚ã‚ã†"},{"æ ¡ç« ","å­¦æ ¡ã‚„å¤§å­¦ã®ç´‹ç« "},{"å·¥å» ","å·¥å ´ã¿ãŸã„ãªã¨ã“ã‚"}, ... }
 
 //#define MAX_SKK_DICTIONARY_HISTORY 1000
-//using SKKdictionaryHistory = std::deque<std::wstring>; //“Ç‚İ‚Ì‚İ •ÏŠ·—š—ğ
+//using SKKdictionaryHistory = std::deque<std::wstring>; //èª­ã¿ã®ã¿ å¤‰æ›å±¥æ­´
 
 #define EUC_JP_CODEPAGE 20932
 

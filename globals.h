@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #define WIN32_LEAN_AND_MEAN
 #include <string>
@@ -14,9 +14,9 @@ extern LONG g_cRefDll;
 extern HMODULE g_hModule;
 
 enum class SKKMode {
-	Hankaku, // ”¼Šp‰p”“ü—Íƒ‚[ƒh
-	Kakutei, // ‚»‚Ì‚Ü‚Ü•½‰¼–¼(or•Ğ‰¼–¼)‚Å“ü—Í‚µ‚Ä‘¦Šm’è
-	Henkan,  // •ÏŠ·‚·‚é
+	Hankaku, // åŠè§’è‹±æ•°å…¥åŠ›ãƒ¢ãƒ¼ãƒ‰
+	Kakutei, // ãã®ã¾ã¾å¹³ä»®å(orç‰‡ä»®å)ã§å…¥åŠ›ã—ã¦å³ç¢ºå®š
+	Henkan,  // å¤‰æ›ã™ã‚‹
 };
 
 enum class KanaMode {

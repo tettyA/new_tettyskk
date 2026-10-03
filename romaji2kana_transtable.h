@@ -1,315 +1,315 @@
+ï»¿
+MAKETRANSTABLE(A, ã‚, ã‚¢),
+MAKETRANSTABLE(I, ã„, ã‚¤),
+MAKETRANSTABLE(YI, ã„, ã‚¤), /* ç‰¹æ®Š */
+MAKETRANSTABLE(U, ã†, ã‚¦),
+MAKETRANSTABLE(WU, ã†, ã‚¦), /* ç‰¹æ®Š */
+MAKETRANSTABLE(WHU, ã†, ã‚¦), /* ç‰¹æ®Š */
+MAKETRANSTABLE(E, ãˆ, ã‚¨),
+MAKETRANSTABLE(O, ãŠ, ã‚ª),
 
-MAKETRANSTABLE(A, ‚ , ƒA),
-MAKETRANSTABLE(I, ‚¢, ƒC),
-MAKETRANSTABLE(YI, ‚¢, ƒC), /* “ÁŽê */
-MAKETRANSTABLE(U, ‚¤, ƒE),
-MAKETRANSTABLE(WU, ‚¤, ƒE), /* “ÁŽê */
-MAKETRANSTABLE(WHU, ‚¤, ƒE), /* “ÁŽê */
-MAKETRANSTABLE(E, ‚¦, ƒG),
-MAKETRANSTABLE(O, ‚¨, ƒI),
+/* ã‹è¡Œ (Cã‚‚å«ã‚€) */
+MAKETRANSTABLE(KA, ã‹, ã‚«),
+MAKETRANSTABLE(CA, ã‹, ã‚«),
+MAKETRANSTABLE(KI, ã, ã‚­),
+MAKETRANSTABLE(KU, ã, ã‚¯),
+MAKETRANSTABLE(CU, ã, ã‚¯),
+MAKETRANSTABLE(QU, ã, ã‚¯), /* IMEã«ã‚ˆã£ã¦ã¯ã */
+MAKETRANSTABLE(KE, ã‘, ã‚±),
+MAKETRANSTABLE(KO, ã“, ã‚³),
+MAKETRANSTABLE(CO, ã“, ã‚³),
 
-/* ‚©s (C‚àŠÜ‚Þ) */
-MAKETRANSTABLE(KA, ‚©, ƒJ),
-MAKETRANSTABLE(CA, ‚©, ƒJ),
-MAKETRANSTABLE(KI, ‚«, ƒL),
-MAKETRANSTABLE(KU, ‚­, ƒN),
-MAKETRANSTABLE(CU, ‚­, ƒN),
-MAKETRANSTABLE(QU, ‚­, ƒN), /* IME‚É‚æ‚Á‚Ä‚Í‚­ */
-MAKETRANSTABLE(KE, ‚¯, ƒP),
-MAKETRANSTABLE(KO, ‚±, ƒR),
-MAKETRANSTABLE(CO, ‚±, ƒR),
+/* ã•è¡Œ (SHI/SI) */
+MAKETRANSTABLE(SA, ã•, ã‚µ),
+MAKETRANSTABLE(SHI, ã—, ã‚·),
+MAKETRANSTABLE(SI, ã—, ã‚·),
+MAKETRANSTABLE(CI, ã—, ã‚·), /* MS-IMEç­‰ */
+MAKETRANSTABLE(SU, ã™, ã‚¹),
+MAKETRANSTABLE(SE, ã›, ã‚»),
+MAKETRANSTABLE(CE, ã›, ã‚»), /* MS-IMEç­‰ */
+MAKETRANSTABLE(SO, ã, ã‚½),
 
-/* ‚³s (SHI/SI) */
-MAKETRANSTABLE(SA, ‚³, ƒT),
-MAKETRANSTABLE(SHI, ‚µ, ƒV),
-MAKETRANSTABLE(SI, ‚µ, ƒV),
-MAKETRANSTABLE(CI, ‚µ, ƒV), /* MS-IME“™ */
-MAKETRANSTABLE(SU, ‚·, ƒX),
-MAKETRANSTABLE(SE, ‚¹, ƒZ),
-MAKETRANSTABLE(CE, ‚¹, ƒZ), /* MS-IME“™ */
-MAKETRANSTABLE(SO, ‚», ƒ\),
+/* ãŸè¡Œ (CHI/TI, TSU/TU) */
+MAKETRANSTABLE(TA, ãŸ, ã‚¿),
+MAKETRANSTABLE(CHI, ã¡, ãƒ),
+MAKETRANSTABLE(TI, ã¡, ãƒ),
+MAKETRANSTABLE(TSU, ã¤, ãƒ„),
+MAKETRANSTABLE(TU, ã¤, ãƒ„),
+MAKETRANSTABLE(TE, ã¦, ãƒ†),
+MAKETRANSTABLE(TO, ã¨, ãƒˆ),
 
-/* ‚½s (CHI/TI, TSU/TU) */
-MAKETRANSTABLE(TA, ‚½, ƒ^),
-MAKETRANSTABLE(CHI, ‚¿, ƒ`),
-MAKETRANSTABLE(TI, ‚¿, ƒ`),
-MAKETRANSTABLE(TSU, ‚Â, ƒc),
-MAKETRANSTABLE(TU, ‚Â, ƒc),
-MAKETRANSTABLE(TE, ‚Ä, ƒe),
-MAKETRANSTABLE(TO, ‚Æ, ƒg),
+/* ãªè¡Œ */
+MAKETRANSTABLE(NA, ãª, ãƒŠ),
+MAKETRANSTABLE(NI, ã«, ãƒ‹),
+MAKETRANSTABLE(NU, ã¬, ãƒŒ),
+MAKETRANSTABLE(NE, ã­, ãƒ),
+MAKETRANSTABLE(NO, ã®, ãƒŽ),
 
-/* ‚Ès */
-MAKETRANSTABLE(NA, ‚È, ƒi),
-MAKETRANSTABLE(NI, ‚É, ƒj),
-MAKETRANSTABLE(NU, ‚Ê, ƒk),
-MAKETRANSTABLE(NE, ‚Ë, ƒl),
-MAKETRANSTABLE(NO, ‚Ì, ƒm),
+/* ã¯è¡Œ (FU/HU) */
+MAKETRANSTABLE(HA, ã¯, ãƒ),
+MAKETRANSTABLE(HI, ã², ãƒ’),
+MAKETRANSTABLE(FU, ãµ, ãƒ•),
+MAKETRANSTABLE(HU, ãµ, ãƒ•),
+MAKETRANSTABLE(HE, ã¸, ãƒ˜),
+MAKETRANSTABLE(HO, ã», ãƒ›),
 
-/* ‚Ís (FU/HU) */
-MAKETRANSTABLE(HA, ‚Í, ƒn),
-MAKETRANSTABLE(HI, ‚Ð, ƒq),
-MAKETRANSTABLE(FU, ‚Ó, ƒt),
-MAKETRANSTABLE(HU, ‚Ó, ƒt),
-MAKETRANSTABLE(HE, ‚Ö, ƒw),
-MAKETRANSTABLE(HO, ‚Ù, ƒz),
+/* ã¾è¡Œ */
+MAKETRANSTABLE(MA, ã¾, ãƒž),
+MAKETRANSTABLE(MI, ã¿, ãƒŸ),
+MAKETRANSTABLE(MU, ã‚€, ãƒ ),
+MAKETRANSTABLE(ME, ã‚, ãƒ¡),
+MAKETRANSTABLE(MO, ã‚‚, ãƒ¢),
 
-/* ‚Üs */
-MAKETRANSTABLE(MA, ‚Ü, ƒ}),
-MAKETRANSTABLE(MI, ‚Ý, ƒ~),
-MAKETRANSTABLE(MU, ‚Þ, ƒ€),
-MAKETRANSTABLE(ME, ‚ß, ƒ),
-MAKETRANSTABLE(MO, ‚à, ƒ‚),
+/* ã‚„è¡Œ */
+MAKETRANSTABLE(YA, ã‚„, ãƒ¤),
+MAKETRANSTABLE(YU, ã‚†, ãƒ¦),
+MAKETRANSTABLE(YE, ã„ã‡, ã‚¤ã‚§),
+MAKETRANSTABLE(YO, ã‚ˆ, ãƒ¨),
 
-/* ‚âs */
-MAKETRANSTABLE(YA, ‚â, ƒ„),
-MAKETRANSTABLE(YU, ‚ä, ƒ†),
-MAKETRANSTABLE(YE, ‚¢‚¥, ƒCƒF),
-MAKETRANSTABLE(YO, ‚æ, ƒˆ),
+/* ã‚‰è¡Œ */
+MAKETRANSTABLE(RA, ã‚‰, ãƒ©),
+MAKETRANSTABLE(RI, ã‚Š, ãƒª),
+MAKETRANSTABLE(RU, ã‚‹, ãƒ«),
+MAKETRANSTABLE(RE, ã‚Œ, ãƒ¬),
+MAKETRANSTABLE(RO, ã‚, ãƒ­),
 
-/* ‚çs */
-MAKETRANSTABLE(RA, ‚ç, ƒ‰),
-MAKETRANSTABLE(RI, ‚è, ƒŠ),
-MAKETRANSTABLE(RU, ‚é, ƒ‹),
-MAKETRANSTABLE(RE, ‚ê, ƒŒ),
-MAKETRANSTABLE(RO, ‚ë, ƒ),
+/* ã‚è¡Œ */
+MAKETRANSTABLE(WA, ã‚, ãƒ¯),
+MAKETRANSTABLE(WYI, ã†ãƒ, ã‚¦ã‚£),
+MAKETRANSTABLE(WYE, ã†ã‡, ã‚¦ã‚§),
+MAKETRANSTABLE(WO, ã‚’, ãƒ²),
+MAKETRANSTABLE(NN, ã‚“, ãƒ³),
+MAKETRANSTABLE(XN, ã‚“, ãƒ³), /* ç‰¹æ®Š */
 
-/* ‚ís */
-MAKETRANSTABLE(WA, ‚í, ƒ),
-MAKETRANSTABLE(WYI, ‚¤‚¡, ƒEƒB),
-MAKETRANSTABLE(WYE, ‚¤‚¥, ƒEƒF),
-MAKETRANSTABLE(WO, ‚ð, ƒ’),
-MAKETRANSTABLE(NN, ‚ñ, ƒ“),
-MAKETRANSTABLE(XN, ‚ñ, ƒ“), /* “ÁŽê */
+/* === æ¿éŸ³ (DAKUTEN & VARIANTS) === */
+/* ãŒè¡Œ */
+MAKETRANSTABLE(GA, ãŒ, ã‚¬),
+MAKETRANSTABLE(GI, ãŽ, ã‚®),
+MAKETRANSTABLE(GU, ã, ã‚°),
+MAKETRANSTABLE(GE, ã’, ã‚²),
+MAKETRANSTABLE(GO, ã”, ã‚´),
 
-/* === ‘÷‰¹ (DAKUTEN & VARIANTS) === */
-/* ‚ªs */
-MAKETRANSTABLE(GA, ‚ª, ƒK),
-MAKETRANSTABLE(GI, ‚¬, ƒM),
-MAKETRANSTABLE(GU, ‚®, ƒO),
-MAKETRANSTABLE(GE, ‚°, ƒQ),
-MAKETRANSTABLE(GO, ‚², ƒS),
+/* ã–è¡Œ (JI/ZI) */
+MAKETRANSTABLE(ZA, ã–, ã‚¶),
+MAKETRANSTABLE(JI, ã˜, ã‚¸), /* ãƒ˜ãƒœãƒ³å¼ */
+MAKETRANSTABLE(ZI, ã˜, ã‚¸), /* è¨“ä»¤å¼ãƒ»æ—¥æœ¬å¼ */
+MAKETRANSTABLE(ZU, ãš, ã‚º),
+MAKETRANSTABLE(ZE, ãœ, ã‚¼),
+MAKETRANSTABLE(ZO, ãž, ã‚¾),
 
-/* ‚´s (JI/ZI) */
-MAKETRANSTABLE(ZA, ‚´, ƒU),
-MAKETRANSTABLE(JI, ‚¶, ƒW), /* ƒwƒ{ƒ“Ž® */
-MAKETRANSTABLE(ZI, ‚¶, ƒW), /* ŒP—ßŽ®E“ú–{Ž® */
-MAKETRANSTABLE(ZU, ‚¸, ƒY),
-MAKETRANSTABLE(ZE, ‚º, ƒ[),
-MAKETRANSTABLE(ZO, ‚¼, ƒ]),
+/* ã è¡Œ (JI/DI, ZU/DU) */
+MAKETRANSTABLE(DA, ã , ãƒ€),
+MAKETRANSTABLE(DI, ã¢, ãƒ‚), /* æ—¥æœ¬å¼ */
+MAKETRANSTABLE(DU, ã¥, ãƒ…), /* æ—¥æœ¬å¼ */
+MAKETRANSTABLE(DZU, ã¥, ãƒ…), /* åˆ¥è¡¨è¨˜ */
+MAKETRANSTABLE(DE, ã§, ãƒ‡),
+MAKETRANSTABLE(DO, ã©, ãƒ‰),
 
-/* ‚¾s (JI/DI, ZU/DU) */
-MAKETRANSTABLE(DA, ‚¾, ƒ_),
-MAKETRANSTABLE(DI, ‚À, ƒa), /* “ú–{Ž® */
-MAKETRANSTABLE(DU, ‚Ã, ƒd), /* “ú–{Ž® */
-MAKETRANSTABLE(DZU, ‚Ã, ƒd), /* •Ê•\‹L */
-MAKETRANSTABLE(DE, ‚Å, ƒf),
-MAKETRANSTABLE(DO, ‚Ç, ƒh),
+/* ã°è¡Œ */
+MAKETRANSTABLE(BA, ã°, ãƒ),
+MAKETRANSTABLE(BI, ã³, ãƒ“),
+MAKETRANSTABLE(BU, ã¶, ãƒ–),
+MAKETRANSTABLE(BE, ã¹, ãƒ™),
+MAKETRANSTABLE(BO, ã¼, ãƒœ),
 
-/* ‚Îs */
-MAKETRANSTABLE(BA, ‚Î, ƒo),
-MAKETRANSTABLE(BI, ‚Ñ, ƒr),
-MAKETRANSTABLE(BU, ‚Ô, ƒu),
-MAKETRANSTABLE(BE, ‚×, ƒx),
-MAKETRANSTABLE(BO, ‚Ú, ƒ{),
+/* ã†ã‚›(VU) */
+MAKETRANSTABLE(VU, ã†ã‚›, ãƒ´),
 
-/* ‚¤J(VU) */
-MAKETRANSTABLE(VU, ‚¤J, ƒ”),
+/* === åŠæ¿éŸ³ (HANDAKUTEN) === */
+MAKETRANSTABLE(PA, ã±, ãƒ‘),
+MAKETRANSTABLE(PI, ã´, ãƒ”),
+MAKETRANSTABLE(PU, ã·, ãƒ—),
+MAKETRANSTABLE(PE, ãº, ãƒš),
+MAKETRANSTABLE(PO, ã½, ãƒ),
 
-/* === ”¼‘÷‰¹ (HANDAKUTEN) === */
-MAKETRANSTABLE(PA, ‚Ï, ƒp),
-MAKETRANSTABLE(PI, ‚Ò, ƒs),
-MAKETRANSTABLE(PU, ‚Õ, ƒv),
-MAKETRANSTABLE(PE, ‚Ø, ƒy),
-MAKETRANSTABLE(PO, ‚Û, ƒ|),
+/* === æ‹—éŸ³ (YOON & VARIANTS) === */
+/* ãã‚ƒè¡Œ */
+MAKETRANSTABLE(KYA, ãã‚ƒ, ã‚­ãƒ£),
+MAKETRANSTABLE(KYU, ãã‚…, ã‚­ãƒ¥),
+MAKETRANSTABLE(KYO, ãã‚‡, ã‚­ãƒ§),
 
-/* === X‰¹ (YOON & VARIANTS) === */
-/* ‚«‚ás */
-MAKETRANSTABLE(KYA, ‚«‚á, ƒLƒƒ),
-MAKETRANSTABLE(KYU, ‚«‚ã, ƒLƒ…),
-MAKETRANSTABLE(KYO, ‚«‚å, ƒLƒ‡),
+/* ã—ã‚ƒè¡Œ (SHA/SYA) */
+MAKETRANSTABLE(SHA, ã—ã‚ƒ, ã‚·ãƒ£), /* ãƒ˜ãƒœãƒ³å¼ */
+MAKETRANSTABLE(SYA, ã—ã‚ƒ, ã‚·ãƒ£), /* è¨“ä»¤å¼ */
+MAKETRANSTABLE(SHU, ã—ã‚…, ã‚·ãƒ¥),
+MAKETRANSTABLE(SYU, ã—ã‚…, ã‚·ãƒ¥),
+MAKETRANSTABLE(SHE, ã—ã‡, ã‚·ã‚§),
+MAKETRANSTABLE(SYE, ã—ã‡, ã‚·ã‚§),
+MAKETRANSTABLE(SHO, ã—ã‚‡, ã‚·ãƒ§),
+MAKETRANSTABLE(SYO, ã—ã‚‡, ã‚·ãƒ§),
 
-/* ‚µ‚ás (SHA/SYA) */
-MAKETRANSTABLE(SHA, ‚µ‚á, ƒVƒƒ), /* ƒwƒ{ƒ“Ž® */
-MAKETRANSTABLE(SYA, ‚µ‚á, ƒVƒƒ), /* ŒP—ßŽ® */
-MAKETRANSTABLE(SHU, ‚µ‚ã, ƒVƒ…),
-MAKETRANSTABLE(SYU, ‚µ‚ã, ƒVƒ…),
-MAKETRANSTABLE(SHE, ‚µ‚¥, ƒVƒF),
-MAKETRANSTABLE(SYE, ‚µ‚¥, ƒVƒF),
-MAKETRANSTABLE(SHO, ‚µ‚å, ƒVƒ‡),
-MAKETRANSTABLE(SYO, ‚µ‚å, ƒVƒ‡),
+/* ã¡ã‚ƒè¡Œ (CHA/TYA/CYA) */
+MAKETRANSTABLE(CHA, ã¡ã‚ƒ, ãƒãƒ£), /* ãƒ˜ãƒœãƒ³å¼ */
+MAKETRANSTABLE(TYA, ã¡ã‚ƒ, ãƒãƒ£), /* è¨“ä»¤å¼ */
+MAKETRANSTABLE(CYA, ã¡ã‚ƒ, ãƒãƒ£), /* IMEæ‹¡å¼µ */
+MAKETRANSTABLE(CHU, ã¡ã‚…, ãƒãƒ¥),
+MAKETRANSTABLE(TYU, ã¡ã‚…, ãƒãƒ¥),
+MAKETRANSTABLE(CYU, ã¡ã‚…, ãƒãƒ¥),
+MAKETRANSTABLE(CYE, ã¡ã‡, ãƒã‚§),
+MAKETRANSTABLE(CHE, ã¡ã‡, ãƒã‚§),
+MAKETRANSTABLE(TYE, ã¡ã‡, ãƒã‚§),
+MAKETRANSTABLE(CHO, ã¡ã‚‡, ãƒãƒ§),
+MAKETRANSTABLE(TYO, ã¡ã‚‡, ãƒãƒ§),
+MAKETRANSTABLE(CYO, ã¡ã‚‡, ãƒãƒ§),
 
-/* ‚¿‚ás (CHA/TYA/CYA) */
-MAKETRANSTABLE(CHA, ‚¿‚á, ƒ`ƒƒ), /* ƒwƒ{ƒ“Ž® */
-MAKETRANSTABLE(TYA, ‚¿‚á, ƒ`ƒƒ), /* ŒP—ßŽ® */
-MAKETRANSTABLE(CYA, ‚¿‚á, ƒ`ƒƒ), /* IMEŠg’£ */
-MAKETRANSTABLE(CHU, ‚¿‚ã, ƒ`ƒ…),
-MAKETRANSTABLE(TYU, ‚¿‚ã, ƒ`ƒ…),
-MAKETRANSTABLE(CYU, ‚¿‚ã, ƒ`ƒ…),
-MAKETRANSTABLE(CYE, ‚¿‚¥, ƒ`ƒF),
-MAKETRANSTABLE(CHE, ‚¿‚¥, ƒ`ƒF),
-MAKETRANSTABLE(TYE, ‚¿‚¥, ƒ`ƒF),
-MAKETRANSTABLE(CHO, ‚¿‚å, ƒ`ƒ‡),
-MAKETRANSTABLE(TYO, ‚¿‚å, ƒ`ƒ‡),
-MAKETRANSTABLE(CYO, ‚¿‚å, ƒ`ƒ‡),
+/* ã«ã‚ƒè¡Œ */
+MAKETRANSTABLE(NYA, ã«ã‚ƒ, ãƒ‹ãƒ£),
+MAKETRANSTABLE(NYU, ã«ã‚…, ãƒ‹ãƒ¥),
+MAKETRANSTABLE(NYO, ã«ã‚‡, ãƒ‹ãƒ§),
 
-/* ‚É‚ás */
-MAKETRANSTABLE(NYA, ‚É‚á, ƒjƒƒ),
-MAKETRANSTABLE(NYU, ‚É‚ã, ƒjƒ…),
-MAKETRANSTABLE(NYO, ‚É‚å, ƒjƒ‡),
+/* ã²ã‚ƒè¡Œ */
+MAKETRANSTABLE(HYA, ã²ã‚ƒ, ãƒ’ãƒ£),
+MAKETRANSTABLE(HYU, ã²ã‚…, ãƒ’ãƒ¥),
+MAKETRANSTABLE(HYE, ã²ã‡, ãƒ’ã‚§),
+MAKETRANSTABLE(HYO, ã²ã‚‡, ãƒ’ãƒ§),
 
-/* ‚Ð‚ás */
-MAKETRANSTABLE(HYA, ‚Ð‚á, ƒqƒƒ),
-MAKETRANSTABLE(HYU, ‚Ð‚ã, ƒqƒ…),
-MAKETRANSTABLE(HYE, ‚Ð‚¥, ƒqƒF),
-MAKETRANSTABLE(HYO, ‚Ð‚å, ƒqƒ‡),
+/* ã¿ã‚ƒè¡Œ */
+MAKETRANSTABLE(MYA, ã¿ã‚ƒ, ãƒŸãƒ£),
+MAKETRANSTABLE(MYU, ã¿ã‚…, ãƒŸãƒ¥),
+MAKETRANSTABLE(MYE, ã¿ã‡, ãƒŸã‚§),
+MAKETRANSTABLE(MYO, ã¿ã‚‡, ãƒŸãƒ§),
 
-/* ‚Ý‚ás */
-MAKETRANSTABLE(MYA, ‚Ý‚á, ƒ~ƒƒ),
-MAKETRANSTABLE(MYU, ‚Ý‚ã, ƒ~ƒ…),
-MAKETRANSTABLE(MYE, ‚Ý‚¥, ƒ~ƒF),
-MAKETRANSTABLE(MYO, ‚Ý‚å, ƒ~ƒ‡),
+/* ã‚Šã‚ƒè¡Œ */
+MAKETRANSTABLE(RYA, ã‚Šã‚ƒ, ãƒªãƒ£),
+MAKETRANSTABLE(RYU, ã‚Šã‚…, ãƒªãƒ¥),
+MAKETRANSTABLE(RYO, ã‚Šã‚‡, ãƒªãƒ§),
 
-/* ‚è‚ás */
-MAKETRANSTABLE(RYA, ‚è‚á, ƒŠƒƒ),
-MAKETRANSTABLE(RYU, ‚è‚ã, ƒŠƒ…),
-MAKETRANSTABLE(RYO, ‚è‚å, ƒŠƒ‡),
+/* ãŽã‚ƒè¡Œ */
+MAKETRANSTABLE(GYA, ãŽã‚ƒ, ã‚®ãƒ£),
+MAKETRANSTABLE(GYU, ãŽã‚…, ã‚®ãƒ¥),
+MAKETRANSTABLE(GYO, ãŽã‚‡, ã‚®ãƒ§),
 
-/* ‚¬‚ás */
-MAKETRANSTABLE(GYA, ‚¬‚á, ƒMƒƒ),
-MAKETRANSTABLE(GYU, ‚¬‚ã, ƒMƒ…),
-MAKETRANSTABLE(GYO, ‚¬‚å, ƒMƒ‡),
+/* ã˜ã‚ƒè¡Œ (JA/JYA/ZYA) */
+MAKETRANSTABLE(JA, ã˜ã‚ƒ, ã‚¸ãƒ£), /* ãƒ˜ãƒœãƒ³å¼ */
+MAKETRANSTABLE(JYA, ã˜ã‚ƒ, ã‚¸ãƒ£), /* æ··åˆ */
+MAKETRANSTABLE(ZYA, ã˜ã‚ƒ, ã‚¸ãƒ£), /* è¨“ä»¤å¼ */
+MAKETRANSTABLE(JU, ã˜ã‚…, ã‚¸ãƒ¥),
+MAKETRANSTABLE(JYU, ã˜ã‚…, ã‚¸ãƒ¥),
+MAKETRANSTABLE(ZYU, ã˜ã‚…, ã‚¸ãƒ¥),
+MAKETRANSTABLE(ZYE, ã˜ã‡, ã‚¸ã‚§),
+MAKETRANSTABLE(JE, ã˜ã‡, ã‚¸ã‚§),
+MAKETRANSTABLE(JYE, ã˜ã‡, ã‚¸ã‚§),
+MAKETRANSTABLE(JO, ã˜ã‚‡, ã‚¸ãƒ§),
+MAKETRANSTABLE(JYO, ã˜ã‚‡, ã‚¸ãƒ§),
+MAKETRANSTABLE(ZYO, ã˜ã‚‡, ã‚¸ãƒ§),
 
-/* ‚¶‚ás (JA/JYA/ZYA) */
-MAKETRANSTABLE(JA, ‚¶‚á, ƒWƒƒ), /* ƒwƒ{ƒ“Ž® */
-MAKETRANSTABLE(JYA, ‚¶‚á, ƒWƒƒ), /* ¬‡ */
-MAKETRANSTABLE(ZYA, ‚¶‚á, ƒWƒƒ), /* ŒP—ßŽ® */
-MAKETRANSTABLE(JU, ‚¶‚ã, ƒWƒ…),
-MAKETRANSTABLE(JYU, ‚¶‚ã, ƒWƒ…),
-MAKETRANSTABLE(ZYU, ‚¶‚ã, ƒWƒ…),
-MAKETRANSTABLE(ZYE, ‚¶‚¥, ƒWƒF),
-MAKETRANSTABLE(JE, ‚¶‚¥, ƒWƒF),
-MAKETRANSTABLE(JYE, ‚¶‚¥, ƒWƒF),
-MAKETRANSTABLE(JO, ‚¶‚å, ƒWƒ‡),
-MAKETRANSTABLE(JYO, ‚¶‚å, ƒWƒ‡),
-MAKETRANSTABLE(ZYO, ‚¶‚å, ƒWƒ‡),
+/* ã¢ã‚ƒè¡Œ (DYA) */
+MAKETRANSTABLE(DYA, ã¢ã‚ƒ, ãƒ‚ãƒ£),
+MAKETRANSTABLE(DYU, ã¢ã‚…, ãƒ‚ãƒ¥),
+MAKETRANSTABLE(DYO, ã¢ã‚‡, ãƒ‚ãƒ§),
 
-/* ‚À‚ás (DYA) */
-MAKETRANSTABLE(DYA, ‚À‚á, ƒaƒƒ),
-MAKETRANSTABLE(DYU, ‚À‚ã, ƒaƒ…),
-MAKETRANSTABLE(DYO, ‚À‚å, ƒaƒ‡),
+/* ã³ã‚ƒè¡Œ */
+MAKETRANSTABLE(BYA, ã³ã‚ƒ, ãƒ“ãƒ£),
+MAKETRANSTABLE(BYU, ã³ã‚…, ãƒ“ãƒ¥),
+MAKETRANSTABLE(BYO, ã³ã‚‡, ãƒ“ãƒ§),
 
-/* ‚Ñ‚ás */
-MAKETRANSTABLE(BYA, ‚Ñ‚á, ƒrƒƒ),
-MAKETRANSTABLE(BYU, ‚Ñ‚ã, ƒrƒ…),
-MAKETRANSTABLE(BYO, ‚Ñ‚å, ƒrƒ‡),
+/* ã´ã‚ƒè¡Œ */
+MAKETRANSTABLE(PYA, ã´ã‚ƒ, ãƒ”ãƒ£),
+MAKETRANSTABLE(PYU, ã´ã‚…, ãƒ”ãƒ¥),
+MAKETRANSTABLE(PYO, ã´ã‚‡, ãƒ”ãƒ§),
 
-/* ‚Ò‚ás */
-MAKETRANSTABLE(PYA, ‚Ò‚á, ƒsƒƒ),
-MAKETRANSTABLE(PYU, ‚Ò‚ã, ƒsƒ…),
-MAKETRANSTABLE(PYO, ‚Ò‚å, ƒsƒ‡),
+/* === å°æ›¸ãæ–‡å­—ãƒ»ä¿ƒéŸ³ (SMALL CHARS & VARIANTS - X/L) === */
+/* ã‚è¡Œå° */
+MAKETRANSTABLE(XA, ã, ã‚¡),
+MAKETRANSTABLE(LA, ã, ã‚¡),
+MAKETRANSTABLE(XI, ãƒ, ã‚£),
+MAKETRANSTABLE(LI, ãƒ, ã‚£),
+MAKETRANSTABLE(LYI, ãƒ, ã‚£),
+MAKETRANSTABLE(XU, ã…, ã‚¥),
+MAKETRANSTABLE(LU, ã…, ã‚¥),
+MAKETRANSTABLE(XE, ã‡, ã‚§),
+MAKETRANSTABLE(LE, ã‡, ã‚§),
+MAKETRANSTABLE(LYE, ã‡, ã‚§),
+MAKETRANSTABLE(XO, ã‰, ã‚©),
+MAKETRANSTABLE(LO, ã‰, ã‚©),
 
-/* === ¬‘‚«•¶ŽšE‘£‰¹ (SMALL CHARS & VARIANTS - X/L) === */
-/* ‚ s¬ */
-MAKETRANSTABLE(XA, ‚Ÿ, ƒ@),
-MAKETRANSTABLE(LA, ‚Ÿ, ƒ@),
-MAKETRANSTABLE(XI, ‚¡, ƒB),
-MAKETRANSTABLE(LI, ‚¡, ƒB),
-MAKETRANSTABLE(LYI, ‚¡, ƒB),
-MAKETRANSTABLE(XU, ‚£, ƒD),
-MAKETRANSTABLE(LU, ‚£, ƒD),
-MAKETRANSTABLE(XE, ‚¥, ƒF),
-MAKETRANSTABLE(LE, ‚¥, ƒF),
-MAKETRANSTABLE(LYE, ‚¥, ƒF),
-MAKETRANSTABLE(XO, ‚§, ƒH),
-MAKETRANSTABLE(LO, ‚§, ƒH),
+/* ã£ (TSU/TU VARIANT FOR SMALL) */
+MAKETRANSTABLE(XTU, ã£, ãƒƒ),
+MAKETRANSTABLE(LTU, ã£, ãƒƒ),
+MAKETRANSTABLE(XTSU, ã£, ãƒƒ),
+MAKETRANSTABLE(LTSU, ã£, ãƒƒ),
 
-/* ‚Á (TSU/TU VARIANT FOR SMALL) */
-MAKETRANSTABLE(XTU, ‚Á, ƒb),
-MAKETRANSTABLE(LTU, ‚Á, ƒb),
-MAKETRANSTABLE(XTSU, ‚Á, ƒb),
-MAKETRANSTABLE(LTSU, ‚Á, ƒb),
+/* ã‚„è¡Œå° */
+MAKETRANSTABLE(XYA, ã‚ƒ, ãƒ£),
+MAKETRANSTABLE(LYA, ã‚ƒ, ãƒ£),
+MAKETRANSTABLE(XYU, ã‚…, ãƒ¥),
+MAKETRANSTABLE(LYU, ã‚…, ãƒ¥),
+MAKETRANSTABLE(XYO, ã‚‡, ãƒ§),
+MAKETRANSTABLE(LYO, ã‚‡, ãƒ§),
 
-/* ‚âs¬ */
-MAKETRANSTABLE(XYA, ‚á, ƒƒ),
-MAKETRANSTABLE(LYA, ‚á, ƒƒ),
-MAKETRANSTABLE(XYU, ‚ã, ƒ…),
-MAKETRANSTABLE(LYU, ‚ã, ƒ…),
-MAKETRANSTABLE(XYO, ‚å, ƒ‡),
-MAKETRANSTABLE(LYO, ‚å, ƒ‡),
+/* ã‚å° */
+MAKETRANSTABLE(XWA, ã‚Ž, ãƒ®),
+MAKETRANSTABLE(LWA, ã‚Ž, ãƒ®),
 
-/* ‚í¬ */
-MAKETRANSTABLE(XWA, ‚ì, ƒŽ),
-MAKETRANSTABLE(LWA, ‚ì, ƒŽ),
+/* ã‚«ãƒ»ã‚± (ãƒµ/ãƒ¶) */
+MAKETRANSTABLE(XKA, ãƒµ, ãƒµ),
+MAKETRANSTABLE(LKA, ãƒµ, ãƒµ),
+MAKETRANSTABLE(XKE, ãƒ¶, ãƒ¶),
+MAKETRANSTABLE(LKE, ãƒ¶, ãƒ¶),
 
-/* ƒJEƒP (ƒ•/ƒ–) */
-MAKETRANSTABLE(XKA, ƒ•, ƒ•),
-MAKETRANSTABLE(LKA, ƒ•, ƒ•),
-MAKETRANSTABLE(XKE, ƒ–, ƒ–),
-MAKETRANSTABLE(LKE, ƒ–, ƒ–),
+/* === å¤–æ¥èªžãƒ»æ‹¡å¼µè¡¨ç¾ (EXTENDED & VARIANTS) === */
+/* ã„ã‡ */
+MAKETRANSTABLE(YE, ã„ã‡, ã‚¤ã‚§),
 
-/* === ŠO—ˆŒêEŠg’£•\Œ» (EXTENDED & VARIANTS) === */
-/* ‚¢‚¥ */
-MAKETRANSTABLE(YE, ‚¢‚¥, ƒCƒF),
-
-/* ‚¤‚Ÿs (WHA/WA VARIANTS) */
-MAKETRANSTABLE(WYA, ‚¤‚Ÿ, ƒEƒ@),
-MAKETRANSTABLE(WYI, ‚î, ƒ),
-MAKETRANSTABLE(WI, ‚¤‚¡, ƒEƒB),
-MAKETRANSTABLE(WYE, ‚ï, ƒ‘),
-MAKETRANSTABLE(WE, ‚¤‚¥, ƒEƒF),
-MAKETRANSTABLE(WYO, ‚¤‚§, ƒEƒH),
+/* ã†ãè¡Œ (WHA/WA VARIANTS) */
+MAKETRANSTABLE(WYA, ã†ã, ã‚¦ã‚¡),
+MAKETRANSTABLE(WYI, ã‚, ãƒ°),
+MAKETRANSTABLE(WI, ã†ãƒ, ã‚¦ã‚£),
+MAKETRANSTABLE(WYE, ã‚‘, ãƒ±),
+MAKETRANSTABLE(WE, ã†ã‡, ã‚¦ã‚§),
+MAKETRANSTABLE(WYO, ã†ã‰, ã‚¦ã‚©),
 
 #ifdef trans_USE_smallW
-/* ‚­‚Ÿs (KWA/QWA) */
+/* ããè¡Œ (KWA/QWA) */
 
-MAKETRANSTABLE(KWA, ‚­‚Ÿ, ƒNƒ@),
-MAKETRANSTABLE(QWA, ‚­‚Ÿ, ƒNƒ@),
-MAKETRANSTABLE(KWI, ‚­‚¡, ƒNƒB),
-MAKETRANSTABLE(QWI, ‚­‚¡, ƒNƒB),
-MAKETRANSTABLE(KWE, ‚­‚¥, ƒNƒF),
-MAKETRANSTABLE(QWE, ‚­‚¥, ƒNƒF),
-MAKETRANSTABLE(KWO, ‚­‚§, ƒNƒH),
-MAKETRANSTABLE(QWO, ‚­‚§, ƒNƒH),
+MAKETRANSTABLE(KWA, ãã, ã‚¯ã‚¡),
+MAKETRANSTABLE(QWA, ãã, ã‚¯ã‚¡),
+MAKETRANSTABLE(KWI, ããƒ, ã‚¯ã‚£),
+MAKETRANSTABLE(QWI, ããƒ, ã‚¯ã‚£),
+MAKETRANSTABLE(KWE, ãã‡, ã‚¯ã‚§),
+MAKETRANSTABLE(QWE, ãã‡, ã‚¯ã‚§),
+MAKETRANSTABLE(KWO, ãã‰, ã‚¯ã‚©),
+MAKETRANSTABLE(QWO, ãã‰, ã‚¯ã‚©),
 
-/* ‚®‚Ÿs (GWA) */
-MAKETRANSTABLE(GWA, ‚®‚Ÿ, ƒOƒ@),
-MAKETRANSTABLE(GWI, ‚®‚¡, ƒOƒB),
-MAKETRANSTABLE(GWE, ‚®‚¥, ƒOƒF),
-MAKETRANSTABLE(GWO, ‚®‚§, ƒOƒH),
+/* ããè¡Œ (GWA) */
+MAKETRANSTABLE(GWA, ãã, ã‚°ã‚¡),
+MAKETRANSTABLE(GWI, ããƒ, ã‚°ã‚£),
+MAKETRANSTABLE(GWE, ãã‡, ã‚°ã‚§),
+MAKETRANSTABLE(GWO, ãã‰, ã‚°ã‚©),
 
 #endif
 
-MAKETRANSTABLE(CA, ‚Â‚Ÿ, ƒcƒ@),
-MAKETRANSTABLE(CI, ‚Â‚¡, ƒcƒB),
-MAKETRANSTABLE(CE, ‚Â‚¥, ƒcƒF),
-MAKETRANSTABLE(CO, ‚Â‚§, ƒcƒH),
+MAKETRANSTABLE(CA, ã¤ã, ãƒ„ã‚¡),
+MAKETRANSTABLE(CI, ã¤ãƒ, ãƒ„ã‚£),
+MAKETRANSTABLE(CE, ã¤ã‡, ãƒ„ã‚§),
+MAKETRANSTABLE(CO, ã¤ã‰, ãƒ„ã‚©),
 
-MAKETRANSTABLE(CYE, ‚¿‚¥, ƒ`ƒF),
+MAKETRANSTABLE(CYE, ã¡ã‡, ãƒã‚§),
 
-/* ‚Ä‚¡E‚Æ‚£E‚Å‚¡E‚Ç‚£ (TI/TU/DI/DU EXTENDED) */
-MAKETRANSTABLE(THI, ‚Ä‚¡, ƒeƒB),
-MAKETRANSTABLE(TYI, ‚Ä‚¡, ƒeƒB),
-MAKETRANSTABLE(THU, ‚Æ‚£, ƒgƒD),
-MAKETRANSTABLE(TYU, ‚Æ‚£, ƒgƒD),//
-//MAKETRANSTABLE(TYU, ‚Ä‚ã, ƒeƒ…), /* ¦‚Ä‚ã */
-MAKETRANSTABLE(DHI, ‚Å‚¡, ƒfƒB),
-MAKETRANSTABLE(DYI, ‚Å‚¡, ƒfƒB),
-MAKETRANSTABLE(DHU, ‚Ç‚£, ƒhƒD),
-MAKETRANSTABLE(DYU, ‚Ç‚£, ƒhƒD),
-//MAKETRANSTABLE(DYE, ‚Å‚ã, ƒfƒ…), /* ¦‚Å‚ã */
+/* ã¦ãƒãƒ»ã¨ã…ãƒ»ã§ãƒãƒ»ã©ã… (TI/TU/DI/DU EXTENDED) */
+MAKETRANSTABLE(THI, ã¦ãƒ, ãƒ†ã‚£),
+MAKETRANSTABLE(TYI, ã¦ãƒ, ãƒ†ã‚£),
+MAKETRANSTABLE(THU, ã¨ã…, ãƒˆã‚¥),
+MAKETRANSTABLE(TYU, ã¨ã…, ãƒˆã‚¥),//
+//MAKETRANSTABLE(TYU, ã¦ã‚…, ãƒ†ãƒ¥), /* â€»ã¦ã‚… */
+MAKETRANSTABLE(DHI, ã§ãƒ, ãƒ‡ã‚£),
+MAKETRANSTABLE(DYI, ã§ãƒ, ãƒ‡ã‚£),
+MAKETRANSTABLE(DHU, ã©ã…, ãƒ‰ã‚¥),
+MAKETRANSTABLE(DYU, ã©ã…, ãƒ‰ã‚¥),
+//MAKETRANSTABLE(DYE, ã§ã‚…, ãƒ‡ãƒ¥), /* â€»ã§ã‚… */
 
-/* ‚Ó‚Ÿs (FA/FI/FE/FO/FYU) */
-MAKETRANSTABLE(FA, ‚Ó‚Ÿ, ƒtƒ@),
-MAKETRANSTABLE(FI, ‚Ó‚¡, ƒtƒB),
-MAKETRANSTABLE(FE, ‚Ó‚¥, ƒtƒF),
-MAKETRANSTABLE(FO, ‚Ó‚§, ƒtƒH),
-MAKETRANSTABLE(FYU, ‚Ó‚ã, ƒtƒ…),
+/* ãµãè¡Œ (FA/FI/FE/FO/FYU) */
+MAKETRANSTABLE(FA, ãµã, ãƒ•ã‚¡),
+MAKETRANSTABLE(FI, ãµãƒ, ãƒ•ã‚£),
+MAKETRANSTABLE(FE, ãµã‡, ãƒ•ã‚§),
+MAKETRANSTABLE(FO, ãµã‰, ãƒ•ã‚©),
+MAKETRANSTABLE(FYU, ãµã‚…, ãƒ•ãƒ¥),
 
-/* ‚¤J‚Ÿs (VA/VI/VE/VO/VYU) */
-MAKETRANSTABLE(VA, ‚¤J‚Ÿ, ƒ”ƒ@),
-MAKETRANSTABLE(VI, ‚¤J‚¡, ƒ”ƒB),
-MAKETRANSTABLE(VE, ‚¤J‚¥, ƒ”ƒF),
-MAKETRANSTABLE(VO, ‚¤J‚§, ƒ”ƒH),
-MAKETRANSTABLE(VYU, ‚¤J‚ã, ƒ”ƒ…),
+/* ã†ã‚›ãè¡Œ (VA/VI/VE/VO/VYU) */
+MAKETRANSTABLE(VA, ã†ã‚›ã, ãƒ´ã‚¡),
+MAKETRANSTABLE(VI, ã†ã‚›ãƒ, ãƒ´ã‚£),
+MAKETRANSTABLE(VE, ã†ã‚›ã‡, ãƒ´ã‚§),
+MAKETRANSTABLE(VO, ã†ã‚›ã‰, ãƒ´ã‚©),
+MAKETRANSTABLE(VYU, ã†ã‚›ã‚…, ãƒ´ãƒ¥),
 
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <atlbase.h>
 #include <msctf.h>
@@ -14,9 +14,9 @@ enum class EditSessionRequest {
     EndCompositionCancel,
 };
 
-// CTextService‚Ìcomposition‘€ì‚ğITfContext::RequestEditSessionŒo—R‚Å
-// ŒÄ‚Ño‚·‚½‚ß‚Ìƒ‰ƒbƒp[BTfEditCookie‚ÍRequestEditSessionŒÄ‚Ño‚µ‘¤‚©‚ç‚µ‚©
-// æ“¾‚Å‚«‚È‚¢‚½‚ßAÀÛ‚Ìˆ—‚ÍCTextService‘¤‚Ìƒƒ\ƒbƒh‚ÉˆÏ÷‚·‚éB
+// CTextServiceã®compositionæ“ä½œã‚’ITfContext::RequestEditSessionçµŒç”±ã§
+// å‘¼ã³å‡ºã™ãŸã‚ã®ãƒ©ãƒƒãƒ‘ãƒ¼ã€‚TfEditCookieã¯RequestEditSessionå‘¼ã³å‡ºã—å´ã‹ã‚‰ã—ã‹
+// å–å¾—ã§ããªã„ãŸã‚ã€å®Ÿéš›ã®å‡¦ç†ã¯CTextServiceå´ã®ãƒ¡ã‚½ãƒƒãƒ‰ã«å§”è­²ã™ã‚‹ã€‚
 class CEditSession : public ITfEditSession {
 public:
     CEditSession(CTextService* pTextService, ITfContext* pContext,
@@ -33,7 +33,7 @@ public:
 
 private:
     LONG _refCount;
-    CTextService* _pTextService; // AddRef/Release‚ÅŠ—LŒ ‚ğ‚Â
+    CTextService* _pTextService; // AddRef/Releaseã§æ‰€æœ‰æ¨©ã‚’æŒã¤
     CComPtr<ITfContext> _pContext;
     EditSessionRequest _req;
 };

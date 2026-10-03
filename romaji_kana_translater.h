@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <vector>
 #include <string>
@@ -18,21 +18,29 @@ class romaji_kana_translater
 public:
 	romaji_kana_translater();
 	~romaji_kana_translater();
-	// true: •ÏŠ·‚³‚êCm_buffer‚Í‹ó‚É‚È‚é false: •ÏŠ·‚³‚ê‚¸Cƒoƒbƒtƒ@‚Íkey‚ª’Ç‰Á‚³‚ê‚Äc‚é(qelf‘O’ñ)
+	// true: å¤‰æ›ã•ã‚Œï¼Œm_bufferã¯ç©ºã«ãªã‚‹ false: å¤‰æ›ã•ã‚Œãšï¼Œãƒãƒƒãƒ•ã‚¡ã¯keyãŒè¿½åŠ ã•ã‚Œã¦æ®‹ã‚‹(qelfå‰æ)
 	BOOL translate_qelf(const std::wstring key, std::wstring& outstr);
 
-	// true: •ÏŠ·‚³‚êCm_buffer‚Í‹ó‚É‚È‚é false: •ÏŠ·‚³‚ê‚¸Cƒoƒbƒtƒ@‚Íkey‚ª’Ç‰Á‚³‚ê‚Äc‚é
+	// true: å¤‰æ›ã•ã‚Œï¼Œm_bufferã¯ç©ºã«ãªã‚‹ false: å¤‰æ›ã•ã‚Œãšï¼Œãƒãƒƒãƒ•ã‚¡ã¯keyãŒè¿½åŠ ã•ã‚Œã¦æ®‹ã‚‹
 	BOOL translate_kigou(const int keycode, std::wstring& outstr);
 	inline bool contain_kigou(const KeyCode keycode) const{
 		return m_KigouToJpnKigou.find(keycode) != m_KigouToJpnKigou.end();
 	}
-	// ¬•¶š‚Å•Ô‚·B
-	inline WCHAR get_last_translate_last_shiin() const { return m_last_shiin +ToSmallAlphabet; }
+	// å°æ–‡å­—ã§è¿”ã™ã€‚
+	// æœªè¨˜æ†¶ã®æ™‚ã¯ L'\0' ã‚’è¿”ã™(å‘¼ã³å‡ºã—å´ã¯è¾æ›¸ã‚­ãƒ¼ã«ä»˜åŠ ã—ãªã„ã“ã¨)
+	inline WCHAR get_last_translate_last_shiin() const {
+		return m_last_shiin == L'\0' ? L'\0' : static_cast<WCHAR>(m_last_shiin + ToSmallAlphabet);
+	}
+
+	inline void reset() {
+		m_buffer.clear();
+		m_last_shiin = L'\0';
+	}
 private:
 	std::wstring m_buffer;
 	std::unordered_map<std::wstring, std::vector<std::wstring>> m_RomajiToKana;
 	std::unordered_map<int, std::wstring>m_KigouToJpnKigou;
 
-	WCHAR m_last_shiin;// ÅŒã‚ÉQ-ELF‚É•ÏŠ·‚³‚ê‚½q‰¹‚Ìƒ[ƒ}š•”•ª(—á: k, s, t, a, i)(•ê‰¹‚Íaiueo)
+	WCHAR m_last_shiin;// æœ€å¾Œã«Q-ELFã«å¤‰æ›ã•ã‚ŒãŸå­éŸ³ã®ãƒ­ãƒ¼ãƒå­—éƒ¨åˆ†(ä¾‹: k, s, t, a, i)(æ¯éŸ³ã¯aiueo)
 };
 

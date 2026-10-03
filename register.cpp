@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #define WIN32_LEAN_AND_MEAN
 #include <atlbase.h>
 #include <msctf.h>
@@ -67,13 +67,13 @@ STDAPI DllRegisterServer(void) {
     WCHAR szDllPath[MAX_PATH];
     WCHAR szRegKeyPath[256];
 
-    // CLSID‚ğ•¶š—ñ‚É•ÏŠ·
+    // CLSIDã‚’æ–‡å­—åˆ—ã«å¤‰æ›
     if (!StringFromGUID2(CLSID_new_tettyskk, szClsidString,
         ARRAYSIZE(szClsidString))) {
         return E_FAIL;
     }
 
-    // HKEY_CLASSES_ROOT/CLSID/{XXX....}‚ÉƒL[‚ğì¬
+    // HKEY_CLASSES_ROOT/CLSID/{XXX....}ã«ã‚­ãƒ¼ã‚’ä½œæˆ
     StringCchPrintf(szRegKeyPath, ARRAYSIZE(szRegKeyPath),
         CLSIDSTR_ TEXT("\\%s"), szClsidString);
     if (!SetRegistryValue(HKEY_CLASSES_ROOT, szRegKeyPath, NULL, REG_SZ,
@@ -82,7 +82,7 @@ STDAPI DllRegisterServer(void) {
         return E_FAIL;
     }
 
-    // InprocServer32ƒTƒuƒL[‚É‚±‚ÌDLL‚Ìƒtƒ‹ƒpƒX‚ğ‘‚«‚Ş
+    // InprocServer32ã‚µãƒ–ã‚­ãƒ¼ã«ã“ã®DLLã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’æ›¸ãè¾¼ã‚€
     StringCchPrintf(szRegKeyPath, ARRAYSIZE(szRegKeyPath),
         CLSIDSTR_ TEXT("\\%s\\") _INPROCSERVER32STR, szClsidString);
     if (GetModuleFileName(g_hModule, szDllPath, ARRAYSIZE(szDllPath)) == FALSE) {
@@ -94,7 +94,7 @@ STDAPI DllRegisterServer(void) {
         return E_FAIL;
     }
 
-    // ƒXƒŒƒbƒhƒ‚ƒfƒ‹‚ğApartment‚Æ‚µ‚Ä‘‚«‚ŞB
+    // ã‚¹ãƒ¬ãƒƒãƒ‰ãƒ¢ãƒ‡ãƒ«ã‚’Apartmentã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚
     if (!SetRegistryValue(HKEY_CLASSES_ROOT, szRegKeyPath, _THREADINGMODELSTR,
         REG_SZ, (const BYTE*)APARTMENTSTR,
         (wcslen(APARTMENTSTR) + 1) * sizeof(WCHAR))) {
@@ -104,9 +104,9 @@ STDAPI DllRegisterServer(void) {
     // Register Profiles
     // ref
     // https://github.com/nathancorvussolis/corvusskk/blob/2904b3ad7ba80e66e717aef6805164c74fcec71d/imcrvtip/Register.cpp#L35
-    // TSF‚ÉIME‚Æ‚µ‚Ä“o˜^
+    // TSFã«IMEã¨ã—ã¦ç™»éŒ²
 
-    // ƒvƒƒtƒ@ƒCƒ‹‚Ì“o˜^
+    // ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ã®ç™»éŒ²
     {
         CComPtr<ITfInputProcessorProfileMgr> pProfileMgr;
         hr = pProfileMgr.CoCreateInstance(CLSID_TF_InputProcessorProfiles);
@@ -121,7 +121,7 @@ STDAPI DllRegisterServer(void) {
             return hr;
     }
 
-    // ƒJƒeƒSƒŠ‚Ì“o˜^
+    // ã‚«ãƒ†ã‚´ãƒªã®ç™»éŒ²
     {
         CComPtr<ITfCategoryMgr> pCategoryMgr;
         HRESULT hrCat = pCategoryMgr.CoCreateInstance(CLSID_TF_CategoryMgr);

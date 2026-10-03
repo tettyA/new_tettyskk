@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "globals.h"
 
 #define INITGUID
@@ -14,7 +14,7 @@ DEFINE_GUID(CLSID_new_tettyskk, 0xc1827914, 0x9a3, 0x44c0, 0x95, 0xa2, 0x4a,
 DEFINE_GUID(GUID_Profile_SkkIme, 0x829224a8, 0x964c, 0x4acb, 0x84, 0xb4, 0xf9,
     0x69, 0x6, 0x8, 0x4b, 0xee);
 
-// –¢Šm’è“ü—Í(composition)—p‚Ì•\¦‘®«GUID
+// æœªç¢ºå®šå…¥åŠ›(composition)ç”¨ã®è¡¨ç¤ºå±æ€§GUID
 // {216D13C4-3628-4BD5-A214-A1F9B9BACF74}
 DEFINE_GUID(GUID_DisplayAttributeInput,
     0x216d13c4, 0x3628, 0x4bd5, 0xa2, 0x14, 0xa1, 0xf9, 0xb9, 0xba, 0xcf, 0x74);

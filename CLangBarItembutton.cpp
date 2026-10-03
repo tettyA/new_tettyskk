@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "globals.h"
 #include "ClangBarItemButton.h"
 #include "text_service.h"
@@ -90,15 +90,15 @@ STDMETHODIMP_(HRESULT __stdcall) CLangBarItemButton::GetStatus(DWORD* pdwStatus)
 		return E_INVALIDARG;
 	}
 
-	//TODO: _IsKeyBoardDisabled()“I‚ÈŠÖ”‚ðì¬‚µ‚ÄAƒL[ƒ{[ƒh‚ª–³Œø‰»‚³‚ê‚Ä‚¢‚éê‡‚ÍTF_LBI_STATUS_DISABLED‚ð•Ô‚·‚æ‚¤‚É‚·‚é
+	//TODO: _IsKeyBoardDisabled()çš„ãªé–¢æ•°ã‚’ä½œæˆã—ã¦ã€ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãŒç„¡åŠ¹åŒ–ã•ã‚Œã¦ã„ã‚‹å ´åˆã¯TF_LBI_STATUS_DISABLEDã‚’è¿”ã™ã‚ˆã†ã«ã™ã‚‹
 	*pdwStatus = 0;
 	return S_OK;
 }
 
 STDMETHODIMP_(HRESULT __stdcall) CLangBarItemButton::Show(BOOL fShow)
 {
-	//•\Ž¦E”ñ•\Ž¦‚ÌØ‚è‘Ö‚¦—v‹
-    //“Á‚É‰½‚à‚µ‚È‚¢
+	//è¡¨ç¤ºãƒ»éžè¡¨ç¤ºã®åˆ‡ã‚Šæ›¿ãˆè¦æ±‚
+    //ç‰¹ã«ä½•ã‚‚ã—ãªã„
 	return S_OK;
 }
 
@@ -114,19 +114,19 @@ STDMETHODIMP_(HRESULT __stdcall) CLangBarItemButton::GetTooltipString(BSTR* pbst
 
 STDMETHODIMP_(HRESULT __stdcall) CLangBarItemButton::OnClick(TfLBIClick click, POINT pt, const RECT* prcArea)
 {
-	// TODO: ƒNƒŠƒbƒNŽž‚Ìˆ—‚ðŽÀ‘•‚·‚é
+	// TODO: ã‚¯ãƒªãƒƒã‚¯æ™‚ã®å‡¦ç†ã‚’å®Ÿè£…ã™ã‚‹
 	return S_OK;
 }
 
 STDMETHODIMP_(HRESULT __stdcall) CLangBarItemButton::InitMenu(ITfMenu* pMenu)
 {
-	// TODO: ƒƒjƒ…[‚Ì‰Šú‰»ˆ—‚ðŽÀ‘•‚·‚és
+	// TODO: ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®åˆæœŸåŒ–å‡¦ç†ã‚’å®Ÿè£…ã™ã‚‹s
 	return S_OK;
 }
 
 STDMETHODIMP_(HRESULT __stdcall) CLangBarItemButton::OnMenuSelect(UINT wID)
 {
-	// TODO: ƒƒjƒ…[‘I‘ðŽž‚Ìˆ—‚ðŽÀ‘•‚·‚é
+	// TODO: ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠžæ™‚ã®å‡¦ç†ã‚’å®Ÿè£…ã™ã‚‹
 	return S_OK;
 }
 
@@ -226,9 +226,15 @@ HRESULT CLangBarItemButton::_Init()
 	ITfLangBarItemMgr* pLangBarItemMgr = nullptr;
 	ITfThreadMgr* pThreadMgr = nullptr;
 
+	if (_pSkkIme == nullptr) {
+		return E_FAIL;
+	}
 	_pSkkIme->__GetThreadMgr(&pThreadMgr);
+	if (pThreadMgr == nullptr) {
+		return E_FAIL;
+	}
 	if (SUCCEEDED(pThreadMgr->QueryInterface(IID_PPV_ARGS(&pLangBarItemMgr))) && pLangBarItemMgr != nullptr) {
-		//Ž©•ªŽ©g‚ð“o˜^
+		//è‡ªåˆ†è‡ªèº«ã‚’ç™»éŒ²
 		if (FAILED(pLangBarItemMgr->AddItem(this))) {
 			pLangBarItemMgr->Release();
 			pThreadMgr->Release();
@@ -248,6 +254,10 @@ HRESULT CLangBarItemButton::_Init()
 HRESULT CLangBarItemButton::_Uninit()
 {
 	ITfThreadMgr* pThreadMgr = nullptr;
+	if (_pSkkIme == nullptr) {
+		return S_OK;
+	}
+	// Deactivateæ¸ˆã¿ãªã‚‰pThreadMgrã¯nullptrã®ã¾ã¾ã«ãªã‚‹(ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰ã‚‚å‘¼ã°ã‚Œã‚‹ãŸã‚)
 	_pSkkIme->__GetThreadMgr(&pThreadMgr);
 
 	if (pThreadMgr) {

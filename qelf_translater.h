@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 
 #include <vector>
 #include <unordered_map>
 
-//‘÷‰¹
+//æ¿éŸ³
 #define SAMEHAND 1
-//´‰¹
+//æ¸…éŸ³
 #define ANOTHERHAND 0
 
 
@@ -16,7 +16,7 @@
 #define ex_boin     (0x9C)
 #define ex_sakujo   (0x9A)
 
-// ÅŒã‚É WCHAR_XTU ‚ğ•t‚¯‚é‚ÆC‘£‰¹(‚Á)‚ª‘}“ü‚³‚ê‚é ( SA% -> ‚Á‚³, KYA% -> ‚Á‚«‚á) 
+// æœ€å¾Œã« WCHAR_XTU ã‚’ä»˜ã‘ã‚‹ã¨ï¼Œä¿ƒéŸ³(ã£)ãŒæŒ¿å…¥ã•ã‚Œã‚‹ ( SA% -> ã£ã•, KYA% -> ã£ãã‚ƒ) 
 #define WCHAR_XTU (L'%')
 
 using  KeyCode = WCHAR;
@@ -25,7 +25,7 @@ struct KMP {
         None, L, R,
     };
 
-    // ‚ ‚éƒL[‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚é‚ÌKMP—v‘f
+    // ã‚ã‚‹ã‚­ãƒ¼ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ã®KMPè¦ç´ 
     struct KMPelm {
         enum class Cmd
         {
@@ -33,11 +33,11 @@ struct KMP {
             DSend
         };
 
-        Cmd cmd;  // ‚±‚ÌƒL[‚ªSend‚©CDSend‚Å‚ ‚é‚©
-		KMP::Dir dir;  // ‚±‚ÌƒL[‚ÌDir (L/R/None)
-        KeyCode to_samedir;  // “¯‚¶Dir‚ÌC‘—‚ç‚ê‚éKeyCode
-		KeyCode to_otherdir;// ˆá‚¤Dir‚ÌC‘—‚ç‚ê‚éKeyCode
-        KeyCode to_secboin; // “ñ“x–Ú‚É‰Ÿ‚³‚ê‚½C‘—‚ç‚ê‚é•ê‰¹(‚¾‚¢‚½‚¢)‚ÌKeyCode
+        Cmd cmd;  // ã“ã®ã‚­ãƒ¼ãŒSendã‹ï¼ŒDSendã§ã‚ã‚‹ã‹
+		KMP::Dir dir;  // ã“ã®ã‚­ãƒ¼ã®Dir (L/R/None)
+        KeyCode to_samedir;  // åŒã˜Dirã®æ™‚ï¼Œé€ã‚‰ã‚Œã‚‹KeyCode
+		KeyCode to_otherdir;// é•ã†Dirã®æ™‚ï¼Œé€ã‚‰ã‚Œã‚‹KeyCode
+        KeyCode to_secboin; // äºŒåº¦ç›®ã«æŠ¼ã•ã‚ŒãŸæ™‚ï¼Œé€ã‚‰ã‚Œã‚‹æ¯éŸ³(ã ã„ãŸã„)ã®KeyCode
     };
 
     struct SpecialKeyStates {
@@ -61,20 +61,23 @@ public:
 
 
 	/// <summary>
-    /// QWERTY”z—ñ‚©‚çQ-ELF”z—ñ‚Ö‚Ì•ÏŠ·‚ğs‚¢‚Ü‚·B
-	/// ‘S‚Ä‚Ìˆø”‚Í‘å•¶š‚Åw’è‚µC•Ô‹p‚³‚ê‚Ü‚·B
+    /// QWERTYé…åˆ—ã‹ã‚‰Q-ELFé…åˆ—ã¸ã®å¤‰æ›ã‚’è¡Œã„ã¾ã™ã€‚
+	/// å…¨ã¦ã®å¼•æ•°ã¯å¤§æ–‡å­—ã§æŒ‡å®šã—ï¼Œè¿”å´ã•ã‚Œã¾ã™ã€‚
     /// </summary>
-    /// <param name="key">QWERTY”z—ñ‚ÌƒL[</param>
-    /// <param name="output">–ß‚è’l‚ªtrue‚ÌC•ÏŠ·‚µ‚½‰¼–¼‚ªKanaMode‚É‰‚¶‚Ä“ü‚è‚Ü‚·</param>
-    /// <returns>true‚ÌC•ÏŠ·‚ğs‚Á‚½Bfalse‚ÌC•ÏŠ·‚É’B‚µ‚È‚©‚Á‚½</returns>
+    /// <param name="key">QWERTYé…åˆ—æ™‚ã®ã‚­ãƒ¼</param>
+    /// <param name="output">æˆ»ã‚Šå€¤ãŒtrueã®æ™‚ï¼Œå¤‰æ›ã—ãŸä»®åãŒKanaModeã«å¿œã˜ã¦å…¥ã‚Šã¾ã™</param>
+    /// <returns>trueã®æ™‚ï¼Œå¤‰æ›ã‚’è¡Œã£ãŸã€‚falseã®æ™‚ï¼Œå¤‰æ›ã«é”ã—ãªã‹ã£ãŸ</returns>
 	bool translate_qwerty_to_qelf(const KeyCode& key, std::wstring& output);
 
 	inline bool _is_contain_key(const KeyCode& key) const { return m_KMP.KMPs.contains(key); }
 	void load_KMP_table(const std::wstring& filename);
     inline bool get_shift_pushed_last() const { return m_KMP.is_shift_pressed_last; }
-private:
+
+
     void reset_kmp_state();
-	//QWERTY”z—ñ‚©‚çQ-ELF”z—ñ‚Ö‚Ì•ÏŠ·ƒe[ƒuƒ‹
+private:
+	void _ConsumeShiftState();
+	//QWERTYé…åˆ—ã‹ã‚‰Q-ELFé…åˆ—ã¸ã®å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«
 	KMP m_KMP;
 
     int DSendCnt;

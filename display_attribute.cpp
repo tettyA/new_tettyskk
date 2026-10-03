@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "display_attribute.h"
 
 
@@ -8,7 +8,7 @@ void reset_setting_display_attribute() {
 
 CDisplayAttributeInfo::CDisplayAttributeInfo() : _refCount(1) {
     reset_setting_display_attribute();
-    // _attribute = g_Setting.display_attribute; // İ’è’l‚ÌƒOƒ[ƒoƒ‹•Ï”‚©‚ç‰Šú‰»
+    // _attribute = g_Setting.display_attribute; // è¨­å®šå€¤ã®ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã‹ã‚‰åˆæœŸåŒ–
 }
 
 CDisplayAttributeInfo::~CDisplayAttributeInfo() {}
@@ -78,7 +78,7 @@ STDAPI CDisplayAttributeInfo::SetAttributeInfo(const TF_DISPLAYATTRIBUTE* pda) {
 }
 
 STDAPI CDisplayAttributeInfo::Reset() {
-    reset_setting_display_attribute(); // İ’è’l‚ÌƒOƒ[ƒoƒ‹•Ï”‚©‚çƒŠƒZƒbƒg
+    reset_setting_display_attribute(); // è¨­å®šå€¤ã®ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã‹ã‚‰ãƒªã‚»ãƒƒãƒˆ
     return S_OK;
 }
 

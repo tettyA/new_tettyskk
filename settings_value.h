@@ -11,6 +11,7 @@ struct settings_value {
 	std::wstring kmp_file_path;
 	std::wstring skk_dic_file_path;
 	std::wstring skk_user_dic_file_path;
+	int single_candidate_max_count;
 };
 
 extern settings_value g_Setting;
