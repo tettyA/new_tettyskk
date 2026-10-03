@@ -23,10 +23,13 @@ void initialize_setting() {
 }
 
 void initialize_setting_display_attribute() {
-	g_Setting.display_attribute.crText.type = TF_CT_NONE; // テキストの前景色 (指定せず)
+	g_Setting.display_attribute.crText.type = TF_CT_NONE;//TF_CT_COLORREF; // = TF_CT_NONE; // テキストの前景色 (指定せず)
+	//g_Setting.display_attribute.crText.cr = RGB(255, 0, 255); // テキストの前景色 (黒)
 	g_Setting.display_attribute.crBk.type = TF_CT_NONE; // テキストの背景色 (指定せず)
+	//g_Setting.display_attribute.crBk.cr = RGB(0, 255, 0); // テキストの背景色 (白)
 	g_Setting.display_attribute.lsStyle = TF_LS_SOLID; // 下線の種類 (実線)
 	g_Setting.display_attribute.fBoldLine = FALSE; // 下線を太くするか (通常の太さ)
 	g_Setting.display_attribute.crLine.type = TF_CT_NONE; // 下線の色 (指定せず)
+	//g_Setting.display_attribute.crLine.cr = RGB(28, 110, 83); // 下線の色 (赤)
 	g_Setting.display_attribute.bAttr = TF_ATTR_INPUT; // 未確定文字列の属性
 }
