@@ -312,7 +312,8 @@ void CTextService::_ResetAllState()
 
 void CTextService::_OnDictionaryRegistration(const std::wstring& reading, WCHAR okuriganashiin, const std::wstring& word)
 {
-	// TODO: 後で送り仮名付きのやつの登録も出来るようにする
+	// okuriganashiin != L'\0' の場合は送り仮名付き登録。
+	// 辞書キーは「語幹 + 子音」(例: わたs -> 渡) になる。
 	SKKCandidate candidate;
     // ;前と，後で区切る(後は;含む)
     const size_t semi = word.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
@@ -823,6 +824,8 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         // 辞書キーは「語幹 + 送り仮名の子音」(例: おもw)
         std::wstring dictKey = m_henkanGokan;
         WCHAR shiin = m_romajiKanaTranslater.get_last_translate_last_shiin();
+        // 辞書登録時に参照できるよう m_okuriganashiin にも保存する
+        m_okuriganashiin = shiin;
         if (shiin != L'\0') {
             dictKey += shiin;
         }
