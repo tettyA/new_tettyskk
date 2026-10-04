@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CCandidateWindow.h"
 
 CCandidateWindow::CCandidateWindow()
@@ -124,7 +124,7 @@ void CCandidateWindow::SetCandidates(const SKKCandidates & candidas)
 	m_candidates = candidas;
 }
 
-// m_currentIndex‚©‚çCmulti‚Å6ŒÂCsingle‚Å1ŒÂ‚ÌŒó•â‚ğ•`‰æ‚·‚éB
+// m_currentIndexã‹ã‚‰ï¼Œmultiã§6å€‹ï¼Œsingleã§1å€‹ã®å€™è£œã‚’æç”»ã™ã‚‹ã€‚
 void CCandidateWindow::SetShowIndex(int candidates_index, CandidateWindowDrawMode drawmode)
 {
 	m_drawmode = drawmode;
@@ -185,7 +185,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 {
 	SetTextColor(hdc, g_Setting.candidate_window_normal_font_color);
 	{
-		std::wstring testStr = L"‚ ";
+		std::wstring testStr = L"ã‚";
 		SIZE size;
 		GetTextExtentPoint32W(hdc, testStr.c_str(), (int)testStr.length(), &size);
 		LINE_HEIGHT = size.cy;
@@ -210,7 +210,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 	DebugTrace((L"RenderContent: availableWidth=" + std::to_wstring(availableWidth) + L", wrapLimit=" + std::to_wstring(wrapLimit)));
 	if (m_isRegisterMode) {
 		std::vector<ColorfulText> texts{
-			{L"[“o˜^] ", g_Setting.candidate_window_hilight_font_color},
+			{L"[ç™»éŒ²] ", g_Setting.candidate_window_hilight_font_color},
 			{m_registerTarget, g_Setting.candidate_window_normal_font_color},
 			{L" : ", g_Setting.candidate_window_dim_font_color},
 			{m_registerCommittedInput, g_Setting.candidate_window_normal_font_color},
@@ -258,7 +258,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 			appendSegment(segment);
 		}
 
-		appendSegment({ {L" c:" + std::to_wstring(max(0, candCount - (m_currentIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color} });
+		appendSegment({ {L" æ®‹:" + std::to_wstring(max(0, candCount - (m_currentIndex + SKK_CHOOSE_CANDIDATES_BIGSTR_LEN))), g_Setting.candidate_window_hilight_font_color} });
 		flushLine();
 	}
 

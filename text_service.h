@@ -19,6 +19,7 @@ struct SKK_RegDict_State {
 	std::wstring compositionBuffer;
     std::wstring henkanGokan;
     std::wstring okurigana;
+    WCHAR okuriganashiin; // 送り仮名の最初の子音 (例: 渡す -> 's')
     SKKCandidates candidates;
     int candidateIndex;
 	CandidateWindowDrawMode drawmode;
@@ -136,7 +137,8 @@ private:
     void _UpdateCandidateWindow(TfEditCookie ec, ITfContext* pContext);
     void _HideCandidateWindow();
     void _EnterDictionaryRegistration(ITfContext* pContext);
-    void _OnDictionaryRegistration(const std::wstring& reading, const std::wstring& word);
+    void _OnDictionaryRegistration(const std::wstring& reading, WCHAR okuriganashiin, const std::wstring& word);
     bool _GetCaretRect(TfEditCookie ec, ITfContext* pContext, RECT* pRect);
 
 };
+

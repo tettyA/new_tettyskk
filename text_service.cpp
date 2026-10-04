@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include <ctffunc.h>
 
 #include "text_service.h"
@@ -8,16 +8,16 @@
 
 #define _isAlphabet(_key_) ((_key_ >= 'A' && _key_ <= 'Z'))
 
-// ‚±‚ÌIME‚ªˆ—‚·‚éƒL[‚©”»’è‚·‚é(TRUE=IME‚ªH‚×‚é / FALSE=ƒAƒvƒŠ‚Ö‘f’Ê‚µ)B
-// ‘Î‰: Q-ELF”z—ñE‹L†ƒe[ƒuƒ‹‚ÉÚ‚Á‚Ä‚¢‚éƒL[, Backspace/Enter/Escape(composition’†‚Ì‚İ),
-//       Space(•ÏŠ·’†E«‘“o˜^’†‚Ì‚İ)BHankakuƒ‚[ƒh‚ÆACtrl/Alt•¹—pƒL[‚Í‘S‚Ä‘f’Ê‚µ‚·‚éB
-// NOTE: IME ON/OFFØ‘ÖƒRƒ“ƒp[ƒgƒƒ“ƒg‚Í–¢‘Î‰‚Ì‚½‚ßA‚±‚ÌTIP‚ªƒAƒNƒeƒBƒu‚ÈŠÔ‚Íí‚É‚±‚Ì”»’è‚ª“­‚­B
+// ã“ã®IMEãŒå‡¦ç†ã™ã‚‹ã‚­ãƒ¼ã‹åˆ¤å®šã™ã‚‹(TRUE=IMEãŒé£Ÿã¹ã‚‹ / FALSE=ã‚¢ãƒ—ãƒªã¸ç´ é€šã—)ã€‚
+// å¯¾å¿œ: Q-ELFé…åˆ—ãƒ»è¨˜å·ãƒ†ãƒ¼ãƒ–ãƒ«ã«è¼‰ã£ã¦ã„ã‚‹ã‚­ãƒ¼, Backspace/Enter/Escape(compositionä¸­ã®ã¿),
+//       Space(å¤‰æ›ä¸­ãƒ»è¾æ›¸ç™»éŒ²ä¸­ã®ã¿)ã€‚Hankakuãƒ¢ãƒ¼ãƒ‰ã¨ã€Ctrl/Altä½µç”¨ã‚­ãƒ¼ã¯å…¨ã¦ç´ é€šã—ã™ã‚‹ã€‚
+// NOTE: IME ON/OFFåˆ‡æ›¿ã‚³ãƒ³ãƒ‘ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã¯æœªå¯¾å¿œã®ãŸã‚ã€ã“ã®TIPãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªé–“ã¯å¸¸ã«ã“ã®åˆ¤å®šãŒåƒãã€‚
 BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     WPARAM key = (WPARAM)wParam;
     if (g_currentMode == SKKMode::Hankaku) {
         return FALSE;
     }
-    // Ctrl/Alt•¹—p‚ÌƒVƒ‡[ƒgƒJƒbƒg(Ctrl+C“™)‚ÍƒAƒvƒŠ‚É“n‚·BCtrl+J‚¾‚¯‚ÍŒÄ‚Ño‚µ‘¤‚Åˆ—‚·‚é
+    // Ctrl/Altä½µç”¨ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆ(Ctrl+Cç­‰)ã¯ã‚¢ãƒ—ãƒªã«æ¸¡ã™ã€‚Ctrl+Jã ã‘ã¯å‘¼ã³å‡ºã—å´ã§å‡¦ç†ã™ã‚‹
     if ((GetKeyState(VK_CONTROL) & 0x8000) || (GetKeyState(VK_MENU) & 0x8000)) {
         return FALSE;
     }
@@ -30,7 +30,7 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     case VK_ESCAPE:
         return __HasComposition();
     case VK_SPACE:
-        // •ÏŠ·’†/«‘“o˜^’†ˆÈŠO‚ÌƒXƒy[ƒX‚Í’Êí‚Ì‹ó”’‚Æ‚µ‚ÄƒAƒvƒŠ‚É“n‚·
+        // å¤‰æ›ä¸­/è¾æ›¸ç™»éŒ²ä¸­ä»¥å¤–ã®ã‚¹ãƒšãƒ¼ã‚¹ã¯é€šå¸¸ã®ç©ºç™½ã¨ã—ã¦ã‚¢ãƒ—ãƒªã«æ¸¡ã™
         return __HasComposition() || g_currentMode == SKKMode::Henkan;
     default:
         return FALSE;
@@ -42,8 +42,8 @@ BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
 void _ConvertToKatakana(std::wstring& str)
 {
     for (size_t i = 0; i < str.length(); i++) {
-        if (str[i] >= L'‚Ÿ' && str[i] <= L'‚ñ') {
-            str[i] = str[i] - L'‚Ÿ' + L'ƒ@';
+        if (str[i] >= L'ã' && str[i] <= L'ã‚“') {
+            str[i] = str[i] - L'ã' + L'ã‚¡';
         }
     }
 }
@@ -51,8 +51,8 @@ void _ConvertToKatakana(std::wstring& str)
 void _ConvertToHiragana(std::wstring& str)
 {
     for (size_t i = 0; i < str.length(); i++) {
-        if (str[i] >= L'ƒ@' && str[i] <= L'ƒ“') {
-            str[i] = str[i] + L'‚Ÿ' - L'ƒ@';
+        if (str[i] >= L'ã‚¡' && str[i] <= L'ãƒ³') {
+            str[i] = str[i] + L'ã' - L'ã‚¡';
         }
     }
 }
@@ -61,21 +61,21 @@ void CTextService::__StartHenkanMode(ITfContext *pic)
 {
     __changeCurrentMode(SKKMode::Henkan);
 
-    // ‘O‰ñ‚Ì•ÏŠ·ó‘Ô‚ªc‚Á‚Ä‚¢‚é‚ÆŒó•â•\¦‚ª‰ó‚ê‚é‚½‚ß‰Šú‰»‚·‚é
+    // å‰å›ã®å¤‰æ›çŠ¶æ…‹ãŒæ®‹ã£ã¦ã„ã‚‹ã¨å€™è£œè¡¨ç¤ºãŒå£Šã‚Œã‚‹ãŸã‚åˆæœŸåŒ–ã™ã‚‹
     m_candidates.clear();
     m_candidateIndex = 0;
     m_drawmode = CandidateWindowDrawMode::Single;
     m_henkanGokan.clear();
     m_okurigana.clear();
 
-    // «‘“o˜^’†‚ÍŠù‚Écomposition‚ª‘¶İ‚·‚é‚Ì‚ÅV‹Kì¬‚µ‚È‚¢
+    // è¾æ›¸ç™»éŒ²ä¸­ã¯æ—¢ã«compositionãŒå­˜åœ¨ã™ã‚‹ã®ã§æ–°è¦ä½œæˆã—ãªã„
     HRESULT hrSession = S_OK;
     __RequestEditSession(pic, __HasComposition() ? EditSessionRequest::DoComposition : EditSessionRequest::StartComposition, hrSession);
 }
 
 void CTextService::__EndHenkanMode(ITfContext* pic)
 {
-    // Šm’èEƒLƒƒƒ“ƒZƒ‹Œã‚ÍŸ‚Ì“ü—Í‚É”õ‚¦‚Ä•ÏŠ·ó‘Ô‚ÆQ-ELF/ƒ[ƒ}š‚Ì“à•”ó‘Ô‚ğ‘S‚Ä‰Šú‰»‚·‚é
+    // ç¢ºå®šãƒ»ã‚­ãƒ£ãƒ³ã‚»ãƒ«å¾Œã¯æ¬¡ã®å…¥åŠ›ã«å‚™ãˆã¦å¤‰æ›çŠ¶æ…‹ã¨Q-ELF/ãƒ­ãƒ¼ãƒå­—ã®å†…éƒ¨çŠ¶æ…‹ã‚’å…¨ã¦åˆæœŸåŒ–ã™ã‚‹
     m_candidates.clear();
     m_candidateIndex = 0;
     m_drawmode = CandidateWindowDrawMode::Single;
@@ -109,7 +109,7 @@ inline bool CTextService::_IsCtrlKeyPressed()
     return (GetKeyState(VK_CONTROL) & 0x8000) != 0;
 }
 
-// Œó•â‚ğ–¢Šm’èƒoƒbƒtƒ@‚É”½‰f‚·‚éB”ÍˆÍŠO‚Ìindex‚ÍÅŒã‚ÌŒó•â‚ÉŠÛ‚ß‚é
+// å€™è£œã‚’æœªç¢ºå®šãƒãƒƒãƒ•ã‚¡ã«åæ˜ ã™ã‚‹ã€‚ç¯„å›²å¤–ã®indexã¯æœ€å¾Œã®å€™è£œã«ä¸¸ã‚ã‚‹
 void CTextService::_SetCandidateText()
 {
     if (m_candidates.empty()) {
@@ -177,7 +177,7 @@ void CTextService::_UpdateCandidateWindow(TfEditCookie ec ,ITfContext* pContext)
 
 	m_candidateWindow.SetCandidates(m_candidates);
 	m_candidateWindow.SetShowIndex(m_candidateIndex, m_drawmode);
-	// “o˜^’†‚ÍuŠm’èÏ‚İ‚Ì•¶š—ñ + •ÏŠ·’†‚Ì“Ç‚İ/Œó•âv‚ğƒEƒBƒ“ƒhƒEã‚Ì“ü—Í‚Æ‚µ‚ÄŒ©‚¹‚é
+	// ç™»éŒ²ä¸­ã¯ã€Œç¢ºå®šæ¸ˆã¿ã®æ–‡å­—åˆ— + å¤‰æ›ä¸­ã®èª­ã¿/å€™è£œã€ã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸Šã®å…¥åŠ›ã¨ã—ã¦è¦‹ã›ã‚‹
 	m_candidateWindow.SetRegisterInfo(isRegisterMode, registerTarget, m_regText, _compositionBuffer);
 
     RECT rc = { 0 };
@@ -191,7 +191,7 @@ void CTextService::_HideCandidateWindow()
 	m_candidateWindow.Hide();
 }
 
-// Œó•â‚ªs‚«‚½‚ÉŒÄ‚Î‚ê‚éBŒ»İ‚Ì•ÏŠ·ó‘Ô‚ğƒXƒ^ƒbƒN‚Ö‘Ş”ğ‚µA“o˜^—p‚Ì“ü—Íó‘Ô(Kakutei)‚ÖˆÚ‚é
+// å€™è£œãŒå°½ããŸæ™‚ã«å‘¼ã°ã‚Œã‚‹ã€‚ç¾åœ¨ã®å¤‰æ›çŠ¶æ…‹ã‚’ã‚¹ã‚¿ãƒƒã‚¯ã¸é€€é¿ã—ã€ç™»éŒ²ç”¨ã®å…¥åŠ›çŠ¶æ…‹(Kakutei)ã¸ç§»ã‚‹
 void CTextService::_EnterDictionaryRegistration(ITfContext * pContext)
 {
 	SKK_RegDict_State state;
@@ -199,8 +199,9 @@ void CTextService::_EnterDictionaryRegistration(ITfContext * pContext)
 	state.compositionBuffer = _compositionBuffer;
 	state.henkanGokan = m_henkanGokan;
 	state.okurigana = m_okurigana;
+	state.okuriganashiin = m_okuriganashiin;
 	state.candidates = m_candidates;
-	// ”ÍˆÍŠOindex‚Ì‚Ü‚Ü‘Ş”ğ‚·‚é‚Æ•œŒ³Œã‚Ém_candidates[index]‚Å”ÍˆÍŠOQÆ‚É‚È‚é‚½‚ßAÅŒã‚ÌŒó•âESingle‚ÉŠÛ‚ß‚é
+	// ç¯„å›²å¤–indexã®ã¾ã¾é€€é¿ã™ã‚‹ã¨å¾©å…ƒå¾Œã«m_candidates[index]ã§ç¯„å›²å¤–å‚ç…§ã«ãªã‚‹ãŸã‚ã€æœ€å¾Œã®å€™è£œãƒ»Singleã«ä¸¸ã‚ã‚‹
 	state.candidateIndex = m_candidates.empty() ? 0 : (int)m_candidates.size() - 1;
 	state.drawmode = CandidateWindowDrawMode::Single;
 	state.regText = m_regText;
@@ -221,16 +222,16 @@ void CTextService::_EnterDictionaryRegistration(ITfContext * pContext)
 	__RequestEditSession(pContext, EditSessionRequest::DoComposition, hrSession);
 }
 
-// «‘“o˜^‚ğ”²‚¯‚Ä‘Ş”ğ‚µ‚Ä‚¨‚¢‚½•ÏŠ·ó‘Ô‚ğ•œŒ³‚·‚éB
-// apply=true : “ü—Í‚³‚ê‚½Œê‚ÅŠm’è‚·‚é(“ü‚êq‚Ìê‡‚Íe‚Ì“o˜^ƒoƒbƒtƒ@‚Öæ‚è‚Ş)
-// apply=false: “o˜^‚ğƒLƒƒƒ“ƒZƒ‹‚µ‚Ä•ÏŠ·’†‚Ìó‘Ô‚Ö–ß‚é
+// è¾æ›¸ç™»éŒ²ã‚’æŠœã‘ã¦é€€é¿ã—ã¦ãŠã„ãŸå¤‰æ›çŠ¶æ…‹ã‚’å¾©å…ƒã™ã‚‹ã€‚
+// apply=true : å…¥åŠ›ã•ã‚ŒãŸèªã§ç¢ºå®šã™ã‚‹(å…¥ã‚Œå­ã®å ´åˆã¯è¦ªã®ç™»éŒ²ãƒãƒƒãƒ•ã‚¡ã¸å–ã‚Šè¾¼ã‚€)
+// apply=false: ç™»éŒ²ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦å¤‰æ›ä¸­ã®çŠ¶æ…‹ã¸æˆ»ã‚‹
 void CTextService::_ExitDictionaryRegistration(ITfContext* pic, bool apply)
 {
     if (m_stateStack.empty()) {
         return;
     }
 
-    // “o˜^’†‚ÉŠJn‚µ‚½“à‘¤‚Ì•ÏŠ·‚ªc‚Á‚Ä‚¢‚ê‚ÎA‚»‚Ì“Ç‚İ/Œó•â‚à“o˜^Œê‚ÉŠÜ‚ß‚Ä‚©‚ç”jŠü‚·‚é
+    // ç™»éŒ²ä¸­ã«é–‹å§‹ã—ãŸå†…å´ã®å¤‰æ›ãŒæ®‹ã£ã¦ã„ã‚Œã°ã€ãã®èª­ã¿/å€™è£œã‚‚ç™»éŒ²èªã«å«ã‚ã¦ã‹ã‚‰ç ´æ£„ã™ã‚‹
     std::wstring word = m_regText + _compositionBuffer;
     if (g_currentMode == SKKMode::Henkan) {
         __EndHenkanMode(pic);
@@ -249,10 +250,10 @@ void CTextService::_ExitDictionaryRegistration(ITfContext* pic, bool apply)
     __changeCurrentMode(SKKMode::Henkan);
 
     if (apply && !word.empty()) {
-        // «‘‚Ö‚ÌÀ“o˜^ˆ—(’ß•t‚« "Œê;’ß" ‚Ì‚Ü‚Ü“n‚·)
-        _OnDictionaryRegistration(parent.henkanGokan, word);
+        // è¾æ›¸ã¸ã®å®Ÿç™»éŒ²å‡¦ç†(æ³¨é‡ˆä»˜ã "èª;æ³¨é‡ˆ" ã®ã¾ã¾æ¸¡ã™)
+        _OnDictionaryRegistration(parent.henkanGokan, parent.okuriganashiin, word);
 
-        // ƒAƒvƒŠ‚ÖŠm’è‚·‚é•¶š—ñ‚É‚Í’ß‚ğŠÜ‚ß‚È‚¢
+        // ã‚¢ãƒ—ãƒªã¸ç¢ºå®šã™ã‚‹æ–‡å­—åˆ—ã«ã¯æ³¨é‡ˆã‚’å«ã‚ãªã„
         size_t semi = word.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
         if (semi != std::wstring::npos) {
             word.erase(semi);
@@ -262,12 +263,12 @@ void CTextService::_ExitDictionaryRegistration(ITfContext* pic, bool apply)
         return;
     }
 
-    // ƒLƒƒƒ“ƒZƒ‹: ÅŒã‚ÌŒó•â(–³‚¯‚ê‚Î“Ç‚İ)‚ğ•\¦‚µ‚½•ÏŠ·’†‚Ìó‘Ô‚Ö–ß‚é
+    // ã‚­ãƒ£ãƒ³ã‚»ãƒ«: æœ€å¾Œã®å€™è£œ(ç„¡ã‘ã‚Œã°èª­ã¿)ã‚’è¡¨ç¤ºã—ãŸå¤‰æ›ä¸­ã®çŠ¶æ…‹ã¸æˆ»ã‚‹
     if (!m_candidates.empty()) {
         _SetCandidateText();
     }
     else {
-        // Œó•â‚ª–³‚¢ó‘Ô‚É–ß‚é‚Ì‚Å‘—‚è‰¼–¼‚Í“Ç‚İ‚ÖŠÜ‚ß‚¸”jŠü‚·‚é
+        // å€™è£œãŒç„¡ã„çŠ¶æ…‹ã«æˆ»ã‚‹ã®ã§é€ã‚Šä»®åã¯èª­ã¿ã¸å«ã‚ãšç ´æ£„ã™ã‚‹
         m_okurigana.clear();
         _compositionBuffer = m_henkanGokan;
     }
@@ -275,8 +276,8 @@ void CTextService::_ExitDictionaryRegistration(ITfContext* pic, bool apply)
     __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
 }
 
-// •ÏŠ·’†‚Ì•¶š—ñ‚ğŠm’è‚·‚éB
-// ’Êí: composition‚Ö”½‰f‚µ‚ÄƒAƒvƒŠ‚ÉŠm’èB«‘“o˜^’†: ƒAƒvƒŠ‘¤‚É‚Í‰½‚àŠm’è‚¹‚¸A“o˜^—pƒoƒbƒtƒ@‚Öæ‚è‚Ş
+// å¤‰æ›ä¸­ã®æ–‡å­—åˆ—ã‚’ç¢ºå®šã™ã‚‹ã€‚
+// é€šå¸¸æ™‚: compositionã¸åæ˜ ã—ã¦ã‚¢ãƒ—ãƒªã«ç¢ºå®šã€‚è¾æ›¸ç™»éŒ²ä¸­: ã‚¢ãƒ—ãƒªå´ã«ã¯ä½•ã‚‚ç¢ºå®šã›ãšã€ç™»éŒ²ç”¨ãƒãƒƒãƒ•ã‚¡ã¸å–ã‚Šè¾¼ã‚€
 void CTextService::_CommitHenkan(ITfContext* pic)
 {
     HRESULT hrSession = S_OK;
@@ -298,7 +299,7 @@ void CTextService::_CommitHenkan(ITfContext* pic)
     __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
 }
 
-// ƒtƒH[ƒJƒX‘r¸‚È‚ÇAó‘Ô‚ğˆø‚«Œp‚°‚È‚¢ê–Ê‚Å‘S‚Ä‚Ì•ÏŠ·/“o˜^ó‘Ô‚ğÌ‚Ä‚é
+// ãƒ•ã‚©ãƒ¼ã‚«ã‚¹å–ªå¤±ãªã©ã€çŠ¶æ…‹ã‚’å¼•ãç¶™ã’ãªã„å ´é¢ã§å…¨ã¦ã®å¤‰æ›/ç™»éŒ²çŠ¶æ…‹ã‚’æ¨ã¦ã‚‹
 void CTextService::_ResetAllState()
 {
     m_stateStack.clear();
@@ -309,11 +310,11 @@ void CTextService::_ResetAllState()
     g_currentMode = (g_currentMode == SKKMode::Hankaku) ? SKKMode::Hankaku : SKKMode::Kakutei;
 }
 
-void CTextService::_OnDictionaryRegistration(const std::wstring & reading, const std::wstring & word)
+void CTextService::_OnDictionaryRegistration(const std::wstring& reading, WCHAR okuriganashiin, const std::wstring& word)
 {
-	// TODO: Œã‚Å‘—‚è‰¼–¼•t‚«‚Ì‚â‚Â‚Ì“o˜^‚ào—ˆ‚é‚æ‚¤‚É‚·‚é
+	// TODO: å¾Œã§é€ã‚Šä»®åä»˜ãã®ã‚„ã¤ã®ç™»éŒ²ã‚‚å‡ºæ¥ã‚‹ã‚ˆã†ã«ã™ã‚‹
 	SKKCandidate candidate;
-    // ;‘O‚ÆCŒã‚Å‹æØ‚é(Œã‚Í;ŠÜ‚Ş)
+    // ;å‰ã¨ï¼Œå¾Œã§åŒºåˆ‡ã‚‹(å¾Œã¯;å«ã‚€)
     const size_t semi = word.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
     if (semi == std::wstring::npos) {
         candidate.candidate = word;
@@ -324,10 +325,16 @@ void CTextService::_OnDictionaryRegistration(const std::wstring & reading, const
         candidate.annotation = word.substr(semi);
     }
 
-    m_skkdictProvider.RegisterUserDictionary(reading, L"", candidate);
+    // é€ã‚Šä»®åã‚ã‚Š(okuriganashiin != L'\0')ã®å ´åˆã¯èª­ã¿ã‚­ãƒ¼ã«å­éŸ³ã‚’ä»˜åŠ  (ä¾‹: ã‚ãŸs -> æ¸¡)
+    
+    std::wstring okuriAlpha;
+    if (okuriganashiin != L'\0') {
+        okuriAlpha += okuriganashiin;
+    }
+    m_skkdictProvider.RegisterUserDictionary(reading, okuriAlpha, candidate);
 }
 
-// ƒLƒƒƒŒƒbƒg‚ÌƒXƒNƒŠ[ƒ“À•W‚ğæ“¾‚·‚éBæ“¾o—ˆ‚È‚¢ê‡‚Íƒ}ƒEƒXƒJ[ƒ\ƒ‹•t‹ß‚ğƒtƒFƒCƒ‹ƒZ[ƒt‚Æ‚µ‚Ä•Ô‚·
+// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã‚’å–å¾—ã™ã‚‹ã€‚å–å¾—å‡ºæ¥ãªã„å ´åˆã¯ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ä»˜è¿‘ã‚’ãƒ•ã‚§ã‚¤ãƒ«ã‚»ãƒ¼ãƒ•ã¨ã—ã¦è¿”ã™
 bool CTextService::_GetCaretRect(TfEditCookie ec, ITfContext * pContext, RECT * pRect)
 {
 	if (!pContext || !pRect) {
@@ -339,7 +346,7 @@ bool CTextService::_GetCaretRect(TfEditCookie ec, ITfContext * pContext, RECT * 
 		CComPtr<ITfRange> pRange;
 		CComPtr<ITfRange> pRangeEnd;
 		BOOL fClipped = FALSE;
-		// ––”öˆÊ’u(CollapseÏ‚İ)‚ÌRange‚Ì‹éŒ`‚ğæ‚é
+		// æœ«å°¾ä½ç½®(Collapseæ¸ˆã¿)ã®Rangeã®çŸ©å½¢ã‚’å–ã‚‹
 		if (SUCCEEDED(pContext->GetActiveView(&pContextView)) && pContextView &&
 			SUCCEEDED(_pComposition->GetRange(&pRange)) && pRange &&
 			SUCCEEDED(pRange->Clone(&pRangeEnd)) && pRangeEnd &&
@@ -349,7 +356,7 @@ bool CTextService::_GetCaretRect(TfEditCookie ec, ITfContext * pContext, RECT * 
 		}
 	}
 
-    // GetTextExt”ñ‘Î‰‚ÌƒAƒvƒŠ—p
+    // GetTextExtéå¯¾å¿œã®ã‚¢ãƒ—ãƒªç”¨
     POINT pt;
     if (GetCursorPos(&pt)) {
         pRect->left = pt.x + 10;
@@ -468,7 +475,7 @@ STDAPI CTextService::Activate(ITfThreadMgr* ptim, TfClientId tid) {
 
 
 
-    //ƒL[‚ª‰Ÿ‚³‚ê‚½‚Æ‚«‚É’Ê’m‚ğó‚¯æ‚é‚æ‚¤‚É“o˜^
+    //ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã¨ãã«é€šçŸ¥ã‚’å—ã‘å–ã‚‹ã‚ˆã†ã«ç™»éŒ²
     HRESULT hr = pKeystrokeMgr->AdviseKeyEventSink(
         _clientId,
         static_cast<ITfKeyEventSink*>(this),
@@ -491,16 +498,16 @@ STDAPI CTextService::Deactivate() {
         m_pLangBarItemButton->_Uninit();
     }
 
-    // composition ‚ªc‚Á‚Ä‚¢‚éê‡A‚±‚±‚Å‚ÍEditSession‚ğ”­s‚Å‚«‚È‚¢
-    // (Deactivate©‘Ì‚ªedit session‚ÌŠO‚ÅŒÄ‚Î‚ê‚é‚½‚ßA—LŒø‚ÈITfContext‚ğ
-    //  •Û‚µ‚Ä‚¢‚È‚¢)Bƒ[ƒJƒ‹ó‘Ô‚Ì‚İ”jŠü‚·‚éB’Êí‚ÍƒtƒH[ƒJƒXˆÚ“®‚É
-    // OnCompositionTerminatedŒo—R‚Åæ‚Éˆ—‚³‚ê‚é‚½‚ßA‚±‚±‚É“’B‚·‚é‚Ì‚Í
-    // ˆÙíŒn(TIP‹­§‰ğœ‚È‚Ç)‚Ö‚Ì•ÛŒ¯B
+    // composition ãŒæ®‹ã£ã¦ã„ã‚‹å ´åˆã€ã“ã“ã§ã¯EditSessionã‚’ç™ºè¡Œã§ããªã„
+    // (Deactivateè‡ªä½“ãŒedit sessionã®å¤–ã§å‘¼ã°ã‚Œã‚‹ãŸã‚ã€æœ‰åŠ¹ãªITfContextã‚’
+    //  ä¿æŒã—ã¦ã„ãªã„)ã€‚ãƒ­ãƒ¼ã‚«ãƒ«çŠ¶æ…‹ã®ã¿ç ´æ£„ã™ã‚‹ã€‚é€šå¸¸ã¯ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ç§»å‹•æ™‚ã«
+    // OnCompositionTerminatedçµŒç”±ã§å…ˆã«å‡¦ç†ã•ã‚Œã‚‹ãŸã‚ã€ã“ã“ã«åˆ°é”ã™ã‚‹ã®ã¯
+    // ç•°å¸¸ç³»(TIPå¼·åˆ¶è§£é™¤ãªã©)ã¸ã®ä¿é™ºã€‚
     if (_pComposition != nullptr) {
         _pComposition.Release();
     }
     _ResetAllState();
-    // Œó•âƒEƒBƒ“ƒhƒE‚Í‚±‚ÌDLL“à‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚ğ‚Â‚Ì‚ÅADLL‚ªŠO‚ê‚é‘O‚É”jŠü‚·‚é
+    // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯ã“ã®DLLå†…ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã‚’æŒã¤ã®ã§ã€DLLãŒå¤–ã‚Œã‚‹å‰ã«ç ´æ£„ã™ã‚‹
     m_candidateWindow.Destroy();
 
     CComPtr<ITfKeystrokeMgr> pKeystrokeMgr;
@@ -518,7 +525,7 @@ STDAPI CTextService::OnSetFocus(BOOL fForeground) {
     return S_OK;
 }
 
-// ‚±‚ÌƒL[‚ğ‚Ç‚Ì‚æ‚¤‚Éˆ—‚·‚é‚©ŒÄ‚Ño‚³‚ê‚é(ƒL[‚ª‰Ÿ‚³‚ê‚½uŠÔ)
+// ã“ã®ã‚­ãƒ¼ã‚’ã©ã®ã‚ˆã†ã«å‡¦ç†ã™ã‚‹ã‹å‘¼ã³å‡ºã•ã‚Œã‚‹(ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸç¬é–“)
 STDAPI CTextService::OnTestKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
     if (pfEaten == nullptr) {
         return E_INVALIDARG;
@@ -534,13 +541,13 @@ STDAPI CTextService::OnTestKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam
 
 
 
-// ƒL[‚ª‰Ÿ‚³‚ê‚½uŠÔ
+// ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸç¬é–“
 STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
     if (pfEaten == nullptr || pic == nullptr) {
         return E_INVALIDARG;
     }
 
-    // EditSession‚Ì—v‹Œ‹‰Ê‚Íg‚í‚È‚¢‚Ì‚ÅAŒÄ‚Ño‚µ‚²‚Æ‚Ég‚¢Ì‚Ä‚ÌHRESULT‚Å—v‹‚·‚é
+    // EditSessionã®è¦æ±‚çµæœã¯ä½¿ã‚ãªã„ã®ã§ã€å‘¼ã³å‡ºã—ã”ã¨ã«ä½¿ã„æ¨ã¦ã®HRESULTã§è¦æ±‚ã™ã‚‹
     auto request = [&](EditSessionRequest req) {
         HRESULT hrSession = S_OK;
         __RequestEditSession(pic, req, hrSession);
@@ -548,7 +555,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 
     *pfEaten = __IsKeyEaten(wParam);
 
-    // Ctrl+J: ‚Ğ‚ç‚ª‚È“ü—Í(Kakutei)‚ÖB•ÏŠ·’†‚È‚çæ‚ÉŠm’è‚·‚é
+    // Ctrl+J: ã²ã‚‰ãŒãªå…¥åŠ›(Kakutei)ã¸ã€‚å¤‰æ›ä¸­ãªã‚‰å…ˆã«ç¢ºå®šã™ã‚‹
     if (_IsCtrlKeyPressed() && wParam == 'J') {
         *pfEaten = TRUE;
         if (g_currentMode == SKKMode::Henkan) {
@@ -565,9 +572,9 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return S_OK;
     }
 
-    // ‚±‚±‚É‚¢‚é‚Æ‚¢‚¤‚±‚Æ‚ÍASKKMode::Hankaku ‚Å‚Í‚È‚¢B
+    // ã“ã“ã«ã„ã‚‹ã¨ã„ã†ã“ã¨ã¯ã€SKKMode::Hankaku ã§ã¯ãªã„ã€‚
     if (wParam == 'R') {
-        // «‘“o˜^’†‚Ì”¼Šp‰p”‚Ö‚Ì‘JˆÚ‚Í“ü—Íæ‚ª–³‚­‚È‚é‚½‚ß–³‹‚·‚é
+        // è¾æ›¸ç™»éŒ²ä¸­ã®åŠè§’è‹±æ•°ã¸ã®é·ç§»ã¯å…¥åŠ›å…ˆãŒç„¡ããªã‚‹ãŸã‚ç„¡è¦–ã™ã‚‹
         if (!m_stateStack.empty()) {
             return S_OK;
         }
@@ -581,7 +588,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
     else if (wParam == 'Q') {
         KanaMode gotokanaMode = KanaMode::Katakana;
-        // •ÏŠ·’†‚È‚çA–¢Šm’èƒoƒbƒtƒ@(Œó•â•\¦’†‚Í“Ç‚İ)‚ğƒJƒ^ƒJƒi‚É‚µ‚ÄŠm’è
+        // å¤‰æ›ä¸­ãªã‚‰ã€æœªç¢ºå®šãƒãƒƒãƒ•ã‚¡(å€™è£œè¡¨ç¤ºä¸­ã¯èª­ã¿)ã‚’ã‚«ã‚¿ã‚«ãƒŠã«ã—ã¦ç¢ºå®š
         if (g_currentMode == SKKMode::Henkan && __HasComposition()) {
             if (!m_candidates.empty()) {
                 _compositionBuffer = m_henkanGokan + m_okurigana;
@@ -600,11 +607,11 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
     else if (wParam == VK_RETURN) {
         if (!__HasComposition()) {
-            *pfEaten = FALSE; // composition’†‚Å‚È‚¯‚ê‚ÎEnter‚ÍƒAƒvƒŠ‚É“n‚·
+            *pfEaten = FALSE; // compositionä¸­ã§ãªã‘ã‚Œã°Enterã¯ã‚¢ãƒ—ãƒªã«æ¸¡ã™
             return S_OK;
         }
 
-        // «‘“o˜^’†: “ü—Í‚ª‚ ‚ê‚Î‚»‚ÌŒê‚Å“o˜^EŠm’èA‹ó‚È‚ç“o˜^‚ğƒLƒƒƒ“ƒZƒ‹‚µ‚ÄŒ³‚Ì•ÏŠ·ó‘Ô‚Ö–ß‚é
+        // è¾æ›¸ç™»éŒ²ä¸­: å…¥åŠ›ãŒã‚ã‚Œã°ãã®èªã§ç™»éŒ²ãƒ»ç¢ºå®šã€ç©ºãªã‚‰ç™»éŒ²ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦å…ƒã®å¤‰æ›çŠ¶æ…‹ã¸æˆ»ã‚‹
         if (!m_stateStack.empty()) {
             if (g_currentMode == SKKMode::Henkan) {
                 _CommitHenkan(pic);
@@ -630,7 +637,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             *pfEaten = FALSE;
             return S_OK;
         }
-        // «‘“o˜^’†‚ÌEscape‚Í“o˜^‚¾‚¯‚ğƒLƒƒƒ“ƒZƒ‹‚µ‚ÄŒ³‚Ì•ÏŠ·ó‘Ô‚Ö–ß‚é
+        // è¾æ›¸ç™»éŒ²ä¸­ã®Escapeã¯ç™»éŒ²ã ã‘ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦å…ƒã®å¤‰æ›çŠ¶æ…‹ã¸æˆ»ã‚‹
         if (!m_stateStack.empty()) {
             _ExitDictionaryRegistration(pic, false);
             return S_OK;
@@ -643,13 +650,13 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
     else if (wParam == VK_BACK) {
         if (!__HasComposition()) {
-            *pfEaten = FALSE; // composition’†‚Å‚È‚¯‚ê‚ÎBackspace‚ÍƒAƒvƒŠ‚É“n‚·
+            *pfEaten = FALSE; // compositionä¸­ã§ãªã‘ã‚Œã°Backspaceã¯ã‚¢ãƒ—ãƒªã«æ¸¡ã™
             return S_OK;
         }
         const bool registering = !m_stateStack.empty();
 
         if (g_currentMode == SKKMode::Henkan) {
-            // Œó•â•\¦’†‚Íˆê’U“Ç‚İ‚É–ß‚µ‚Ä‚©‚ç1•¶šíœ‚·‚é(Œó•â•¶š—ñ©‘Ì‚Íí‚ç‚È‚¢)
+            // å€™è£œè¡¨ç¤ºä¸­ã¯ä¸€æ—¦èª­ã¿ã«æˆ»ã—ã¦ã‹ã‚‰1æ–‡å­—å‰Šé™¤ã™ã‚‹(å€™è£œæ–‡å­—åˆ—è‡ªä½“ã¯å‰Šã‚‰ãªã„)
             if (!m_candidates.empty()) {
                 m_candidates.clear();
                 m_candidateIndex = 0;
@@ -661,7 +668,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
                 _compositionBuffer.pop_back();
             }
             if (_compositionBuffer.empty()) {
-                // ‹ó‚É‚È‚Á‚½‚çƒLƒƒƒ“ƒZƒ‹ˆµ‚¢(«‘“o˜^’†‚Í“o˜^“ü—Í‚É–ß‚é‚¾‚¯)
+                // ç©ºã«ãªã£ãŸã‚‰ã‚­ãƒ£ãƒ³ã‚»ãƒ«æ‰±ã„(è¾æ›¸ç™»éŒ²ä¸­ã¯ç™»éŒ²å…¥åŠ›ã«æˆ»ã‚‹ã ã‘)
                 if (registering) {
                     __EndHenkanMode(pic);
                     request(EditSessionRequest::DoComposition);
@@ -677,7 +684,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             }
         }
         else if (registering) {
-            // “o˜^’†‚ÌŠm’èÏ‚İ•¶š—ñ‚©‚ç1•¶šíœB‹ó‚Å‚àƒAƒvƒŠ‚Ì•\¦‚Í•Ï‚í‚ç‚È‚¢‚Ì‚ÅBackspace‚ÍH‚×‚é
+            // ç™»éŒ²ä¸­ã®ç¢ºå®šæ¸ˆã¿æ–‡å­—åˆ—ã‹ã‚‰1æ–‡å­—å‰Šé™¤ã€‚ç©ºã§ã‚‚ã‚¢ãƒ—ãƒªã®è¡¨ç¤ºã¯å¤‰ã‚ã‚‰ãªã„ã®ã§Backspaceã¯é£Ÿã¹ã‚‹
             if (!m_regText.empty()) {
                 m_regText.pop_back();
             }
@@ -693,10 +700,10 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     else if (wParam == VK_SPACE) {
         if (g_currentMode == SKKMode::Henkan) {
             if (_compositionBuffer.empty()) {
-                return S_OK; // “Ç‚İ‚ª–³‚¢‚Ì‚Å‰½‚à‚µ‚È‚¢
+                return S_OK; // èª­ã¿ãŒç„¡ã„ã®ã§ä½•ã‚‚ã—ãªã„
             }
             if (m_candidates.empty()) {
-                // ‰‚ß‚Ä‚Ì•ÏŠ·: –¢Šm’èƒoƒbƒtƒ@‘S‘Ì‚ğ“Ç‚İ‚Æ‚µ‚Ä«‘‚ğˆø‚­
+                // åˆã‚ã¦ã®å¤‰æ›: æœªç¢ºå®šãƒãƒƒãƒ•ã‚¡å…¨ä½“ã‚’èª­ã¿ã¨ã—ã¦è¾æ›¸ã‚’å¼•ã
                 m_candidateIndex = 0;
                 m_henkanGokan = _compositionBuffer;
                 m_okurigana.clear();
@@ -707,13 +714,13 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
                 _IncrementCandidateIndex();
             }
 
-            // Œó•â‚ªs‚«‚½‚ç«‘“o˜^‚Ö
+            // å€™è£œãŒå°½ããŸã‚‰è¾æ›¸ç™»éŒ²ã¸
             if (m_candidates.empty() || m_candidateIndex >= (int)m_candidates.size()) {
                 _EnterDictionaryRegistration(pic);
                 return S_OK;
             }
 
-            // Single‚Ì‚¾‚¯Œó•â‚ğcompositionã‚É‚à•\¦‚·‚é(Multi‚ÍŒó•âƒEƒBƒ“ƒhƒE‚Ì‚İ)
+            // Singleã®æ™‚ã ã‘å€™è£œã‚’compositionä¸Šã«ã‚‚è¡¨ç¤ºã™ã‚‹(Multiã¯å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã¿)
             if (m_drawmode == CandidateWindowDrawMode::Single) {
                 _SetCandidateText();
             }
@@ -721,14 +728,14 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             return S_OK;
         }
         if (!m_stateStack.empty()) {
-            // «‘“o˜^’†(Kakutei)‚ÌƒXƒy[ƒX‚Í“o˜^Œê‚Ìˆê•”‚Æ‚µ‚Äˆµ‚¤
+            // è¾æ›¸ç™»éŒ²ä¸­(Kakutei)ã®ã‚¹ãƒšãƒ¼ã‚¹ã¯ç™»éŒ²èªã®ä¸€éƒ¨ã¨ã—ã¦æ‰±ã†
             m_regText += L' ';
             request(EditSessionRequest::DoComposition);
             return S_OK;
         }
     }
     else if (wParam == 'X' && g_currentMode == SKKMode::Henkan && !m_candidates.empty()) {
-        // ‘O‚ÌŒó•â‚Ö–ß‚é(Multi‚©‚çSingle‚Ö‚Ì‹ts‚ğŠÜ‚Ş)
+        // å‰ã®å€™è£œã¸æˆ»ã‚‹(Multiã‹ã‚‰Singleã¸ã®é€†è¡Œã‚’å«ã‚€)
         _DecrementCandidateIndex();
         if (m_drawmode == CandidateWindowDrawMode::Single) {
             _SetCandidateText();
@@ -737,7 +744,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return S_OK;
     }
     else if (g_currentMode == SKKMode::Henkan && m_drawmode == CandidateWindowDrawMode::Multi && !m_candidates.empty()) {
-        // Multi•\¦’†: A,S,D,F,J,K,L ‚Å•\¦’†‚ÌŒó•â‚ğ’¼Ú‘I‘ğ‚µ‚ÄŠm’è‚·‚é
+        // Multiè¡¨ç¤ºä¸­: A,S,D,F,J,K,L ã§è¡¨ç¤ºä¸­ã®å€™è£œã‚’ç›´æ¥é¸æŠã—ã¦ç¢ºå®šã™ã‚‹
         std::wstring keys(SKK_CHOOSE_CANDIDATES_BIGSTR);
         size_t selectedOffset = keys.find((WCHAR)wParam);
 
@@ -752,29 +759,29 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         }
     }
 
-    // ˆÃ–Ù‚ÌŠm’è: Œó•â‚ª•\¦‚³‚ê‚Ä‚¢‚éó‘Ô‚Å•Ê‚Ì•¶š‚ª“ü—Í‚³‚ê‚½‚çA‚Ü‚¸•\¦’†‚ÌŒó•â‚ğŠm’è‚·‚é
+    // æš—é»™ã®ç¢ºå®š: å€™è£œãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹çŠ¶æ…‹ã§åˆ¥ã®æ–‡å­—ãŒå…¥åŠ›ã•ã‚ŒãŸã‚‰ã€ã¾ãšè¡¨ç¤ºä¸­ã®å€™è£œã‚’ç¢ºå®šã™ã‚‹
     if (g_currentMode == SKKMode::Henkan && !m_candidates.empty()) {
         _CommitHenkan(pic);
     }
 
     DebugTrace((L"OnKeyDown: " + std::wstring(1, static_cast<WCHAR>(wParam))));
 
-    // ‚±‚ÌƒL[‚ª¶‚Ş•¶š—ñ(output)‚ÆAQ-ELFã‚ÅShift‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½‚©(shifted)‚ğ‹‚ß‚é
+    // ã“ã®ã‚­ãƒ¼ãŒç”Ÿã‚€æ–‡å­—åˆ—(output)ã¨ã€Q-ELFä¸Šã§ShiftãŒæŠ¼ã•ã‚Œã¦ã„ãŸã‹(shifted)ã‚’æ±‚ã‚ã‚‹
     const WCHAR ch = static_cast<WCHAR>(wParam);
     std::wstring output;
     bool shifted = false;
 
     if (m_romajiKanaTranslater.translate_kigou(ch, output)) {
-        // “Ç‚İ“ü—Í’†‚É‹L†([ˆÈŠO)‚ª—ˆ‚½‚çA“Ç‚İ‚ğ‚»‚Ì‚Ü‚ÜŠm’è‚µ‚Ä‚©‚ç‹L†‚ğ“ü—Í‚·‚é
-        if (g_currentMode == SKKMode::Henkan && output != L"[") {
+        // èª­ã¿å…¥åŠ›ä¸­ã«è¨˜å·(ãƒ¼ä»¥å¤–)ãŒæ¥ãŸã‚‰ã€èª­ã¿ã‚’ãã®ã¾ã¾ç¢ºå®šã—ã¦ã‹ã‚‰è¨˜å·ã‚’å…¥åŠ›ã™ã‚‹
+        if (g_currentMode == SKKMode::Henkan && output != L"ãƒ¼") {
             _CommitHenkan(pic);
         }
-        // ‹L†‚ÍShift‚É‚æ‚é•ÏŠ·ŠJn‚Ì‘ÎÛŠO
+        // è¨˜å·ã¯Shiftã«ã‚ˆã‚‹å¤‰æ›é–‹å§‹ã®å¯¾è±¡å¤–
     }
     else {
         std::wstring qelfOutput;
         if (m_qelfTranslater.translate_qwerty_to_qelf(ch, qelfOutput)) {
-            // Q-ELF‘¤‚ÅEnter‚ªŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚éƒL[(;‚È‚Ç)‚ÍA–{•¨‚ÌEnter‚ğ‘—‚Á‚Ä’Êí‚ÌEnterˆ—‚É”C‚¹‚é
+            // Q-ELFå´ã§EnterãŒå‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼(;ãªã©)ã¯ã€æœ¬ç‰©ã®Enterã‚’é€ã£ã¦é€šå¸¸ã®Enterå‡¦ç†ã«ä»»ã›ã‚‹
             if (qelfOutput.length() == 1 && qelfOutput[0] == L'\r') {
                 INPUT inputs[2] = {};
                 inputs[0].type = INPUT_KEYBOARD;
@@ -786,12 +793,12 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
                 return S_OK;
             }
             m_romajiKanaTranslater.translate_qelf(qelfOutput, output);
-            // Shift‚Í“¯‰Ÿ‚µ2‘Å‚Ì‚Ç‚¿‚ç‚Å‰Ÿ‚³‚ê‚Ä‚¢‚Ä‚à—Ç‚¢B‰¼–¼‚ªŠm’è‚µ‚½‚¾‚¯ˆÓ–¡‚ğ‚Â
+            // Shiftã¯åŒæ™‚æŠ¼ã—2æ‰“ã®ã©ã¡ã‚‰ã§æŠ¼ã•ã‚Œã¦ã„ã¦ã‚‚è‰¯ã„ã€‚ä»®åãŒç¢ºå®šã—ãŸæ™‚ã ã‘æ„å‘³ã‚’æŒã¤
             shifted = !output.empty() && m_qelfTranslater.get_shift_pushed_last();
         }
     }
 
-    // 1‘Å–Ú‚¾‚¯(“¯‰Ÿ‚µ‚Ì“r’†)‚È‚ÇA‚Ü‚¾•¶š‚ªŠm’è‚µ‚Ä‚¢‚È‚¢
+    // 1æ‰“ç›®ã ã‘(åŒæ™‚æŠ¼ã—ã®é€”ä¸­)ãªã©ã€ã¾ã æ–‡å­—ãŒç¢ºå®šã—ã¦ã„ãªã„
     if (output.empty()) {
         return S_OK;
     }
@@ -799,27 +806,27 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     const bool registering = !m_stateStack.empty();
 
     if (shifted && g_currentMode == SKKMode::Kakutei) {
-        // Shift+•¶š: •ÏŠ·(“Ç‚İ“ü—Í)‚ÌŠJnB‚±‚Ì‰¼–¼‚ª“Ç‚İ‚Ìæ“ª‚É‚È‚é
+        // Shift+æ–‡å­—: å¤‰æ›(èª­ã¿å…¥åŠ›)ã®é–‹å§‹ã€‚ã“ã®ä»®åãŒèª­ã¿ã®å…ˆé ­ã«ãªã‚‹
         _compositionBuffer += output;
         __StartHenkanMode(pic);
         return S_OK;
     }
 
     if (shifted && g_currentMode == SKKMode::Henkan && !_compositionBuffer.empty()) {
-        // •ÏŠ·’†‚ÌShift+•¶š: ‚±‚±‚Ü‚Å‚ğŒêŠ²A‚±‚Ì‰¼–¼‚ğ‘—‚è‰¼–¼‚Æ‚µ‚Ä‘¦À‚É•ÏŠ·‚·‚é
+        // å¤‰æ›ä¸­ã®Shift+æ–‡å­—: ã“ã“ã¾ã§ã‚’èªå¹¹ã€ã“ã®ä»®åã‚’é€ã‚Šä»®åã¨ã—ã¦å³åº§ã«å¤‰æ›ã™ã‚‹
         _compositionBuffer += output;
         m_okurigana = output;
         m_henkanGokan = _compositionBuffer.substr(0, _compositionBuffer.length() - output.length());
         m_candidateIndex = 0;
         m_drawmode = CandidateWindowDrawMode::Single;
 
-        // «‘ƒL[‚ÍuŒêŠ² + ‘—‚è‰¼–¼‚Ìq‰¹v(—á: ‚¨‚àw)
+        // è¾æ›¸ã‚­ãƒ¼ã¯ã€Œèªå¹¹ + é€ã‚Šä»®åã®å­éŸ³ã€(ä¾‹: ãŠã‚‚w)
         std::wstring dictKey = m_henkanGokan;
         WCHAR shiin = m_romajiKanaTranslater.get_last_translate_last_shiin();
         if (shiin != L'\0') {
             dictKey += shiin;
         }
-        DebugTrace(L"‘—‚è‰¼–¼•ÏŠ·ŠJn:" + dictKey);
+        DebugTrace(L"é€ã‚Šä»®åå¤‰æ›é–‹å§‹:" + dictKey);
         m_skkdictProvider.GetCandidates(dictKey, m_candidates);
 
         if (m_candidates.empty()) {
@@ -833,12 +840,12 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 
     if (g_currentMode == SKKMode::Kakutei) {
         if (registering) {
-            // «‘“o˜^’†‚Ì’Êí“ü—Í‚ÍƒAƒvƒŠ‚Ö‘}“ü‚¹‚¸A“o˜^—pƒoƒbƒtƒ@‚É—­‚ß‚ÄŒó•âƒEƒBƒ“ƒhƒE‚É•\¦‚·‚é
+            // è¾æ›¸ç™»éŒ²ä¸­ã®é€šå¸¸å…¥åŠ›ã¯ã‚¢ãƒ—ãƒªã¸æŒ¿å…¥ã›ãšã€ç™»éŒ²ç”¨ãƒãƒƒãƒ•ã‚¡ã«æºœã‚ã¦å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«è¡¨ç¤ºã™ã‚‹
             m_regText += output;
             request(EditSessionRequest::DoComposition);
         }
         else {
-            // ’Êí‚ÌŠm’è“ü—Í: ‚»‚Ì‚Ü‚ÜƒAƒvƒŠ‚É‘}“ü‚·‚é
+            // é€šå¸¸ã®ç¢ºå®šå…¥åŠ›: ãã®ã¾ã¾ã‚¢ãƒ—ãƒªã«æŒ¿å…¥ã™ã‚‹
             _compositionBuffer += output;
             request(EditSessionRequest::InsertText);
             _compositionBuffer.clear();
@@ -846,13 +853,13 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return S_OK;
     }
 
-    // Henkanƒ‚[ƒh(“Ç‚İ‚Ì“ü—Í’†)
+    // Henkanãƒ¢ãƒ¼ãƒ‰(èª­ã¿ã®å…¥åŠ›ä¸­)
     _compositionBuffer += output;
     request(__HasComposition() ? EditSessionRequest::DoComposition : EditSessionRequest::StartComposition);
     return S_OK;
 }
 
-// ‚±‚ÌƒL[‚ğ‚Ç‚Ì‚æ‚¤‚Éˆ—‚·‚é‚©ŒÄ‚Ño‚³‚ê‚é(ƒL[‚ª—£‚³‚ê‚½uŠÔ)
+// ã“ã®ã‚­ãƒ¼ã‚’ã©ã®ã‚ˆã†ã«å‡¦ç†ã™ã‚‹ã‹å‘¼ã³å‡ºã•ã‚Œã‚‹(ã‚­ãƒ¼ãŒé›¢ã•ã‚ŒãŸç¬é–“)
 STDAPI CTextService::OnTestKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam, BOOL* pfEaten) {
     if (pfEaten == nullptr) {
         return E_INVALIDARG;
@@ -861,7 +868,7 @@ STDAPI CTextService::OnTestKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam, 
     return S_OK;
 }
 
-// ƒL[‚ª—£‚³‚ê‚½uŠÔ
+// ã‚­ãƒ¼ãŒé›¢ã•ã‚ŒãŸç¬é–“
 STDAPI CTextService::OnKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam,
     BOOL* pfEaten) {
     if (pfEaten == nullptr) {
@@ -871,7 +878,7 @@ STDAPI CTextService::OnKeyUp(ITfContext* pic, WPARAM wParam, LPARAM lParam,
     return S_OK;
 }
 
-// •Û‘¶‚³‚ê‚½ƒL[‚ª‰Ÿ‚³‚ê‚½‚Æ‚«‚ÉŒÄ‚Ño‚³‚ê‚é
+// ä¿å­˜ã•ã‚ŒãŸã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã¨ãã«å‘¼ã³å‡ºã•ã‚Œã‚‹
 STDAPI CTextService::OnPreservedKey(ITfContext* pic, REFGUID rguid, BOOL* pfEaten) {
     if (pfEaten == nullptr) {//
         return E_INVALIDARG;
@@ -881,10 +888,10 @@ STDAPI CTextService::OnPreservedKey(ITfContext* pic, REFGUID rguid, BOOL* pfEate
 }
 
 STDAPI CTextService::OnCompositionTerminated(TfEditCookie ecWrite, ITfComposition* pComposition) {
-    // ƒtƒH[ƒJƒXˆÚ“®‚È‚Ç‚ÅTSF‘¤‚©‚ç‹­§I—¹‚³‚ê‚½ê‡B
-    // Šù‚ÉI—¹Ï‚İ‚Ì‚½‚ßEndComposition‚ğŒÄ‚ñ‚Å‚Í‚È‚ç‚¸Aƒ[ƒJƒ‹ó‘Ô‚ÌƒNƒŠƒA‚Ì‚İs‚¤B
+    // ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ç§»å‹•ãªã©ã§TSFå´ã‹ã‚‰å¼·åˆ¶çµ‚äº†ã•ã‚ŒãŸå ´åˆã€‚
+    // æ—¢ã«çµ‚äº†æ¸ˆã¿ã®ãŸã‚EndCompositionã‚’å‘¼ã‚“ã§ã¯ãªã‚‰ãšã€ãƒ­ãƒ¼ã‚«ãƒ«çŠ¶æ…‹ã®ã‚¯ãƒªã‚¢ã®ã¿è¡Œã†ã€‚
     _pComposition.Release();
-    // «‘“o˜^’†E•ÏŠ·’†‚Ìó‘Ô‚àˆø‚«Œp‚°‚È‚¢‚Ì‚Å‘S‚Ä”jŠü‚·‚é
+    // è¾æ›¸ç™»éŒ²ä¸­ãƒ»å¤‰æ›ä¸­ã®çŠ¶æ…‹ã‚‚å¼•ãç¶™ã’ãªã„ã®ã§å…¨ã¦ç ´æ£„ã™ã‚‹
     _ResetAllState();
     return S_OK;
 }
@@ -915,7 +922,7 @@ HRESULT CTextService::_StartComposition(TfEditCookie ec, ITfContext* pContext) {
     if (pContext == nullptr) {
         return E_INVALIDARG;
     }
-    // Šù‚Écomposition‚ª‚ ‚éê‡(«‘“o˜^’†‚È‚Ç)‚Í“ñd‚ÉŠJn‚¹‚¸•\¦XV‚Ì‚İs‚¤
+    // æ—¢ã«compositionãŒã‚ã‚‹å ´åˆ(è¾æ›¸ç™»éŒ²ä¸­ãªã©)ã¯äºŒé‡ã«é–‹å§‹ã›ãšè¡¨ç¤ºæ›´æ–°ã®ã¿è¡Œã†
     if (__HasComposition()) {
         return _DoComposition(ec, pContext);
     }
@@ -925,7 +932,7 @@ HRESULT CTextService::_StartComposition(TfEditCookie ec, ITfContext* pContext) {
         return E_FAIL;
     }
 
-    // TF_IAS_QUERYONLY: ƒeƒLƒXƒg‚Í‘}“ü‚¹‚¸AŒ»İ‚Ì‘I‘ğˆÊ’u‚ÌRange‚Ì‚İæ“¾‚·‚éB
+    // TF_IAS_QUERYONLY: ãƒ†ã‚­ã‚¹ãƒˆã¯æŒ¿å…¥ã›ãšã€ç¾åœ¨ã®é¸æŠä½ç½®ã®Rangeã®ã¿å–å¾—ã™ã‚‹ã€‚
     CComPtr<ITfRange> pRange;
     if (FAILED(pInsertAtSelection->InsertTextAtSelection(ec, TF_IAS_QUERYONLY, nullptr, 0, &pRange))) {
         return E_FAIL;
@@ -961,13 +968,13 @@ HRESULT CTextService::_DoComposition(TfEditCookie ec, ITfContext* pContext) {
 		displayText = m_stateStack[0].compositionBuffer;
     }
 
-    // «‘“o˜^’†‚ÌƒAƒvƒŠ‘¤•\¦‚ÍA“o˜^‚ğn‚ß‚½“_‚Ì•¶š—ñ‚ÅŒÅ’è‚·‚é(“ü—Í’†‚Ì“o˜^Œê‚ÍŒó•âƒEƒBƒ“ƒhƒE‚Éo‚·)
+    // è¾æ›¸ç™»éŒ²ä¸­ã®ã‚¢ãƒ—ãƒªå´è¡¨ç¤ºã¯ã€ç™»éŒ²ã‚’å§‹ã‚ãŸæ™‚ç‚¹ã®æ–‡å­—åˆ—ã§å›ºå®šã™ã‚‹(å…¥åŠ›ä¸­ã®ç™»éŒ²èªã¯å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«å‡ºã™)
     if (FAILED(pRange->SetText(ec, 0, displayText.c_str(),
         (LONG)displayText.length()))) {
         return E_FAIL;
     }
 
-    // –¢Šm’è•¶š—ñ‚Å‚ ‚é‚±‚Æ‚ğ¦‚·•\¦‘®«(‰ºü)‚ğRange‚É“K—p‚·‚éB
+    // æœªç¢ºå®šæ–‡å­—åˆ—ã§ã‚ã‚‹ã“ã¨ã‚’ç¤ºã™è¡¨ç¤ºå±æ€§(ä¸‹ç·š)ã‚’Rangeã«é©ç”¨ã™ã‚‹ã€‚
     CComPtr<ITfProperty> pProperty;
     if (SUCCEEDED(pContext->GetProperty(GUID_PROP_ATTRIBUTE, &pProperty))) {
         VARIANT var;
@@ -976,12 +983,12 @@ HRESULT CTextService::_DoComposition(TfEditCookie ec, ITfContext* pContext) {
 
         if (m_displayAttributeInputAtom != TF_INVALID_GUIDATOM) {
 			var.lVal = (LONG)m_displayAttributeInputAtom;
-            // ‰ºü‚Ì•t—^‚É¸”s‚µ‚Ä‚à“ü—Í©‘Ì‚Í‘±s‚·‚é
+            // ä¸‹ç·šã®ä»˜ä¸ã«å¤±æ•—ã—ã¦ã‚‚å…¥åŠ›è‡ªä½“ã¯ç¶šè¡Œã™ã‚‹
             pProperty->SetValue(ec, pRange, &var);
         }
     }
 
-    // ƒLƒƒƒŒƒbƒg‚ğcomposition––”ö‚ÉˆÚ“®‚·‚éB
+    // ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’compositionæœ«å°¾ã«ç§»å‹•ã™ã‚‹ã€‚
     pRange->Collapse(ec, TF_ANCHOR_END);
     TF_SELECTION selection;
     selection.range = pRange;
@@ -1036,7 +1043,7 @@ HRESULT CTextService::_EndComposition(TfEditCookie ec, ITfContext* pContext, BOO
             pRange->SetText(ec, 0, L"", 0);
         }
         else if (pContext != nullptr) {
-            // Šm’èŒã‚Ì•¶š‚É–¢Šm’è‚Ì‰ºü‚ªc‚ç‚È‚¢‚æ‚¤•\¦‘®«‚ğŠO‚·
+            // ç¢ºå®šå¾Œã®æ–‡å­—ã«æœªç¢ºå®šã®ä¸‹ç·šãŒæ®‹ã‚‰ãªã„ã‚ˆã†è¡¨ç¤ºå±æ€§ã‚’å¤–ã™
             CComPtr<ITfProperty> pProperty;
             if (SUCCEEDED(pContext->GetProperty(GUID_PROP_ATTRIBUTE, &pProperty)) && pProperty) {
                 pProperty->Clear(ec, pRange);
@@ -1059,3 +1066,4 @@ inline void CTextService::__RequestEditSession(ITfContext* pContext, EditSession
     pEditSession.Attach(new CEditSession(this, pContext, req));
     pContext->RequestEditSession(_clientId, pEditSession, TF_ES_SYNC | TF_ES_READWRITE, &hrSession);
 }
+

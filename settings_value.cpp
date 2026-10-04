@@ -1,8 +1,8 @@
-
+ï»¿
 #include "pch.h"
 #include "settings_value.h"
 
-__declspec(selectany) settings_value g_Setting; // İ’è’l‚ÌƒOƒ[ƒoƒ‹•Ï”
+__declspec(selectany) settings_value g_Setting; // è¨­å®šå€¤ã®ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 
 void initialize_setting() {
 	initialize_setting_display_attribute();
@@ -12,24 +12,24 @@ void initialize_setting() {
 	g_Setting.skk_user_dic_file_path = LR"(C:\skktemp\SKK-JISYO.USER.L)";
 	g_Setting.single_candidate_max_count = 5;
 
-	g_Setting.candidate_window_font_size = 46; // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğİ’è
-	g_Setting.candidate_window_font_name = L"Meiryo UI"; // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒtƒHƒ“ƒg–¼‚ğİ’è
-	g_Setting.candidate_window_normal_font_color = RGB(0, 0, 0); // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒtƒHƒ“ƒgF‚ğİ’è 
-	g_Setting.candidate_window_dim_font_color = RGB(128, 128, 128); // Œó•âƒEƒBƒ“ƒhƒE‚Ì”–‚¢ƒtƒHƒ“ƒgF‚ğİ’è
-	g_Setting.candidate_window_hilight_font_color = RGB(163, 41, 99); // Œó•âƒEƒBƒ“ƒhƒE‚ÌƒnƒCƒ‰ƒCƒgƒtƒHƒ“ƒgF‚ğİ’è
-	g_Setting.candidate_window_asdfjkl_font_color = RGB(28, 110, 83); // Œó•âƒEƒBƒ“ƒhƒE‚ÌASDFJKLƒtƒHƒ“ƒgF‚ğİ’è
+	g_Setting.candidate_window_font_size = 46; // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è¨­å®š
+	g_Setting.candidate_window_font_name = L"Meiryo UI"; // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ•ã‚©ãƒ³ãƒˆåã‚’è¨­å®š
+	g_Setting.candidate_window_normal_font_color = RGB(0, 0, 0); // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ•ã‚©ãƒ³ãƒˆè‰²ã‚’è¨­å®š 
+	g_Setting.candidate_window_dim_font_color = RGB(128, 128, 128); // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è–„ã„ãƒ•ã‚©ãƒ³ãƒˆè‰²ã‚’è¨­å®š
+	g_Setting.candidate_window_hilight_font_color = RGB(163, 41, 99); // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒã‚¤ãƒ©ã‚¤ãƒˆãƒ•ã‚©ãƒ³ãƒˆè‰²ã‚’è¨­å®š
+	g_Setting.candidate_window_asdfjkl_font_color = RGB(28, 110, 83); // å€™è£œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ASDFJKLãƒ•ã‚©ãƒ³ãƒˆè‰²ã‚’è¨­å®š
 	g_Setting.candidate_window_unconfirmed_font_color = RGB(24, 90, 163); // unconfirmed font color
 
 }
 
 void initialize_setting_display_attribute() {
-	g_Setting.display_attribute.crText.type = TF_CT_NONE;//TF_CT_COLORREF; // = TF_CT_NONE; // ƒeƒLƒXƒg‚Ì‘OŒiF (w’è‚¹‚¸)
-	//g_Setting.display_attribute.crText.cr = RGB(255, 0, 255); // ƒeƒLƒXƒg‚Ì‘OŒiF (•)
-	g_Setting.display_attribute.crBk.type = TF_CT_NONE; // ƒeƒLƒXƒg‚Ì”wŒiF (w’è‚¹‚¸)
-	//g_Setting.display_attribute.crBk.cr = RGB(0, 255, 0); // ƒeƒLƒXƒg‚Ì”wŒiF (”’)
-	g_Setting.display_attribute.lsStyle = TF_LS_SOLID; // ‰ºü‚Ìí—Ş (Àü)
-	g_Setting.display_attribute.fBoldLine = FALSE; // ‰ºü‚ğ‘¾‚­‚·‚é‚© (’Êí‚Ì‘¾‚³)
-	g_Setting.display_attribute.crLine.type = TF_CT_NONE; // ‰ºü‚ÌF (w’è‚¹‚¸)
-	//g_Setting.display_attribute.crLine.cr = RGB(28, 110, 83); // ‰ºü‚ÌF (Ô)
-	g_Setting.display_attribute.bAttr = TF_ATTR_INPUT; // –¢Šm’è•¶š—ñ‚Ì‘®«
+	g_Setting.display_attribute.crText.type = TF_CT_NONE;//TF_CT_COLORREF; // = TF_CT_NONE; // ãƒ†ã‚­ã‚¹ãƒˆã®å‰æ™¯è‰² (æŒ‡å®šã›ãš)
+	//g_Setting.display_attribute.crText.cr = RGB(255, 0, 255); // ãƒ†ã‚­ã‚¹ãƒˆã®å‰æ™¯è‰² (é»’)
+	g_Setting.display_attribute.crBk.type = TF_CT_NONE; // ãƒ†ã‚­ã‚¹ãƒˆã®èƒŒæ™¯è‰² (æŒ‡å®šã›ãš)
+	//g_Setting.display_attribute.crBk.cr = RGB(0, 255, 0); // ãƒ†ã‚­ã‚¹ãƒˆã®èƒŒæ™¯è‰² (ç™½)
+	g_Setting.display_attribute.lsStyle = TF_LS_SOLID; // ä¸‹ç·šã®ç¨®é¡ (å®Ÿç·š)
+	g_Setting.display_attribute.fBoldLine = FALSE; // ä¸‹ç·šã‚’å¤ªãã™ã‚‹ã‹ (é€šå¸¸ã®å¤ªã•)
+	g_Setting.display_attribute.crLine.type = TF_CT_NONE; // ä¸‹ç·šã®è‰² (æŒ‡å®šã›ãš)
+	//g_Setting.display_attribute.crLine.cr = RGB(28, 110, 83); // ä¸‹ç·šã®è‰² (èµ¤)
+	g_Setting.display_attribute.bAttr = TF_ATTR_INPUT; // æœªç¢ºå®šæ–‡å­—åˆ—ã®å±æ€§
 }
