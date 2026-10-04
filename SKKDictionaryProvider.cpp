@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SKKDictionaryProvider.h"
 
 #include <ranges>
@@ -41,6 +41,7 @@ void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKC
 void SKKDictionaryProvider::RegisterUserDictionary(const std::wstring& hiragana_key, const std::wstring okurigana_alphaet, const SKKCandidate& candidate)
 {
 	m_user_skkdict[hiragana_key + okurigana_alphaet].push_back(candidate);
+	SaveUserDictionary();
 }
 
 BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict)
@@ -144,5 +145,117 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 		p = nl + 1;
 
 	}
+	return TRUE;
+}
+
+BOOL SKKDictionaryProvider::SaveUserDictionary()
+{
+	// Mutexによる排他制御。様々な権限のプロセスからアクセスされるためNull DACLを設定
+	SECURITY_DESCRIPTOR sd;
+	InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+	SetSecurityDescriptorDacl(&sd, TRUE, NULL, FALSE);
+	SECURITY_ATTRIBUTES sa;
+	sa.nLength = sizeof(sa);
+	sa.lpSecurityDescriptor = &sd;
+	sa.bInheritHandle = FALSE;
+
+	HANDLE hMutex = CreateMutexW(&sa, FALSE, L"Global\\TettySKK_UserDictMutex");
+	if (!hMutex) {
+		hMutex = CreateMutexW(&sa, FALSE, L"Local\\TettySKK_UserDictMutex");
+	}
+
+	if (hMutex) {
+		WaitForSingleObject(hMutex, INFINITE);
+	}
+
+	// 他のプロセスで追加された単語を取りこぼさないように、現在のファイルを再読み込みしてマージする
+	SKKDictionary current_file_dict;
+	if (_LoadDictionary(g_Setting.skk_user_dic_file_path, current_file_dict)) {
+		for (const auto& [key, candidates] : m_user_skkdict) {
+			auto& target_cands = current_file_dict[key];
+			for (const auto& cand : candidates) {
+				bool found = false;
+				for (const auto& target_cand : target_cands) {
+					if (target_cand.candidate == cand.candidate) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					target_cands.push_back(cand);
+				}
+			}
+		}
+		m_user_skkdict = std::move(current_file_dict);
+	}
+
+	// 一時ファイルに保存して、アトミックにリネームすることで破損を防ぐ
+	std::wstring tmp_path = g_Setting.skk_user_dic_file_path + L".tmp";
+
+	// EUC-JPで保存する
+	std::ofstream file(tmp_path, std::ios::binary);
+
+	if (!file.is_open()) {
+		if (hMutex) {
+			ReleaseMutex(hMutex);
+			CloseHandle(hMutex);
+		}
+		return FALSE;
+	}
+
+	for (const auto& [wkey, candidates] : m_user_skkdict) {
+		//文字コードの変換
+		std::string key;
+		{
+			int len = WideCharToMultiByte(EUC_JP_CODEPAGE, 0, wkey.c_str(), wkey.length(), nullptr, 0, nullptr, 0);
+			if (len > 0) {
+				key.resize(len);
+				WideCharToMultiByte(EUC_JP_CODEPAGE, 0, wkey.c_str(), wkey.length(), &key[0], len, nullptr, 0);
+			}
+		}
+
+		file << key << " ";
+
+		for (const auto& cand : candidates) {
+			const auto& wword = cand.candidate;
+			const auto& wannotation = cand.annotation;
+
+			//文字コードの変換
+			std::string word;
+			{
+				int len = WideCharToMultiByte(EUC_JP_CODEPAGE, 0, wword.c_str(), wword.length(), nullptr, 0, nullptr, 0);
+				if (len > 0) {
+					word.resize(len);
+					WideCharToMultiByte(EUC_JP_CODEPAGE, 0, wword.c_str(), wword.length(), &word[0], len, nullptr, 0);
+				}
+			}
+			std::string annotation;
+			if (!wannotation.empty()) {
+				int len = WideCharToMultiByte(EUC_JP_CODEPAGE, 0, wannotation.c_str(), wannotation.length(), nullptr, 0, nullptr, 0);
+				if (len > 0) {
+					annotation.resize(len);
+					WideCharToMultiByte(EUC_JP_CODEPAGE, 0, wannotation.c_str(), wannotation.length(), &annotation[0], len, nullptr, 0);
+				}
+			}
+
+			file << "/" << word;
+			if (!annotation.empty()) {
+				file << SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_ASTR;
+				file << annotation;
+			}
+		}
+		file << "/" << std::endl;
+	}
+
+	file.close();
+
+	// 一時ファイルから元のファイルへアトミックに置換
+	MoveFileExW(tmp_path.c_str(), g_Setting.skk_user_dic_file_path.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+
+	if (hMutex) {
+		ReleaseMutex(hMutex);
+		CloseHandle(hMutex);
+	}
+
 	return TRUE;
 }

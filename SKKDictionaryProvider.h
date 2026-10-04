@@ -14,6 +14,7 @@
 
 #define SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_STR L";"
 #define SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR L';'
+#define SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_ASTR ";"
 
 #define SKK_CHOOSE_CANDIDATES_BIGSTR  (L"ASDFJKL")
 #define SKK_CHOOSE_CANDIDATES_SMLSTR  (L"asdfjkl")
@@ -46,5 +47,6 @@ private:
 	SKKDictionary m_user_skkdict;
 
 	BOOL _LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict);
+	BOOL SaveUserDictionary();
 };
 
