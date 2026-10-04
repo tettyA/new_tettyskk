@@ -1,15 +1,39 @@
 ﻿
 #include "pch.h"
 #include "settings_value.h"
+#include <filesystem>
+#include <Windows.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <filesystem>
+#include <windows.h>
+#include <shlobj.h>
+#include <urlmon.h>
+#include <conio.h>
+#include <fcntl.h>
+#include <io.h>
+
+namespace fs = std::filesystem;
 
 __declspec(selectany) settings_value g_Setting; // 設定値のグローバル変数
+fs::path GetAppDataPath() {
+	wchar_t* path = nullptr;
+	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path))) {
+		fs::path p(path);
+		CoTaskMemFree(path);
+		return p;
+	}
+	return fs::path();
+}
 
 void initialize_setting() {
 	initialize_setting_display_attribute();
+	std::filesystem::path appData = GetAppDataPath() / L"new_tettyskk";
+	g_Setting.kmp_file_path = (appData / L"kmp.kmp");
+	g_Setting.skk_dic_file_path = (appData / L"SKK-JISYO.L");
+	g_Setting.skk_user_dic_file_path = (appData / L"SKK-JISYO.USER.L");
 	
-	g_Setting.kmp_file_path = LR"(C:\skktemp\kmp.kmp)";
-	g_Setting.skk_dic_file_path = LR"(C:\skktemp\SKK-JISYO.L)";
-	g_Setting.skk_user_dic_file_path = LR"(C:\skktemp\SKK-JISYO.USER.L)";
 	g_Setting.single_candidate_max_count = 5;
 
 	g_Setting.candidate_window_font_size = 46; // 候補ウィンドウのフォントサイズを設定
