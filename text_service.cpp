@@ -14,11 +14,15 @@
 // NOTE: IME ON/OFF切替コンパートメントは未対応のため、このTIPがアクティブな間は常にこの判定が働く。
 BOOL  CTextService::__IsKeyEaten(WPARAM wParam)const  {
     WPARAM key = (WPARAM)wParam;
-    if (g_currentMode == SKKMode::Hankaku) {
-        return FALSE;
-    }
     // Ctrl/Alt併用のショートカット(Ctrl+C等)はアプリに渡す。Ctrl+Jだけは呼び出し側で処理する
     if ((GetKeyState(VK_CONTROL) & 0x8000) || (GetKeyState(VK_MENU) & 0x8000)) {
+        if (key == 'J') return TRUE;
+        return FALSE;
+    }
+    if (g_currentMode == SKKMode::Hankaku) {
+        if (!m_stateStack.empty()) {
+            return TRUE;
+        }
         return FALSE;
     }
     if (key <= 0xFFFF && (m_qelfTranslater._is_contain_key((KeyCode)key) || m_romajiKanaTranslater.contain_kigou((KeyCode)key))) {
@@ -323,7 +327,7 @@ void CTextService::_OnDictionaryRegistration(const std::wstring& reading, WCHAR 
     }
     else {
         candidate.candidate = word.substr(0, semi);
-        candidate.annotation = word.substr(semi);
+        candidate.annotation = word.substr(semi + 1);
     }
 
     // 送り仮名あり(okuriganashiin != L'\0')の場合は読みキーに子音を付加 (例: わたs -> 渡)
@@ -574,11 +578,8 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
 
     // ここにいるということは、SKKMode::Hankaku ではない。
+    // 辞書登録中でもHankakuモードへの移行を許可し、注釈などに半角英数を使用できるようにする
     if (wParam == 'R') {
-        // 辞書登録中の半角英数への遷移は入力先が無くなるため無視する
-        if (!m_stateStack.empty()) {
-            return S_OK;
-        }
         if (g_currentMode == SKKMode::Henkan) {
             _CommitHenkan(pic);
         }
@@ -772,30 +773,54 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     std::wstring output;
     bool shifted = false;
 
-    if (m_romajiKanaTranslater.translate_kigou(ch, output)) {
-        // 読み入力中に記号(ー以外)が来たら、読みをそのまま確定してから記号を入力する
-        if (g_currentMode == SKKMode::Henkan && output != L"ー") {
-            _CommitHenkan(pic);
-        }
-        // 記号はShiftによる変換開始の対象外
-    }
-    else {
-        std::wstring qelfOutput;
-        if (m_qelfTranslater.translate_qwerty_to_qelf(ch, qelfOutput)) {
-            // Q-ELF側でEnterが割り当てられているキー(;など)は、本物のEnterを送って通常のEnter処理に任せる
-            if (qelfOutput.length() == 1 && qelfOutput[0] == L'\r') {
-                INPUT inputs[2] = {};
-                inputs[0].type = INPUT_KEYBOARD;
-                inputs[0].ki.wVk = VK_RETURN;
-                inputs[1].type = INPUT_KEYBOARD;
-                inputs[1].ki.wVk = VK_RETURN;
-                inputs[1].ki.dwFlags = KEYEVENTF_KEYUP;
-                SendInput(2, inputs, sizeof(INPUT));
-                return S_OK;
+    if (g_currentMode == SKKMode::Hankaku) {
+        BYTE keyboardState[256];
+        GetKeyboardState(keyboardState);
+        WCHAR buf[2] = {0};
+        if (ToUnicode((UINT)wParam, HIWORD(lParam) & 0xFF, keyboardState, buf, 2, 0) >= 1) {
+            if (buf[0] >= 0x20) { // 制御文字(LFなど)を除外
+                output = buf;
             }
-            m_romajiKanaTranslater.translate_qelf(qelfOutput, output);
-            // Shiftは同時押し2打のどちらで押されていても良い。仮名が確定した時だけ意味を持つ
-            shifted = !output.empty() && m_qelfTranslater.get_shift_pushed_last();
+        } else {
+            if (ch >= 0x20) {
+                output = std::wstring(1, ch);
+            }
+        }
+    } else {
+        if (m_romajiKanaTranslater.translate_kigou(ch, output)) {
+            // 読み入力中に記号(ー以外)が来たら、読みをそのまま確定してから記号を入力する
+            if (g_currentMode == SKKMode::Henkan && output != L"ー") {
+                _CommitHenkan(pic);
+            }
+            // 記号はShiftによる変換開始の対象外
+        }
+        else {
+            std::wstring qelfOutput;
+            if (m_qelfTranslater.translate_qwerty_to_qelf(ch, qelfOutput)) {
+                // Q-ELF側でEnterが割り当てられているキー(;など)は、本物のEnterを送って通常のEnter処理に任せる
+                if (qelfOutput.length() == 1 && qelfOutput[0] == L'\r') {
+                    // ただし、辞書登録中で注釈をつけたい場合(キーボード上で';'となるキー)は';'として扱う
+                    BYTE keyboardState[256];
+                    GetKeyboardState(keyboardState);
+                    WCHAR buf[2] = {0};
+                    if (!m_stateStack.empty() && ToUnicode((UINT)wParam, HIWORD(lParam) & 0xFF, keyboardState, buf, 2, 0) >= 1 && buf[0] == L';') {
+                        output = L";";
+                    } else {
+                        INPUT inputs[2] = {};
+                        inputs[0].type = INPUT_KEYBOARD;
+                        inputs[0].ki.wVk = VK_RETURN;
+                        inputs[1].type = INPUT_KEYBOARD;
+                        inputs[1].ki.wVk = VK_RETURN;
+                        inputs[1].ki.dwFlags = KEYEVENTF_KEYUP;
+                        SendInput(2, inputs, sizeof(INPUT));
+                        return S_OK;
+                    }
+                } else {
+                    m_romajiKanaTranslater.translate_qelf(qelfOutput, output);
+                    // Shiftは同時押し2打のどちらで押されていても良い。仮名が確定した時だけ意味を持つ
+                    shifted = !output.empty() && m_qelfTranslater.get_shift_pushed_last();
+                }
+            }
         }
     }
 
@@ -841,7 +866,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         return S_OK;
     }
 
-    if (g_currentMode == SKKMode::Kakutei) {
+    if (g_currentMode == SKKMode::Kakutei || g_currentMode == SKKMode::Hankaku) {
         if (registering) {
             // 辞書登録中の通常入力はアプリへ挿入せず、登録用バッファに溜めて候補ウィンドウに表示する
             m_regText += output;

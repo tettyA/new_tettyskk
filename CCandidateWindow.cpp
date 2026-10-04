@@ -209,13 +209,31 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 	};
 	DebugTrace((L"RenderContent: availableWidth=" + std::to_wstring(availableWidth) + L", wrapLimit=" + std::to_wstring(wrapLimit)));
 	if (m_isRegisterMode) {
+		std::wstring fullInput = m_registerCommittedInput + m_registerUnconfirmedInput;
+		size_t semi = fullInput.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
+
 		std::vector<ColorfulText> texts{
 			{L"[登録] ", g_Setting.candidate_window_hilight_font_color},
 			{m_registerTarget, g_Setting.candidate_window_normal_font_color},
-			{L" : ", g_Setting.candidate_window_dim_font_color},
-			{m_registerCommittedInput, g_Setting.candidate_window_normal_font_color},
-			{m_registerUnconfirmedInput, g_Setting.candidate_window_unconfirmed_font_color}
+			{L" : ", g_Setting.candidate_window_dim_font_color}
 		};
+
+		if (semi == std::wstring::npos) {
+			texts.push_back({m_registerCommittedInput, g_Setting.candidate_window_normal_font_color});
+			texts.push_back({m_registerUnconfirmedInput, g_Setting.candidate_window_unconfirmed_font_color});
+		} else {
+			if (semi < m_registerCommittedInput.length()) {
+				texts.push_back({m_registerCommittedInput.substr(0, semi), g_Setting.candidate_window_normal_font_color});
+				texts.push_back({m_registerCommittedInput.substr(semi), g_Setting.candidate_window_dim_font_color});
+				texts.push_back({m_registerUnconfirmedInput, g_Setting.candidate_window_dim_font_color});
+			} else {
+				size_t unconfSemi = semi - m_registerCommittedInput.length();
+				texts.push_back({m_registerCommittedInput, g_Setting.candidate_window_normal_font_color});
+				texts.push_back({m_registerUnconfirmedInput.substr(0, unconfSemi), g_Setting.candidate_window_unconfirmed_font_color});
+				texts.push_back({m_registerUnconfirmedInput.substr(unconfSemi), g_Setting.candidate_window_dim_font_color});
+			}
+		}
+
 		DebugTrace((L"RegisterInfo: " + m_registerTarget + L" : " + m_registerCommittedInput + L" + " + m_registerUnconfirmedInput));
 		finalizeLine(texts, MARGIN_X + _GetTextSize(hdc, 0, (int)texts.size(), texts));
 	}
