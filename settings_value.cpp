@@ -6,10 +6,10 @@ __declspec(selectany) settings_value g_Setting; // 設定値のグローバル変数
 
 void initialize_setting() {
 	initialize_setting_display_attribute();
-
+	
 	g_Setting.kmp_file_path = LR"(C:\skktemp\kmp.kmp)";
 	g_Setting.skk_dic_file_path = LR"(C:\skktemp\SKK-JISYO.L)";
-	g_Setting.skk_user_dic_file_path = LR"(C:\skktemp\SKK-JISYO.user)";
+	g_Setting.skk_user_dic_file_path = LR"(C:\skktemp\SKK-JISYO.USER.L)";
 	g_Setting.single_candidate_max_count = 5;
 
 	g_Setting.candidate_window_font_size = 46; // 候補ウィンドウのフォントサイズを設定

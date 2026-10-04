@@ -1,4 +1,4 @@
-ï»¿#include "pch.h"
+#include "pch.h"
 #include "SKKDictionaryProvider.h"
 
 #include <ranges>
@@ -33,9 +33,14 @@ void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKC
 
 	it = m_user_skkdict.find(hiragana_key);
 	if (it != m_user_skkdict.end()) {
-		// ãƒ¦ãƒ¼ã‚¶ãƒ¼è¾æ›¸ã®å€™è£œã‚’è¿½åŠ 
+		// ƒ†[ƒU[«‘‚ÌŒó•â‚ğ’Ç‰Á
 		candidates.insert(candidates.end(), it->second.begin(), it->second.end());
 	}
+}
+
+void SKKDictionaryProvider::RegisterUserDictionary(const std::wstring& hiragana_key, const std::wstring okurigana_alphaet, const SKKCandidate& candidate)
+{
+	m_user_skkdict[hiragana_key + okurigana_alphaet].push_back(candidate);
 }
 
 BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict)
@@ -52,13 +57,13 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 		return TRUE;
 	}
 
-	// ãƒ•ã‚¡ã‚¤ãƒ«å…¨ä½“ã‚’ä¸€æ‹¬èª­ã¿è¾¼ã¿
+	// ƒtƒ@ƒCƒ‹‘S‘Ì‚ğˆêŠ‡“Ç‚İ‚İ
 	std::vector<char> buffer(static_cast<size_t>(fileSize));
 	if (!file.read(buffer.data(), fileSize)) {
 		return FALSE;
 	}
 
-	// ãƒ•ã‚¡ã‚¤ãƒ«å…¨ä½“ã‚’ä¸€æ‹¬ã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ› (MultiByteToWideCharã®å‘¼ã³å‡ºã—ã‚ªãƒ¼ãƒãƒ¼ãƒ˜ãƒƒãƒ‰ã‚’å‰Šæ¸›)
+	// ƒtƒ@ƒCƒ‹‘S‘Ì‚ğˆêŠ‡‚Å•¶šƒR[ƒh•ÏŠ· (MultiByteToWideChar‚ÌŒÄ‚Ño‚µƒI[ƒo[ƒwƒbƒh‚ğíŒ¸)
 	int wideSize = MultiByteToWideChar(EUC_JP_CODEPAGE, 0, buffer.data(), static_cast<int>(fileSize), nullptr, 0);
 	if (wideSize <= 0) {
 		return FALSE;
@@ -67,7 +72,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 	std::vector<wchar_t> wbuffer(static_cast<size_t>(wideSize));
 	MultiByteToWideChar(EUC_JP_CODEPAGE, 0, buffer.data(), static_cast<int>(fileSize), wbuffer.data(), wideSize);
 
-	// ãƒã‚¤ãƒ³ã‚¿ã‚’åˆ©ç”¨ã—ãŸã‚¼ãƒ­ã‚¢ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³è§£æ
+	// ƒ|ƒCƒ“ƒ^‚ğ—˜—p‚µ‚½ƒ[ƒƒAƒƒP[ƒVƒ‡ƒ“‰ğÍ
 	const wchar_t* p = wbuffer.data();
 	const wchar_t* end = p + wideSize;
 
@@ -84,7 +89,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 
 		size_t lineLen = lineEnd - p;
 
-		// ç©ºè¡ŒãŠã‚ˆã³ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã®ã‚¹ã‚­ãƒƒãƒ—
+		// ‹ós‚¨‚æ‚ÑƒRƒƒ“ƒgs‚ÌƒXƒLƒbƒv
 		if (lineLen > 0 && !(lineLen >= 2 && p[0] == L';' && p[1] == L';')) {
 			const wchar_t* space = static_cast<const wchar_t*>(wmemchr(p, L' ', lineLen));
 			if (space) {
@@ -93,7 +98,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 
 				const wchar_t* candStart = space + 1;
 
-				// å€™è£œæ•°ã®äºˆæ¸¬ã¨ãƒ¡ãƒ¢ãƒªäº‹å‰ç¢ºä¿ã«ã‚ˆã‚‹å†ç¢ºä¿ã‚³ã‚¹ãƒˆã®å‰Šæ¸›
+				// Œó•â”‚Ì—\‘ª‚Æƒƒ‚ƒŠ–‘OŠm•Û‚É‚æ‚éÄŠm•ÛƒRƒXƒg‚ÌíŒ¸
 				size_t slashCount = 0;
 				for (const wchar_t* c = candStart; c < lineEnd; ++c) {
 					if (*c == L'/') {
@@ -102,7 +107,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 				}
 				candidates.reserve(slashCount);
 
-				// å€™è£œæ–‡å­—åˆ—ã®æŠ½å‡º
+				// Œó•â•¶š—ñ‚Ì’Šo
 				while (candStart < lineEnd) {
 					const wchar_t* slash = static_cast<const wchar_t*>(wmemchr(candStart, L'/', lineEnd - candStart));
 					if (!slash) {
@@ -113,14 +118,14 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 					if (candLen > 0) {
 						const wchar_t* semi = static_cast<const wchar_t*>(wmemchr(candStart, SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR, candLen));
 						if (semi) {
-							// æ³¨é‡ˆãŒã‚ã‚‹å ´åˆ
+							// ’ß‚ª‚ ‚éê‡
 							candidates.push_back({
 								std::wstring(candStart, semi - candStart),
 								std::wstring(semi + 1, slash - semi - 1)
 								});
 						}
 						else {
-							// æ³¨é‡ˆãŒãªã„å ´åˆ
+							// ’ß‚ª‚È‚¢ê‡
 							candidates.push_back({
 								std::wstring(candStart, candLen),
 								std::wstring()
@@ -131,7 +136,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 				}
 
 				if (!candidates.empty()) {
-					// ãƒ ãƒ¼ãƒ–ã‚»ãƒãƒ³ãƒ†ã‚£ã‚¯ã‚¹ã‚’åˆ©ç”¨ã—ã¦ç„¡é§„ãªã‚³ãƒ”ãƒ¼ã‚’å›é¿
+					// ƒ€[ƒuƒZƒ}ƒ“ƒeƒBƒNƒX‚ğ—˜—p‚µ‚Ä–³‘Ê‚ÈƒRƒs[‚ğ‰ñ”ğ
 					_dict.insert_or_assign(std::move(reading), std::move(candidates));
 				}
 			}
@@ -156,7 +161,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 			continue;
 		}
 
-		//æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®å¤‰æ›
+		//•¶šƒR[ƒh‚Ì•ÏŠ·
 		std::wstring linew;
 		{
 			int len = MultiByteToWideChar(EUC_JP_CODEPAGE, 0, line.c_str(), line.length(), nullptr, 0);
@@ -167,42 +172,42 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 		}
 		if (linew.starts_with(L";;"))continue;
 
-		//è¾æ›¸è§£æ
+		//«‘‰ğÍ
 		/*
-		* æ§‹æ–‡
+		* \•¶
 		*
-		* [ã²ã‚‰ãŒãª] /å€™è£œ1/å€™è£œ2/å€™è£œ3/.../
-		* å€™è£œã®ä¸­ã«;ãŒã‚ã‚‹å ´åˆï¼Œãã®å¾Œã¯è§£èª¬çš„ãªã‚‚ã®
+		* [‚Ğ‚ç‚ª‚È] /Œó•â1/Œó•â2/Œó•â3/.../
+		* Œó•â‚Ì’†‚É;‚ª‚ ‚éê‡C‚»‚ÌŒã‚Í‰ğà“I‚È‚à‚Ì
 		*/
 	/*
-		//  ä¾‹:
-		// ã„a /å°„/å±…/é‹³;é‡‘ç‰©ã‚’é‹³ã‚‹/å°†;å…µã‚’å°†ã‚‹/ç‡;â‰’å°†ã‚‹/é‘„;ã€Œé‹³ã€ã®æ—§å­—(äººåç”¨æ¼¢å­—)/
+		//  —á:
+		// ‚¢a /Ë/‹/’’;‹à•¨‚ğ’’‚é/«;•º‚ğ«‚é/—¦;à«‚é/èh;u’’v‚Ì‹Œš(l–¼—pŠ¿š)/
 
 		size_t spacePos = linew.find(L' ');
 		if (spacePos == std::wstring::npos) {
 			continue;
 		}
 
-		std::wstring reading = linew.substr(0, spacePos);// èª­ã¿
-		std::wstring candidateStr = linew.substr(spacePos + 1);// å€™è£œæ–‡å­—åˆ—ç¾¤
+		std::wstring reading = linew.substr(0, spacePos);// “Ç‚İ
+		std::wstring candidateStr = linew.substr(spacePos + 1);// Œó•â•¶š—ñŒQ
 
 		SKKCandidates candidates;
 
 		for (auto&& subrange : candidateStr | std::views::split(L'/')) {
 			std::wstring_view splitline(subrange.begin(), subrange.end());
 
-			// å€™è£œæ–‡å­—åˆ—
+			// Œó•â•¶š—ñ
 			if (splitline.empty())continue;
 
 			if (splitline.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR) != std::wstring_view::npos) {
-				// æ³¨é‡ˆãŒã‚ã‚‹å ´åˆ
+				// ’ß‚ª‚ ‚éê‡
 				size_t semicolonPos = splitline.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
 				std::wstring candidate(splitline.substr(0, semicolonPos));
 				std::wstring annotation(splitline.substr(semicolonPos + 1));
 				candidates.push_back({ candidate, annotation });
 			}
 			else {
-				// æ³¨é‡ˆãŒãªã„å ´åˆ
+				// ’ß‚ª‚È‚¢ê‡
 				std::wstring candidate(splitline);
 				candidates.push_back({ candidate, L"" });
 			}

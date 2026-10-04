@@ -311,7 +311,20 @@ void CTextService::_ResetAllState()
 
 void CTextService::_OnDictionaryRegistration(const std::wstring & reading, const std::wstring & word)
 {
-	// TODO: 辞書登録処理
+	// TODO: 後で送り仮名付きのやつの登録も出来るようにする
+	SKKCandidate candidate;
+    // ;前と，後で区切る(後は;含む)
+    const size_t semi = word.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
+    if (semi == std::wstring::npos) {
+        candidate.candidate = word;
+        candidate.annotation.clear();
+    }
+    else {
+        candidate.candidate = word.substr(0, semi);
+        candidate.annotation = word.substr(semi);
+    }
+
+    m_skkdictProvider.RegisterUserDictionary(reading, L"", candidate);
 }
 
 // キャレットのスクリーン座標を取得する。取得出来ない場合はマウスカーソル付近をフェイルセーフとして返す

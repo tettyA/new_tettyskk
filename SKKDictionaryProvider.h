@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 #include "globals.h"
 
 #include <string>
@@ -19,16 +19,16 @@
 #define SKK_CHOOSE_CANDIDATES_SMLSTR  (L"asdfjkl")
 #define SKK_CHOOSE_CANDIDATES_BIGSTR_LEN  (7)
 struct SKKCandidate {
-	std::wstring candidate; // ä¸€ã¤ã®å€™è£œæ–‡å­—åˆ—
-	std::wstring annotation;  // æ³¨é‡ˆ
+	std::wstring candidate; // ˆê‚Â‚ÌŒó•â•¶š—ñ
+	std::wstring annotation;  // ’ß
 };
-using SKKCandidates = std::vector<SKKCandidate>;//å€™è£œæ–‡å­—åˆ—ç¾¤
-using SKKDictionary = std::map<std::wstring, SKKCandidates>;//èª­ã¿ï¼Œå€™è£œæ–‡å­—åˆ—ç¾¤
+using SKKCandidates = std::vector<SKKCandidate>;//Œó•â•¶š—ñŒQ
+using SKKDictionary = std::map<std::wstring, SKKCandidates>;//“Ç‚İCŒó•â•¶š—ñŒQ
 
-// SKKDictionary[L"ã“ã†ã—ã‚‡ã†"]={{"äº¤æ¸‰","è©±ã—åˆã£ã¦æ¡ä»¶ã‚’æ±ºã‚ã‚ã†"},{"æ ¡ç« ","å­¦æ ¡ã‚„å¤§å­¦ã®ç´‹ç« "},{"å·¥å» ","å·¥å ´ã¿ãŸã„ãªã¨ã“ã‚"}, ... }
+// SKKDictionary[L"‚±‚¤‚µ‚å‚¤"]={{"ŒğÂ","˜b‚µ‡‚Á‚ÄğŒ‚ğŒˆ‚ß‚ ‚¤"},{"ZÍ","ŠwZ‚â‘åŠw‚Ì–äÍ"},{"H±","Hê‚İ‚½‚¢‚È‚Æ‚±‚ë"}, ... }
 
 //#define MAX_SKK_DICTIONARY_HISTORY 1000
-//using SKKdictionaryHistory = std::deque<std::wstring>; //èª­ã¿ã®ã¿ å¤‰æ›å±¥æ­´
+//using SKKdictionaryHistory = std::deque<std::wstring>; //“Ç‚İ‚Ì‚İ •ÏŠ·—š—ğ
 
 #define EUC_JP_CODEPAGE 20932
 
@@ -40,6 +40,7 @@ public:
 
 	BOOL LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath);
 	void GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const;
+	void RegisterUserDictionary(const std::wstring& hiragana_key,const std::wstring okurigana_alphaet, const SKKCandidate& candidate);
 private:
 	SKKDictionary m_skkdict;
 	SKKDictionary m_user_skkdict;
