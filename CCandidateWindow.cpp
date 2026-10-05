@@ -242,7 +242,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 	if (m_drawmode == CandidateWindowDrawMode::Single && m_currentIndex >= 0 && m_currentIndex < candCount) {
 		std::vector<ColorfulText> texts{
 			{m_candidates[m_currentIndex].candidate, g_Setting.candidate_window_normal_font_color},
-			{(m_candidates[m_currentIndex].annotation.empty() ? L"" : L" ;" + m_candidates[m_currentIndex].annotation), g_Setting.candidate_window_dim_font_color}
+			{(m_candidates[m_currentIndex].annotation.empty() ? L"" : L" " + m_candidates[m_currentIndex].annotation), g_Setting.candidate_window_dim_font_color}
 		};
 		finalizeLine(texts, MARGIN_X + _GetTextSize(hdc, 0, (int)texts.size(), texts));
 	}
@@ -271,7 +271,7 @@ void CCandidateWindow::_RenderContent(HDC hdc, int availableWidth, bool draw, in
 				{m_candidates[m_currentIndex + i].candidate, g_Setting.candidate_window_normal_font_color}
 			};
 			if (!m_candidates[m_currentIndex + i].annotation.empty()) {
-				segment.push_back({ L";" + m_candidates[m_currentIndex + i].annotation, g_Setting.candidate_window_dim_font_color });
+				segment.push_back({ m_candidates[m_currentIndex + i].annotation, g_Setting.candidate_window_dim_font_color });
 			}
 			appendSegment(segment);
 		}

@@ -190,7 +190,7 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 							// 注釈がある場合
 							candidates.push_back({
 								std::wstring(candStart, semi - candStart),
-								std::wstring(semi + 1, slash - semi - 1)
+								std::wstring(semi, slash - semi)
 								});
 						}
 						else {
@@ -255,7 +255,7 @@ BOOL SKKDictionaryProvider::_LoadHistory()
 				size_t readLen = slash - p;
 				const wchar_t* resultStart = slash + 1;
 				size_t remLen = lineEnd - resultStart;
-				const wchar_t* semi = static_cast<const wchar_t*>(wmemchr(resultStart, L';', remLen));
+				const wchar_t* semi = static_cast<const wchar_t*>(wmemchr(resultStart, SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR, remLen));
 
 				int idx = m_pHistory->count;
 				wcsncpy_s(m_pHistory->items[idx].reading, MAX_HISTORY_STR_LEN, std::wstring(p, readLen).c_str(), _TRUNCATE);
@@ -352,10 +352,12 @@ void SKKDictionaryProvider::_InitSharedHistory()
 				0, 0, sizeof(SharedSKKHistory)
 			);
 
-		if (m_pHistory && isFirstProcess) {
+		if (m_pHistory && m_hHistoryMutex) {
 			WaitForSingleObject(m_hHistoryMutex, INFINITE);
+			if (isFirstProcess) {
+				m_pHistory->user_dict_version = 0;
+			}
 			m_pHistory->count = 0;
-			m_pHistory->user_dict_version = 0;
 			_LoadHistory();
 			ReleaseMutex(m_hHistoryMutex);
 		}
@@ -489,7 +491,6 @@ BOOL SKKDictionaryProvider::SaveUserDictionary()
 
 			file << "/" << word;
 			if (!annotation.empty()) {
-				file << SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_ASTR;
 				file << annotation;
 			}
 		}
@@ -499,9 +500,9 @@ BOOL SKKDictionaryProvider::SaveUserDictionary()
 	file.close();
 
 	// 一時ファイルから元のファイルへアトミックに置換
-	MoveFileExW(tmp_path.c_str(), g_Setting.skk_user_dic_file_path.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+	const BOOL replaced = MoveFileExW(tmp_path.c_str(), g_Setting.skk_user_dic_file_path.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
 
-	if (m_pHistory) {
+	if (replaced && m_pHistory) {
 		m_pHistory->user_dict_version++;
 		m_local_user_dict_version = m_pHistory->user_dict_version;
 	}
@@ -509,6 +510,11 @@ BOOL SKKDictionaryProvider::SaveUserDictionary()
 	if (hMutex) {
 		ReleaseMutex(hMutex);
 		CloseHandle(hMutex);
+	}
+
+	if (!replaced) {
+		DeleteFileW(tmp_path.c_str());
+		return FALSE;
 	}
 
 	return TRUE;

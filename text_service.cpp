@@ -328,7 +328,7 @@ void CTextService::_OnDictionaryRegistration(const std::wstring& reading, WCHAR 
 	// okuriganashiin != L'\0' の場合は送り仮名付き登録。
 	// 辞書キーは「語幹 + 子音」(例: わたs -> 渡) になる。
 	SKKCandidate candidate;
-    // ;前と，後で区切る(後は;含む)
+    // 最初の ; を区切りとして分割し、annotation側は区切り文字を含む
     const size_t semi = word.find(SKK_CANDIDOTATES_ANNOTATION_SEPARATOR_WCHAR);
     if (semi == std::wstring::npos) {
         candidate.candidate = word;
@@ -336,7 +336,7 @@ void CTextService::_OnDictionaryRegistration(const std::wstring& reading, WCHAR 
     }
     else {
         candidate.candidate = word.substr(0, semi);
-        candidate.annotation = word.substr(semi + 1);
+        candidate.annotation = word.substr(semi);
     }
 
     // 送り仮名あり(okuriganashiin != L'\0')の場合は読みキーに子音を付加 (例: わたs -> 渡)

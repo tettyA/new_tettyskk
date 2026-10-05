@@ -41,7 +41,7 @@ struct SharedSKKHistory {
 using SKKCandidates = std::vector<SKKCandidate>;//候補文字列群
 using SKKDictionary = std::map<std::wstring, SKKCandidates>;//読み，候補文字列群
 
-// SKKDictionary[L"こうしょう"]={{"交渉","話し合って条件を決めあう"},{"校章","学校や大学の紋章"},{"工廠","工場みたいなところ"}, ... }
+// SKKDictionary[L"こうしょう"]={{"交渉",";話し合って条件を決めあう"},{"校章",";学校や大学の紋章"},{"工廠",";工場みたいなところ"}, ... }
 
 
 #define EUC_JP_CODEPAGE 20932
