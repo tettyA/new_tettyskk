@@ -1,15 +1,26 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SKKDictionaryProvider.h"
 
 #include <ranges>
+#include <windows.h>
+#include <sddl.h>
+
 SKKDictionaryProvider::SKKDictionaryProvider()
 {
 	m_skkdict = SKKDictionary();
 	m_user_skkdict = SKKDictionary();
+
+	m_hHistoryMap = NULL;
+	m_hHistoryMutex = NULL;
+	m_pHistory = NULL;
+
+	_InitSharedHistory();
 }
 
 SKKDictionaryProvider::~SKKDictionaryProvider()
-{}
+{
+	_ReleaseSharedHistory();
+}
 
 BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath)
 {
@@ -26,14 +37,17 @@ BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const st
 void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const
 {
 	candidates.clear();
-	auto it = m_skkdict.find(hiragana_key);
-	if (it != m_skkdict.end()) {
+
+
+
+	auto it = m_user_skkdict.find(hiragana_key);
+	// ユーザー辞書の候補を追加 (ユーザー辞書の候補が優先される)
+	if (it != m_user_skkdict.end()) {
 		candidates = it->second;
 	}
 
-	it = m_user_skkdict.find(hiragana_key);
-	if (it != m_user_skkdict.end()) {
-		// ユーザー辞書の候補を追加
+	it = m_skkdict.find(hiragana_key);
+	if (it != m_skkdict.end()) {
 		candidates.insert(candidates.end(), it->second.begin(), it->second.end());
 	}
 }
@@ -42,6 +56,30 @@ void SKKDictionaryProvider::RegisterUserDictionary(const std::wstring& hiragana_
 {
 	m_user_skkdict[hiragana_key + okurigana_alphaet].push_back(candidate);
 	SaveUserDictionary();
+}
+
+void SKKDictionaryProvider::AddHistory(SKKCandidate& candidate, const std::wstring& reading)
+{
+	if (!m_hHistoryMutex || !m_pHistory) {
+		return;
+	}
+
+	WaitForSingleObject(m_hHistoryMutex, INFINITE);
+
+	if (m_pHistory->count >= MAX_SKK_DICTIONARY_HISTORY) {
+		memmove(&m_pHistory->items[0], &m_pHistory->items[1], sizeof(SharedSKKHistoryItem) * (MAX_SKK_DICTIONARY_HISTORY - 1));
+		m_pHistory->count--;
+	}
+
+	int idx = m_pHistory->count;
+	wcsncpy_s(m_pHistory->items[idx].reading, reading.c_str(), _TRUNCATE);
+	wcsncpy_s(m_pHistory->items[idx].result, candidate.candidate.c_str(), _TRUNCATE);
+	wcsncpy_s(m_pHistory->items[idx].anno, candidate.annotation.c_str(), _TRUNCATE);
+	m_pHistory->count++;
+
+	_SaveHistory();
+
+	ReleaseMutex(m_hHistoryMutex);
 }
 
 BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict)
@@ -147,6 +185,168 @@ BOOL SKKDictionaryProvider::_LoadDictionary(const std::wstring& filepath, SKKDic
 	}
 	return TRUE;
 }
+
+BOOL SKKDictionaryProvider::_LoadHistory()
+{
+	if (!m_pHistory) {
+		return FALSE;
+	}
+
+	std::ifstream file(g_Setting.skk_history_file_path, std::ios::binary | std::ios::ate);
+	if (!file.is_open())return FALSE;
+
+	std::streamsize fileSize = file.tellg();
+	file.seekg(0, std::ios::beg);
+	if (fileSize <= 0)return TRUE;
+
+	std::vector<char>buffer(static_cast<size_t>(fileSize));
+	if (!file.read(buffer.data(), fileSize))return FALSE;
+
+	int wideSize = MultiByteToWideChar(CP_UTF8, 0, buffer.data(), static_cast<int>(fileSize), nullptr, 0);
+	if (wideSize <= 0)return FALSE;
+
+	std::vector<wchar_t> wbuffer(static_cast<size_t>(wideSize));
+	MultiByteToWideChar(CP_UTF8, 0, buffer.data(), static_cast<int>(fileSize), wbuffer.data(), wideSize);
+
+	const wchar_t* p = wbuffer.data();
+	const wchar_t* end = p + wideSize;
+
+	while (p < end && m_pHistory->count < MAX_SKK_DICTIONARY_HISTORY) {
+		const wchar_t* nl = static_cast<const wchar_t*>(wmemchr(p, L'\n', end - p));
+		if (!nl)nl = end;
+
+		const wchar_t* lineEnd = nl;
+		if (lineEnd > p && *(lineEnd - 1) == L'\r')--lineEnd;
+
+		size_t lineLen = lineEnd - p;
+		if (lineLen > 0) {
+			const wchar_t* slash = static_cast<const wchar_t*>(wmemchr(p, L'/', lineLen));
+			if (slash) {
+				size_t readLen = slash - p;
+				const wchar_t* resultStart = slash + 1;
+				size_t remLen = lineEnd - resultStart;
+				const wchar_t* semi = static_cast<const wchar_t*>(wmemchr(resultStart, L';', remLen));
+
+				int idx = m_pHistory->count;
+				wcsncpy_s(m_pHistory->items[idx].reading, MAX_HISTORY_STR_LEN, std::wstring(p, readLen).c_str(), _TRUNCATE);
+
+				if (semi) {
+					size_t resLen = semi - resultStart;
+					wcsncpy_s(m_pHistory->items[idx].result, MAX_HISTORY_STR_LEN, std::wstring(resultStart, resLen).c_str(), _TRUNCATE);
+					wcsncpy_s(m_pHistory->items[idx].anno, MAX_HISTORY_ANNO_LEN, std::wstring(semi, lineEnd - semi).c_str(), _TRUNCATE);
+				}
+				else {
+					wcsncpy_s(m_pHistory->items[idx].result, MAX_HISTORY_STR_LEN, std::wstring(resultStart, remLen).c_str(), _TRUNCATE);
+					m_pHistory->items[idx].anno[0] = L'\0';
+				}
+				m_pHistory->count++;
+			}
+		}
+		p = nl + 1;
+	}
+	return TRUE;
+}
+
+BOOL SKKDictionaryProvider::_SaveHistory()
+{
+	if (!m_pHistory) {
+		return FALSE;
+	}
+
+	std::ofstream file(g_Setting.skk_history_file_path, std::ios::binary);
+	if (!file.is_open()) return FALSE;
+
+	for (int i = 0; i < m_pHistory->count; ++i) {
+		const auto& item = m_pHistory->items[i];
+		std::wstring line = std::wstring(item.reading) + L"/" + item.result;
+		if (item.anno[0] != L'\0') {
+			line += item.anno;
+		}
+		line += L"\n";
+
+		// UTF-16からUTF-8への変換
+		int len = WideCharToMultiByte(CP_UTF8, 0, line.c_str(), (int)line.length(), nullptr, 0, nullptr, 0);
+		if (len > 0) {
+			std::string u8str(len, '\0');
+			WideCharToMultiByte(CP_UTF8, 0, line.c_str(), (int)line.length(), &u8str[0], len, nullptr, 0);
+			file.write(u8str.c_str(), len);
+		}
+	}
+
+	return TRUE;
+}
+
+void SKKDictionaryProvider::_InitSharedHistory()
+{
+	SECURITY_DESCRIPTOR sd;
+	InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+	SetSecurityDescriptorDacl(&sd, TRUE, NULL, FALSE);
+
+	SECURITY_ATTRIBUTES sa;
+	sa.nLength = sizeof(sa);
+	sa.lpSecurityDescriptor = &sd;
+	sa.bInheritHandle = FALSE;
+
+	m_hHistoryMutex = CreateMutexW(&sa, FALSE, L"Global\\TettySKK_HistoryMutex");
+	if (!m_hHistoryMutex) {
+		m_hHistoryMutex = CreateMutexW(&sa, FALSE, L"Local\\TettySKK_HistoryMutex");
+	}
+	
+	m_hHistoryMap = CreateFileMappingW(
+		INVALID_HANDLE_VALUE,
+		&sa,
+		PAGE_READWRITE,
+		0,
+		sizeof(SharedSKKHistory),
+		L"Global\\TettySKK_HistoryBuffer"
+	);
+
+	if (!m_hHistoryMap) {
+		m_hHistoryMap = CreateFileMappingW(
+			INVALID_HANDLE_VALUE,
+			&sa,
+			PAGE_READWRITE,
+			0,
+			sizeof(SharedSKKHistory),
+			L"Local\\TettySKK_HistoryMap"
+		);
+	}
+
+	bool isFirstProcess = (GetLastError() != ERROR_ALREADY_EXISTS);
+
+	if (m_hHistoryMap) {
+		m_pHistory = (SharedSKKHistory*)
+			MapViewOfFile(
+				m_hHistoryMap,
+				FILE_MAP_ALL_ACCESS,
+				0, 0, sizeof(SharedSKKHistory)
+			);
+
+		if (m_pHistory && isFirstProcess) {
+			WaitForSingleObject(m_hHistoryMutex, INFINITE);
+			m_pHistory->count = 0;
+			_LoadHistory();
+			ReleaseMutex(m_hHistoryMutex);
+		}
+	}
+}
+
+void SKKDictionaryProvider::_ReleaseSharedHistory()
+{
+	if (m_pHistory) {
+		UnmapViewOfFile(m_pHistory);
+		m_pHistory = nullptr;
+	}
+	if (m_hHistoryMap) {
+		CloseHandle(m_hHistoryMap);
+		m_hHistoryMap = nullptr;
+	}
+	if (m_hHistoryMutex) {
+		CloseHandle(m_hHistoryMutex);
+		m_hHistoryMutex = nullptr;
+	}
+}
+
 
 BOOL SKKDictionaryProvider::SaveUserDictionary()
 {

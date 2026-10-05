@@ -29,7 +29,7 @@ const std::wstring DICT_URL = L"http://openlab.ring.gr.jp/skk/skk/dic/SKK-JISYO.
 const std::wstring DICT_FILE_NAME = L"SKK-JISYO.L";
 
 // ユーザー辞書のファイル名
-const std::wstring USER_DICT_NAME = L"SKK-JISYO.USER.L";
+const std::wstring USER_DICT_NAME = L"SKK-JISYO.USER";
 // =================================
 
 void PrintError(const std::wstring& msg) {

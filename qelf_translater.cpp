@@ -3,7 +3,6 @@
 #include "globals.h"
 #include <locale>
 #include <fstream>
-#include <sstream>
 #include <filesystem>
 
 namespace {
@@ -156,8 +155,8 @@ void qelf_translater::load_KMP_table(const std::wstring& filename){
     CMode currentmode = def;
 
 
-    std::unordered_map<std::wstring, KeyCode>ids;
-    std::unordered_map<std::wstring, KMP::Dir>dirs;
+    std::map<std::wstring, KeyCode>ids;
+    std::map<std::wstring, KMP::Dir>dirs;
 
     std::wstring line;
     

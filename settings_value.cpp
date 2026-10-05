@@ -32,7 +32,8 @@ void initialize_setting() {
 	std::filesystem::path appData = GetAppDataPath() / L"new_tettyskk";
 	g_Setting.kmp_file_path = (appData / L"kmp.kmp");
 	g_Setting.skk_dic_file_path = (appData / L"SKK-JISYO.L");
-	g_Setting.skk_user_dic_file_path = (appData / L"SKK-JISYO.USER.L");
+	g_Setting.skk_user_dic_file_path = (appData / L"SKK-JISYO.USER");
+	g_Setting.skk_history_file_path = (appData / L"SKK-JISYO.USER.HIST");
 	
 	g_Setting.single_candidate_max_count = 5;
 

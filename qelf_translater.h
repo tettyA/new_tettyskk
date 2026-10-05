@@ -2,7 +2,7 @@
 #include <string>
 
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 //濁音
 #define SAMEHAND 1
@@ -48,7 +48,7 @@ struct KMP {
 	bool is_shift_pressed;
     bool is_shift_pressed_last;
 
-    std::unordered_map<KeyCode, KMPelm>KMPs;
+    std::map<KeyCode, KMPelm>KMPs;
 };
 
 

@@ -5,9 +5,7 @@
 #include <vector>
 #include <map>
 #include <fstream>
-#include <utility>
 
-#include <deque>
 
 #define _Candidate .first
 #define _Annotation .second
@@ -19,17 +17,33 @@
 #define SKK_CHOOSE_CANDIDATES_BIGSTR  (L"ASDFJKL")
 #define SKK_CHOOSE_CANDIDATES_SMLSTR  (L"asdfjkl")
 #define SKK_CHOOSE_CANDIDATES_BIGSTR_LEN  (7)
+
+
+#define MAX_HISTORY_STR_LEN 32
+#define MAX_HISTORY_ANNO_LEN 32
+#define MAX_SKK_DICTIONARY_HISTORY 1024
+
 struct SKKCandidate {
 	std::wstring candidate; // 一つの候補文字列
 	std::wstring annotation;  // 注釈
 };
+struct SharedSKKHistoryItem {
+	WCHAR reading[MAX_HISTORY_STR_LEN]; // ひらがな読み
+	WCHAR result[MAX_HISTORY_STR_LEN];  // 変換結果
+	WCHAR anno[MAX_HISTORY_ANNO_LEN]; // 注釈
+};
+struct SharedSKKHistory {
+	int count; // 履歴の件数
+	SharedSKKHistoryItem items[MAX_SKK_DICTIONARY_HISTORY]; // 履歴の内容
+};
+
 using SKKCandidates = std::vector<SKKCandidate>;//候補文字列群
 using SKKDictionary = std::map<std::wstring, SKKCandidates>;//読み，候補文字列群
 
+//using SKKHistory = std::vector<SKKHistoryItem>; //読み，変換結果 変換履歴 (後ろからの方が最近)
+
 // SKKDictionary[L"こうしょう"]={{"交渉","話し合って条件を決めあう"},{"校章","学校や大学の紋章"},{"工廠","工場みたいなところ"}, ... }
 
-//#define MAX_SKK_DICTIONARY_HISTORY 1000
-//using SKKdictionaryHistory = std::deque<std::wstring>; //読みのみ 変換履歴
 
 #define EUC_JP_CODEPAGE 20932
 
@@ -42,11 +56,20 @@ public:
 	BOOL LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath);
 	void GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const;
 	void RegisterUserDictionary(const std::wstring& hiragana_key,const std::wstring okurigana_alphaet, const SKKCandidate& candidate);
+	void AddHistory(SKKCandidate& candidate, const std::wstring& reading);
 private:
 	SKKDictionary m_skkdict;
 	SKKDictionary m_user_skkdict;
 
+	HANDLE m_hHistoryMap;
+	HANDLE m_hHistoryMutex;
+	SharedSKKHistory* m_pHistory;
+
 	BOOL _LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict);
 	BOOL SaveUserDictionary();
+	BOOL _LoadHistory();
+	BOOL _SaveHistory();
+	void _InitSharedHistory();
+	void _ReleaseSharedHistory();
 };
 
