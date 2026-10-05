@@ -30,6 +30,8 @@ const std::wstring DICT_FILE_NAME = L"SKK-JISYO.L";
 
 // ユーザー辞書のファイル名
 const std::wstring USER_DICT_NAME = L"SKK-JISYO.USER";
+// 変換履歴
+const std::wstring HISTORY_FILE_NAME = L"SKK-JISYO.USER.HIST";
 // =================================
 
 void PrintError(const std::wstring& msg) {
@@ -311,6 +313,32 @@ void ClearUserDictionary() {
     }
 }
 
+void ClearUserHistory() {
+    fs::path appData = GetAppDataPath();
+    if (appData.empty()) {
+        PrintError(L"AppDataのパスが取得できませんでした。");
+        return;
+    }
+
+    fs::path targetDir = appData / APPDATA_DIR_NAME;
+    std::error_code ec;
+    if (!fs::exists(targetDir)) {
+        fs::create_directories(targetDir, ec);
+    }
+
+    fs::path userDict = targetDir / HISTORY_FILE_NAME;
+
+    // ファイルを上書き（または新規作成）して空にする
+    HANDLE hFile = CreateFileW(userDict.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        CloseHandle(hFile);
+        PrintSuccess(L"ユーザー変換履歴を初期化（または新規作成）しました: " + userDict.wstring());
+    }
+    else {
+        PrintError(L"ユーザー変換履歴の初期化に失敗しました。");
+    }
+}
+
 void ClearScreen() {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD coordScreen = { 0, 0 };
@@ -368,6 +396,9 @@ void PrintStatus() {
 
         fs::path userDict = appData / APPDATA_DIR_NAME / USER_DICT_NAME;
         PrintFileInfo(L"ユーザー辞書", userDict);
+
+		fs::path userHistory = appData / APPDATA_DIR_NAME / HISTORY_FILE_NAME;
+		PrintFileInfo(L"ユーザー変換履歴", userHistory);
     } else {
         std::wcout << L"[辞書・KMP] AppDataのパスが取得できないためステータスを表示できません。\n\n";
     }
@@ -380,7 +411,8 @@ void ShowMenu() {
         L"2. IMEのアンインストール (要管理者権限)",
         L"3. システム辞書のダウンロード・更新",
         L"4. ユーザー辞書の初期化・新規作成",
-        L"5. 終了"
+		L"5. ユーザー変換履歴の初期化・新規作成",
+        L"6 終了"
     };
     int selectedIndex = 0;
     
@@ -416,7 +448,8 @@ void ShowMenu() {
                 case 1: UninstallIME(); break;
                 case 2: DownloadDictionary(); break;
                 case 3: ClearUserDictionary(); break;
-                case 4: return;
+				case 4: ClearUserHistory(); break;
+                case 5: return;
             }
             std::wcout << L"\n何かキーを押すとメニューに戻ります...";
             _getch();
