@@ -40,8 +40,6 @@ struct SharedSKKHistory {
 using SKKCandidates = std::vector<SKKCandidate>;//候補文字列群
 using SKKDictionary = std::map<std::wstring, SKKCandidates>;//読み，候補文字列群
 
-//using SKKHistory = std::vector<SKKHistoryItem>; //読み，変換結果 変換履歴 (後ろからの方が最近)
-
 // SKKDictionary[L"こうしょう"]={{"交渉","話し合って条件を決めあう"},{"校章","学校や大学の紋章"},{"工廠","工場みたいなところ"}, ... }
 
 
