@@ -285,6 +285,15 @@ void CTextService::_ExitDictionaryRegistration(ITfContext* pic, bool apply)
 void CTextService::_CommitHenkan(ITfContext* pic)
 {
     HRESULT hrSession = S_OK;
+    // 履歴に保存(確定前に)
+    if (g_currentMode == SKKMode::Henkan && !m_candidates.empty() && m_candidateIndex >= 0 && m_candidateIndex < m_candidates.size()) {
+		std::wstring dictKey = m_henkanGokan;
+		if (m_okuriganashiin != L'\0') {
+			dictKey += m_okuriganashiin;
+		}
+		m_skkdictProvider.AddHistory(m_candidates[m_candidateIndex], dictKey);
+    }
+
     if (m_stateStack.empty()) {
         if (__HasComposition()) {
             __RequestEditSession(pic, EditSessionRequest::DoComposition, hrSession);
@@ -391,7 +400,6 @@ CTextService::CTextService() {
 	g_CurrentKanaMode = KanaMode::Hiragana;
 	g_currentMode = SKKMode::Hankaku;
 
-	m_skkdictProvider = SKKDictionaryProvider();
 	m_skkdictProvider.LoadDictionary(g_Setting.skk_dic_file_path, g_Setting.skk_user_dic_file_path);
 
 	m_candidates = SKKCandidates();

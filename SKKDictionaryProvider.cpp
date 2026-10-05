@@ -14,7 +14,7 @@ SKKDictionaryProvider::SKKDictionaryProvider()
 	m_hHistoryMutex = NULL;
 	m_pHistory = NULL;
 
-	_InitSharedHistory();
+	//_InitSharedHistory();
 }
 
 SKKDictionaryProvider::~SKKDictionaryProvider()
@@ -24,6 +24,7 @@ SKKDictionaryProvider::~SKKDictionaryProvider()
 
 BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath)
 {
+	_InitSharedHistory();
 	if (_LoadDictionary(dictpath, m_skkdict) == FALSE) {
 		return FALSE;
 	}
@@ -38,18 +39,42 @@ void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKC
 {
 	candidates.clear();
 
+	// 重複せずに候補を追加
+	auto add_candidate = [&candidates](const std::wstring& word, const std::wstring& anno) {
+		for (const auto& c : candidates) {
+			if (c.candidate == word) return;
+		}
+		candidates.push_back({ word, anno });
+		};
 
+	if(m_hHistoryMutex && m_pHistory) {
+		WaitForSingleObject(m_hHistoryMutex, INFINITE);
+		for (int i = m_pHistory->count - 1; i >= 0; --i) {
+			const auto& item = m_pHistory->items[i];
+			if (hiragana_key == item.reading) {
+				add_candidate(item.result, item.anno);
+			}
+		}
 
-	auto it = m_user_skkdict.find(hiragana_key);
-	// ユーザー辞書の候補を追加 (ユーザー辞書の候補が優先される)
-	if (it != m_user_skkdict.end()) {
-		candidates = it->second;
+		ReleaseMutex(m_hHistoryMutex);
 	}
 
-	it = m_skkdict.find(hiragana_key);
-	if (it != m_skkdict.end()) {
-		candidates.insert(candidates.end(), it->second.begin(), it->second.end());
+	auto it_skk = m_skkdict.find(hiragana_key);
+	if (it_skk != m_skkdict.end()) {
+		for (const auto& cand : it_skk->second) {
+			add_candidate(cand.candidate, cand.annotation);
+		}
 	}
+
+	auto it_user = m_user_skkdict.find(hiragana_key);
+	// ユーザー辞書の候補を追加
+	if (it_user != m_user_skkdict.end()) {
+		for (const auto& cand : it_user->second) {
+			add_candidate(cand.candidate, cand.annotation);
+		}
+	}
+
+	return;
 }
 
 void SKKDictionaryProvider::RegisterUserDictionary(const std::wstring& hiragana_key, const std::wstring okurigana_alphaet, const SKKCandidate& candidate)
