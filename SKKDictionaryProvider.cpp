@@ -13,7 +13,7 @@ SKKDictionaryProvider::SKKDictionaryProvider()
 	m_hHistoryMap = NULL;
 	m_hHistoryMutex = NULL;
 	m_pHistory = NULL;
-
+	m_local_user_dict_version = 0;
 	//_InitSharedHistory();
 }
 
@@ -31,12 +31,17 @@ BOOL SKKDictionaryProvider::LoadDictionary(const std::wstring dictpath, const st
 	if (_LoadDictionary(user_dictpath, m_user_skkdict) == FALSE) {
 		return FALSE;
 	}
+	if (m_pHistory) {
+		m_local_user_dict_version = m_pHistory->user_dict_version;
+	}
 
 	return TRUE;
 }
 
-void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const
+void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates)
 {
+	_CheckAndUpdateUserDictVersion();
+
 	candidates.clear();
 
 	// 重複せずに候補を追加
@@ -350,6 +355,7 @@ void SKKDictionaryProvider::_InitSharedHistory()
 		if (m_pHistory && isFirstProcess) {
 			WaitForSingleObject(m_hHistoryMutex, INFINITE);
 			m_pHistory->count = 0;
+			m_pHistory->user_dict_version = 0;
 			_LoadHistory();
 			ReleaseMutex(m_hHistoryMutex);
 		}
@@ -370,6 +376,24 @@ void SKKDictionaryProvider::_ReleaseSharedHistory()
 		CloseHandle(m_hHistoryMutex);
 		m_hHistoryMutex = nullptr;
 	}
+}
+
+void SKKDictionaryProvider::_CheckAndUpdateUserDictVersion()
+{
+	if (!m_pHistory) {
+		return;
+	}
+
+	if (m_local_user_dict_version != m_pHistory->user_dict_version) {
+		// ユーザー辞書が他のプロセスで更新されていた場合、再読み込みする
+		SKKDictionary current_file_dict;
+		if (_LoadDictionary(g_Setting.skk_user_dic_file_path, current_file_dict)) {
+			m_user_skkdict = std::move(current_file_dict);
+			m_local_user_dict_version = m_pHistory->user_dict_version;
+		}
+	}
+
+	return;
 }
 
 
@@ -476,6 +500,11 @@ BOOL SKKDictionaryProvider::SaveUserDictionary()
 
 	// 一時ファイルから元のファイルへアトミックに置換
 	MoveFileExW(tmp_path.c_str(), g_Setting.skk_user_dic_file_path.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+
+	if (m_pHistory) {
+		m_pHistory->user_dict_version++;
+		m_local_user_dict_version = m_pHistory->user_dict_version;
+	}
 
 	if (hMutex) {
 		ReleaseMutex(hMutex);

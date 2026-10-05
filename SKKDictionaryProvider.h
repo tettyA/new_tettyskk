@@ -34,6 +34,7 @@ struct SharedSKKHistoryItem {
 };
 struct SharedSKKHistory {
 	int count; // 履歴の件数
+	int user_dict_version; // ユーザー辞書のバージョン(起動直後は0)
 	SharedSKKHistoryItem items[MAX_SKK_DICTIONARY_HISTORY]; // 履歴の内容
 };
 
@@ -52,7 +53,7 @@ public:
 	~SKKDictionaryProvider();
 
 	BOOL LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath);
-	void GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates) const;
+	void GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates);
 	void RegisterUserDictionary(const std::wstring& hiragana_key,const std::wstring okurigana_alphaet, const SKKCandidate& candidate);
 	void AddHistory(SKKCandidate& candidate, const std::wstring& reading);
 private:
@@ -62,6 +63,7 @@ private:
 	HANDLE m_hHistoryMap;
 	HANDLE m_hHistoryMutex;
 	SharedSKKHistory* m_pHistory;
+	int m_local_user_dict_version; // ローカルのユーザー辞書バージョン(起動直後は0)
 
 	BOOL _LoadDictionary(const std::wstring& filepath, SKKDictionary& _dict);
 	BOOL SaveUserDictionary();
@@ -69,5 +71,7 @@ private:
 	BOOL _SaveHistory();
 	void _InitSharedHistory();
 	void _ReleaseSharedHistory();
+
+	void _CheckAndUpdateUserDictVersion();
 };
 
