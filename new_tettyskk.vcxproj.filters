@@ -131,28 +131,16 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="tettySKKIMEICON\imeicon32x32.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
-    <Image Include="tettySKKIMEICON\imeicon64x64.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
-    <Image Include="tettySKKIMEICON\imejicon.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
     <Image Include="tettySKKIMEICON\imejicon16.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
-    <Image Include="tettySKKIMEICON\imelicon.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
     <Image Include="tettySKKIMEICON\imelicon16.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
-    <Image Include="tettySKKIMEICON\imeqicon.ico">
+    <Image Include="tettySKKIMEICON\imeqicon16.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
-    <Image Include="tettySKKIMEICON\imeqicon16.ico">
+    <Image Include="tettySKKIMEICON\imeicon16x16_ne.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
   </ItemGroup>

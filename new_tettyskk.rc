@@ -52,21 +52,13 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_IMEICON32           ICON                    "tettySKKIMEICON\\imeicon32x32.ico"
-
-IDI_IMEICON64           ICON                    "tettySKKIMEICON\\imeicon64x64.ico"
-
-IDI_MODEICON_J32        ICON                    "tettySKKIMEICON\\imejicon.ico"
-
 IDI_MODEICON_J16        ICON                    "tettySKKIMEICON\\imejicon16.ico"
-
-IDI_MODEICON_L32        ICON                    "tettySKKIMEICON\\imelicon.ico"
 
 IDI_MODEICON_L16        ICON                    "tettySKKIMEICON\\imelicon16.ico"
 
-IDI_MODEICON_Q32        ICON                    "tettySKKIMEICON\\imeqicon.ico"
-
 IDI_MODEICON_Q16        ICON                    "tettySKKIMEICON\\imeqicon16.ico"
+
+IDI_IMEICON_NE_16       ICON                    "tettySKKIMEICON\\imeicon16x16_ne.ico"
 
 #endif    // “ú–{Œê (“ú–{) resources
 /////////////////////////////////////////////////////////////////////////////

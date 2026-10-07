@@ -204,13 +204,9 @@
     <ResourceCompile Include="new_tettyskk.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="tettySKKIMEICON\imeicon32x32.ico" />
-    <Image Include="tettySKKIMEICON\imeicon64x64.ico" />
-    <Image Include="tettySKKIMEICON\imejicon.ico" />
+    <Image Include="tettySKKIMEICON\imeicon16x16_ne.ico" />
     <Image Include="tettySKKIMEICON\imejicon16.ico" />
-    <Image Include="tettySKKIMEICON\imelicon.ico" />
     <Image Include="tettySKKIMEICON\imelicon16.ico" />
-    <Image Include="tettySKKIMEICON\imeqicon.ico" />
     <Image Include="tettySKKIMEICON\imeqicon16.ico" />
   </ItemGroup>
   <ItemGroup>
