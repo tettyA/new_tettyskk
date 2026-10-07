@@ -33,12 +33,6 @@
     <ClInclude Include="text_service.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="resource2.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="resource3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>

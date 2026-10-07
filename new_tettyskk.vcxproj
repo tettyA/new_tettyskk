@@ -166,8 +166,6 @@
     <ClInclude Include="kigou2kana_translatable.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="qelf_translater.h" />
-    <ClInclude Include="resource1.h" />
-    <ClInclude Include="resource2.h" />
     <ClInclude Include="resource3.h" />
     <ClInclude Include="romaji2kana_transtable.h" />
     <ClInclude Include="romaji_kana_translater.h" />
