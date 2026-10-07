@@ -177,12 +177,6 @@ void CTextService::_UpdateCandidateWindow(TfEditCookie ec ,ITfContext* pContext)
         registerTarget = m_stateStack.back().henkanGokan;
     }
 
-    // 予測変換中（本格的な変換前）は候補ウィンドウを表示しない
-  //  if (!m_isConverting && !isRegisterMode) {
-		//_HideCandidateWindow();
-  //      return;
-  //  }
-
     if (m_candidates.empty() && !isRegisterMode) {
 		_HideCandidateWindow();
         return;
