@@ -177,6 +177,12 @@ void CTextService::_UpdateCandidateWindow(TfEditCookie ec ,ITfContext* pContext)
         registerTarget = m_stateStack.back().henkanGokan;
     }
 
+    // 予測変換中（本格的な変換前）は候補ウィンドウを表示しない
+  //  if (!m_isConverting && !isRegisterMode) {
+		//_HideCandidateWindow();
+  //      return;
+  //  }
+
     if (m_candidates.empty() && !isRegisterMode) {
 		_HideCandidateWindow();
         return;
@@ -188,9 +194,34 @@ void CTextService::_UpdateCandidateWindow(TfEditCookie ec ,ITfContext* pContext)
 	m_candidateWindow.SetRegisterInfo(isRegisterMode, registerTarget, m_regText, _compositionBuffer);
 
     RECT rc = { 0 };
-	if (_GetCaretRect(ec,pContext, &rc)) {
-		m_candidateWindow.Show(rc.left, rc.bottom);
-	}
+    if (_GetCaretRect(ec, pContext, &rc)) {
+        m_candidateWindow.Show(rc.left, rc.bottom);
+    }
+    //RECT rc = { 0 };
+    //if (_pComposition) {
+    //    // GetTextExtが使えるアプリではその位置に表示。使えないアプリでは表示しない(カーソルにズレて出るのを防ぐ)
+    //    CComPtr<ITfContextView> pContextView;
+    //    CComPtr<ITfRange> pRange;
+    //    CComPtr<ITfRange> pRangeEnd;
+    //    BOOL fClipped = FALSE;
+    //    if (SUCCEEDED(pContext->GetActiveView(&pContextView)) && pContextView &&
+    //        SUCCEEDED(_pComposition->GetRange(&pRange)) && pRange &&
+    //        SUCCEEDED(pRange->Clone(&pRangeEnd)) && pRangeEnd &&
+    //        SUCCEEDED(pRangeEnd->Collapse(ec, TF_ANCHOR_END)) &&
+    //        SUCCEEDED(pContextView->GetTextExt(ec, pRangeEnd, &rc, &fClipped))) {
+    //        m_candidateWindow.Show(rc.left, rc.bottom);
+    //    }
+    //    else if (isRegisterMode || m_isConverting) {
+    //        // GetTextExt非対応アプリ: 辞書登録中・本格変換中はマウス座標フォールバックで表示
+    //        POINT pt;
+    //        if (GetCursorPos(&pt)) {
+    //            m_candidateWindow.Show(pt.x + 10, pt.y + 20);
+    //        }
+    //    }
+    //    else {
+    //        _HideCandidateWindow();
+    //    }
+    //}
 }
 
 void CTextService::_HideCandidateWindow()
@@ -867,8 +898,12 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     if (shifted && g_currentMode == SKKMode::Kakutei) {
         // Shift+文字: 変換(読み入力)の開始。この仮名が読みの先頭になる
         _compositionBuffer += output;
-		m_isConverting = true;
-        __StartHenkanMode(pic);
+		__StartHenkanMode(pic);
+        // __StartHenkanModeはm_candidates.clearするため、開始直後に予測候補を取得する
+        SKKCandidate prediction;
+        if (m_skkdictProvider.GetPrediction(_compositionBuffer, prediction)) {
+            m_candidates.push_back(prediction);
+        }
         return S_OK;
     }
 
@@ -890,6 +925,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         }
         DebugTrace(L"送り仮名変換開始:" + dictKey);
         m_skkdictProvider.GetCandidates(dictKey, m_candidates);
+        m_isConverting = true;
 
         if (m_candidates.empty()) {
             _EnterDictionaryRegistration(pic);
