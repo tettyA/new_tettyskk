@@ -406,6 +406,11 @@ bool CTextService::_GetCaretRect(TfEditCookie ec, ITfContext * pContext, RECT * 
 		}
 	}
 
+    if (m_hasPreRect) {
+        *pRect = m_preRect;
+        return true;
+    }
+
     // GetTextExt非対応のアプリ用
     POINT pt;
     if (GetCursorPos(&pt)) {
@@ -904,6 +909,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         if (m_skkdictProvider.GetPrediction(_compositionBuffer, prediction)) {
             m_candidates.push_back(prediction);
         }
+        request(EditSessionRequest::DoComposition);
         return S_OK;
     }
 
@@ -1069,6 +1075,20 @@ HRESULT CTextService::_DoComposition(TfEditCookie ec, ITfContext* pContext) {
     CComPtr<ITfRange> pRange;
     if (FAILED(_pComposition->GetRange(&pRange))) {
         return E_FAIL;
+    }
+
+    // SetText直後はレイアウト未更新のアプリがあるため、変更前の位置を退避しておく
+    m_hasPreRect = false;
+    {
+        CComPtr<ITfContextView> pView;
+        CComPtr<ITfRange> pPre;
+        BOOL fClipped = FALSE;
+        if (SUCCEEDED(pContext->GetActiveView(&pView)) && pView &&
+            SUCCEEDED(pRange->Clone(&pPre)) && pPre &&
+            SUCCEEDED(pPre->Collapse(ec, TF_ANCHOR_END)) &&
+            SUCCEEDED(pView->GetTextExt(ec, pPre, &m_preRect, &fClipped))) {
+            m_hasPreRect = true;
+        }
     }
 
 	std::wstring displayText = _compositionBuffer;

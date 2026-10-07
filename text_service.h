@@ -140,6 +140,8 @@ private:
     void _EnterDictionaryRegistration(ITfContext* pContext);
     void _OnDictionaryRegistration(const std::wstring& reading, WCHAR okuriganashiin, const std::wstring& word);
     bool _GetCaretRect(TfEditCookie ec, ITfContext* pContext, RECT* pRect);
+    RECT m_preRect = {};
+    bool m_hasPreRect = false;
 
 };
 
