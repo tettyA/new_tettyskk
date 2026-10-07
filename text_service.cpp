@@ -72,6 +72,7 @@ void CTextService::__StartHenkanMode(ITfContext *pic)
     m_henkanGokan.clear();
     m_okurigana.clear();
 
+	m_isConverting = false;
     // 辞書登録中は既にcompositionが存在するので新規作成しない
     HRESULT hrSession = S_OK;
     __RequestEditSession(pic, __HasComposition() ? EditSessionRequest::DoComposition : EditSessionRequest::StartComposition, hrSession);
@@ -86,6 +87,8 @@ void CTextService::__EndHenkanMode(ITfContext* pic)
 	m_okurigana.clear();
 	m_okuriganashiin = L'\0';
 	g_currentMode = SKKMode::Kakutei;
+
+	m_isConverting = false;
     _HideCandidateWindow();
 
 	m_romajiKanaTranslater.reset();
@@ -250,6 +253,7 @@ void CTextService::_ExitDictionaryRegistration(ITfContext* pic, bool apply)
     m_candidateIndex = parent.candidateIndex;
     m_drawmode = parent.drawmode;
     m_regText = parent.regText;
+    m_isConverting = true;
     _compositionBuffer.clear();
     __changeCurrentMode(SKKMode::Henkan);
 
@@ -319,6 +323,7 @@ void CTextService::_ResetAllState()
     m_regText.clear();
     _compositionBuffer.clear();
     m_henkanGokan.clear();
+	m_isConverting = false;
     __EndHenkanMode(nullptr);
     g_currentMode = (g_currentMode == SKKMode::Hankaku) ? SKKMode::Hankaku : SKKMode::Kakutei;
 }
@@ -399,6 +404,8 @@ CTextService::CTextService() {
 
 	g_CurrentKanaMode = KanaMode::Hiragana;
 	g_currentMode = SKKMode::Hankaku;
+
+    m_isConverting = false;
 
 	m_skkdictProvider.LoadDictionary(g_Setting.skk_dic_file_path, g_Setting.skk_user_dic_file_path);
 
@@ -588,7 +595,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     // ここにいるということは、SKKMode::Hankaku ではない。
     // 辞書登録中でもHankakuモードへの移行を許可し、注釈などに半角英数を使用できるようにする
     if (wParam == 'R') {
-        if (g_currentMode == SKKMode::Henkan) {
+        if (g_currentMode == SKKMode::Henkan&&m_isConverting) {
             _CommitHenkan(pic);
         }
         m_romajiKanaTranslater.reset();
@@ -600,7 +607,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         KanaMode gotokanaMode = KanaMode::Katakana;
         // 変換中なら、未確定バッファ(候補表示中は読み)をカタカナにして確定
         if (g_currentMode == SKKMode::Henkan && __HasComposition()) {
-            if (!m_candidates.empty()) {
+            if (m_isConverting) {
                 _compositionBuffer = m_henkanGokan + m_okurigana;
             }
             _ConvertToKatakana(_compositionBuffer);
@@ -667,16 +674,18 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 
         if (g_currentMode == SKKMode::Henkan) {
             // 候補表示中は一旦読みに戻してから1文字削除する(候補文字列自体は削らない)
-            if (!m_candidates.empty()) {
+            if (m_isConverting) {
                 m_candidates.clear();
                 m_candidateIndex = 0;
                 m_drawmode = CandidateWindowDrawMode::Single;
                 m_okurigana.clear();
+				m_isConverting = false;
                 _compositionBuffer = m_henkanGokan;
             }
             if (!_compositionBuffer.empty()) {
                 _compositionBuffer.pop_back();
             }
+
             if (_compositionBuffer.empty()) {
                 // 空になったらキャンセル扱い(辞書登録中は登録入力に戻るだけ)
                 if (registering) {
@@ -690,6 +699,14 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
                 }
             }
             else {
+                if (!m_isConverting) {
+                    m_candidates.clear();
+                    SKKCandidate prediction;
+                    if (m_skkdictProvider.GetPrediction(_compositionBuffer, prediction)) {
+                        m_candidates.push_back(prediction);
+                    }
+                    m_candidateIndex = 0;
+                }
                 request(EditSessionRequest::DoComposition);
             }
         }
@@ -712,7 +729,8 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             if (_compositionBuffer.empty()) {
                 return S_OK; // 読みが無いので何もしない
             }
-            if (m_candidates.empty()) {
+            if (!m_isConverting) {
+				m_isConverting = true;
                 // 初めての変換: 未確定バッファ全体を読みとして辞書を引く
                 m_candidateIndex = 0;
                 m_henkanGokan = _compositionBuffer;
@@ -744,7 +762,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
             return S_OK;
         }
     }
-    else if (wParam == 'X' && g_currentMode == SKKMode::Henkan && !m_candidates.empty()) {
+    else if (wParam == 'X' && g_currentMode == SKKMode::Henkan && m_isConverting) {
         // 前の候補へ戻る(MultiからSingleへの逆行を含む)
         _DecrementCandidateIndex();
         if (m_drawmode == CandidateWindowDrawMode::Single) {
@@ -753,7 +771,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         request(EditSessionRequest::DoComposition);
         return S_OK;
     }
-    else if (g_currentMode == SKKMode::Henkan && m_drawmode == CandidateWindowDrawMode::Multi && !m_candidates.empty()) {
+    else if (g_currentMode == SKKMode::Henkan && m_drawmode == CandidateWindowDrawMode::Multi && m_isConverting) {
         // Multi表示中: A,S,D,F,J,K,L で表示中の候補を直接選択して確定する
         std::wstring keys(SKK_CHOOSE_CANDIDATES_BIGSTR);
         size_t selectedOffset = keys.find((WCHAR)wParam);
@@ -770,7 +788,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     }
 
     // 暗黙の確定: 候補が表示されている状態で別の文字が入力されたら、まず表示中の候補を確定する
-    if (g_currentMode == SKKMode::Henkan && !m_candidates.empty()) {
+    if (g_currentMode == SKKMode::Henkan && !m_candidates.empty() && m_isConverting) {
         _CommitHenkan(pic);
     }
 
@@ -798,6 +816,13 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
         if (m_romajiKanaTranslater.translate_kigou(ch, output)) {
             // 読み入力中に記号(ー以外)が来たら、読みをそのまま確定してから記号を入力する
             if (g_currentMode == SKKMode::Henkan && output != L"ー") {
+                if (!m_isConverting && !m_candidates.empty() && ch==VK_OEM_PERIOD) {
+                    m_henkanGokan = _compositionBuffer;
+                    _compositionBuffer = m_candidates[0].candidate;
+                    m_candidateIndex = 0;
+					_CommitHenkan(pic);
+                    return S_OK;
+                }
                 _CommitHenkan(pic);
             }
             // 記号はShiftによる変換開始の対象外
@@ -842,6 +867,7 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
     if (shifted && g_currentMode == SKKMode::Kakutei) {
         // Shift+文字: 変換(読み入力)の開始。この仮名が読みの先頭になる
         _compositionBuffer += output;
+		m_isConverting = true;
         __StartHenkanMode(pic);
         return S_OK;
     }
@@ -891,6 +917,16 @@ STDAPI CTextService::OnKeyDown(ITfContext* pic, WPARAM wParam, LPARAM lParam, BO
 
     // Henkanモード(読みの入力中)
     _compositionBuffer += output;
+
+    if (!m_isConverting) {
+        m_candidates.clear();
+        SKKCandidate prediction;
+        if (m_skkdictProvider.GetPrediction(_compositionBuffer, prediction)) {
+            m_candidates.push_back(prediction);
+        }
+        m_candidateIndex = 0;
+    }
+
     request(__HasComposition() ? EditSessionRequest::DoComposition : EditSessionRequest::StartComposition);
     return S_OK;
 }

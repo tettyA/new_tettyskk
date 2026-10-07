@@ -54,6 +54,7 @@ public:
 
 	BOOL LoadDictionary(const std::wstring dictpath, const std::wstring user_dictpath);
 	void GetCandidates(const std::wstring& hiragana_key, SKKCandidates& candidates);
+	bool GetPrediction(const std::wstring& hiragana_key, SKKCandidate& candidate);
 	void RegisterUserDictionary(const std::wstring& hiragana_key,const std::wstring okurigana_alphaet, const SKKCandidate& candidate);
 	void AddHistory(SKKCandidate& candidate, const std::wstring& reading);
 private:

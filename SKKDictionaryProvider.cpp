@@ -82,6 +82,40 @@ void SKKDictionaryProvider::GetCandidates(const std::wstring& hiragana_key, SKKC
 	return;
 }
 
+bool SKKDictionaryProvider::GetPrediction(const std::wstring& hiragana_key, SKKCandidate& candidate)
+{
+	_CheckAndUpdateUserDictVersion();
+
+	if (m_hHistoryMutex && m_pHistory) {
+		WaitForSingleObject(m_hHistoryMutex, INFINITE);
+		for (int i = m_pHistory->count - 1; i >= 0; --i) {
+			const auto& item = m_pHistory->items[i];
+			std::wstring  reading(item.reading);
+			if (reading.starts_with(hiragana_key)) {
+				candidate.candidate = item.result;
+				candidate.annotation = item.anno;
+				ReleaseMutex(m_hHistoryMutex);
+				return true;
+			}
+		}
+		ReleaseMutex(m_hHistoryMutex);
+	}
+	
+	auto it_skk = m_skkdict.lower_bound(hiragana_key);
+	if (it_skk != m_skkdict.end() && !it_skk->second.empty() && it_skk->first.starts_with(hiragana_key)) {
+		candidate = it_skk->second.front();
+		return true;
+	}
+
+	auto it_user = m_user_skkdict.lower_bound(hiragana_key);
+	if (it_user != m_user_skkdict.end() && !it_user->second.empty() && it_user->first.starts_with(hiragana_key)) {
+		candidate = it_user->second.front();
+		return true;
+	}
+
+	return false;
+}
+
 void SKKDictionaryProvider::RegisterUserDictionary(const std::wstring& hiragana_key, const std::wstring okurigana_alphaet, const SKKCandidate& candidate)
 {
 	m_user_skkdict[hiragana_key + okurigana_alphaet].push_back(candidate);

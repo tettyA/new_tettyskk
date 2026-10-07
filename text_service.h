@@ -123,6 +123,7 @@ private:
     std::wstring m_okurigana; // [Shift]おも[Shift]わ の わ
     int m_candidateIndex;
 
+    bool m_isConverting; // 本格的な変換中であるかどうか(スペースで候補選択とか，送り仮名入力中とか)
 
     // 候補描画関連
 	void _IncrementCandidateIndex();
